@@ -57,7 +57,7 @@ namespace PurpleNetwork
 		private static int 	_Revision;
 
 		// Singleton
-		private static NetworkView   networkView;
+		private static NetworkView   purpleNetworkView;
 		private static PurpleNetwork instance;
 
 		private static bool useJSONMessage;
@@ -90,7 +90,7 @@ namespace PurpleNetwork
 				{
 					GameObject gameObject 	= new GameObject ("PurpleNetworkManager");
 					instance     			= gameObject.AddComponent<PurpleNetwork> ();
-					networkView 			= gameObject.AddComponent<NetworkView>   ();
+					purpleNetworkView		= gameObject.AddComponent<NetworkView>   ();
 				}
 				return instance;
 			}
@@ -183,7 +183,7 @@ namespace PurpleNetwork
 		}
 
 
-		public T ConvertPurpleMessage <T> (string message)
+		public T ConvertToPurpleMessage <T> (string message)
 		{
 			return string_to_object_converter <T> (message);
 		}
@@ -301,7 +301,7 @@ namespace PurpleNetwork
 		private void queue_broadcast (string event_name, object message)
 		{
 			string string_message = object_to_string_converter(message);
-			networkView.RPC("receive_purple_network_message_queue", RPCMode.All, event_name, string_message);
+			purpleNetworkView.RPC("receive_purple_network_message_queue", RPCMode.All, event_name, string_message);
 		}
 		
 		// SEND QUEUE TO SERVER
@@ -314,7 +314,7 @@ namespace PurpleNetwork
 			}
 			else
 			{
-				networkView.RPC("receive_purple_network_message_queue", RPCMode.Server, event_name, string_message);
+				purpleNetworkView.RPC("receive_purple_network_message_queue", RPCMode.Server, event_name, string_message);
 			}
 		}
 
@@ -426,7 +426,7 @@ namespace PurpleNetwork
 		private void broadcast (string event_name, object message, bool forceXML)
 		{
 			string string_message = object_to_string_converter (message, forceXML);
-			networkView.RPC("receive_purple_network_message", RPCMode.All, event_name, string_message);
+			purpleNetworkView.RPC("receive_purple_network_message", RPCMode.All, event_name, string_message);
 		}
 		
 		// SEND TO SERVER
@@ -443,7 +443,7 @@ namespace PurpleNetwork
 			}
 			else
 			{
-				networkView.RPC("receive_purple_network_message", RPCMode.Server, event_name, string_message);
+				purpleNetworkView.RPC("receive_purple_network_message", RPCMode.Server, event_name, string_message);
 			}
 		}
 
@@ -465,7 +465,7 @@ namespace PurpleNetwork
 		private void to_sender(NetworkPlayer player, string event_name, object message, bool forceXML)
 		{
 			string string_message = object_to_string_converter(message, forceXML);
-			networkView.RPC("receive_purple_network_message", player, event_name, string_message);
+			purpleNetworkView.RPC("receive_purple_network_message", player, event_name, string_message);
 		}
 		
 
@@ -524,12 +524,13 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_message(string event_name, string string_message, NetworkMessageInfo info)
 		{
+			// TODO:
 			Debug.Log ("receive_purple_network_message(string event_name, string xml_message, NetworkMessageInfo info)");
 			Debug.Log (string_message);
 			try{
 				eventListeners[event_name](string_message);
 			} catch(Exception e){
-				Debug.LogWarning("Can not call: eventListeners["+event_name+"]("+string_message+")");
+				Debug.LogWarning("Can not call: eventListeners["+event_name+"]("+string_message+") - " + e.ToString());
 			}
 		}
 

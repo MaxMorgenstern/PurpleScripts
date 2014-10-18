@@ -48,22 +48,32 @@ namespace ConfigManager {
 
 
 
-
+		// TODO: Better Debug
 
 		/**************
 		 * Functions in order to pass the config variables
 		 *************/
 
-		// constructor - reads the config file and builds the dictionary
+		// constructor - reads the config files and builds the dictionary
 		static ItemIds(){
 			_configDictionary = new Dictionary<string,string>();
 			XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
-			xmlDoc.LoadXml (System.IO.File.ReadAllText("Assets/Scripts/PurpleScripts/Config/ServerSettings.config")); // load the file.
-			XmlNodeList nodesList = xmlDoc.GetElementsByTagName("add"); // array of the level nodes.
-			foreach (XmlNode levelInfo in nodesList) 
+
+			string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*PurpleSettings*.config", SearchOption.AllDirectories);
+			if(files.Length > 0)
 			{
-				_configDictionary.Add(levelInfo.Attributes["key"].Value,levelInfo.Attributes["value"].Value);
-			}	
+				foreach (string filePath in files) 
+				{
+					xmlDoc.LoadXml (System.IO.File.ReadAllText(filePath)); // load the file.
+					XmlNodeList nodesList = xmlDoc.GetElementsByTagName("add"); // array of the level nodes.
+					foreach (XmlNode levelInfo in nodesList) 
+					{
+						_configDictionary.Add(levelInfo.Attributes["key"].Value,levelInfo.Attributes["value"].Value);
+					}	
+				}
+			} else {
+				Debug.LogError("Can not find config files.");
+			}
 		}
 
 		// config dictionary
