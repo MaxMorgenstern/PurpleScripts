@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR_WIN
+using UnityEngine;
 using System;
 using System.Collections;
 using System.IO;
@@ -183,3 +184,4 @@ public class PurpleDatabase : MonoBehaviour {
 		}
 	}
 }
+#endif
