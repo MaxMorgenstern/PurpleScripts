@@ -526,7 +526,11 @@ namespace PurpleNetwork
 		{
 			Debug.Log ("receive_purple_network_message(string event_name, string xml_message, NetworkMessageInfo info)");
 			Debug.Log (string_message);
-			eventListeners[event_name](string_message);
+			try{
+				eventListeners[event_name](string_message);
+			} catch(Exception e){
+				Debug.LogWarning("Can not call: eventListeners["+event_name+"]("+string_message+")");
+			}
 		}
 
 	}
