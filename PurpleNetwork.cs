@@ -49,6 +49,11 @@ namespace PurpleNetwork
 		private static string 	networkHost;
 		private static int 		networkPort;
 		private static String 	networkPassword;
+		private static int 		networkPause;
+	
+		private static bool		serverRestart;
+		private static int 		serverPlayer;
+		private static String 	serverPassword;
 
 		// Version intormation
 		private static int 	_Major;
@@ -71,6 +76,8 @@ namespace PurpleNetwork
 			networkHost = "Max-Laptop.fritz.box";
 			networkPort = 25001;
 			networkPassword = "testPasswort";
+			networkPause = 250;
+			serverRestart = false;
 
 			useJSONMessage = true;
 
@@ -111,6 +118,8 @@ namespace PurpleNetwork
 		// SERVER ////////////////////////////
 		public static void LaunchLocalServer (int player, string localPassword)
 		{
+			serverPlayer = player;
+			serverPassword = localPassword;
 			Instance.launch_server (player, localPassword);
 		}
 
@@ -118,8 +127,20 @@ namespace PurpleNetwork
 		{
 			Instance.stop_server ();
 		}
-		
 
+		public static void RestartLocalServer()
+		{
+			if(serverRestart)
+			{
+				serverRestart = false;
+				Instance.launch_server (serverPlayer, serverPassword);
+			} else {
+				serverRestart = true;
+				Instance.stop_server ();
+			}
+		}
+		
+	
 		
 		// CLIENT ////////////////////////////
 		public static void ConnectToServer ()
@@ -333,6 +354,32 @@ namespace PurpleNetwork
 */
 // * ////////////////////////////
 
+		
+		// SERVER ////////////////////////////
+		
+		// CONNECTION CALLS
+		private void launch_server(int player, string localPassword)
+		{
+			Network.InitializeSecurity ();
+			Network.incomingPassword = localPassword;
+			
+			bool use_nat = !Network.HavePublicAddress();
+			
+			Network.InitializeServer (player, networkPort, use_nat);
+		}
+		
+		private void stop_server()
+		{
+			Network.Disconnect(networkPause);
+		}
+		
+		// SERVER EVENTS
+		void OnServerInitialized()                      {  }
+		
+		void OnPlayerDisconnected(NetworkPlayer player) {  }
+		
+		void OnPlayerConnected(NetworkPlayer player)    {  }
+		
 
 
 		
@@ -357,45 +404,17 @@ namespace PurpleNetwork
 		// CLIENT EVENTS
 		private void OnConnectedToServer()      { }
 
-		private void OnDisconnectedFromServer() { }
+		// ALSO SERVER EVENT ON DISCONNECT
+		private void OnDisconnectedFromServer() { 
+			RestartLocalServer ();
+		}
 
 		private void OnFailedToConnect(NetworkConnectionError error)
 		{
 			Debug.Log("Could not connect to server: " + error);
 		}
 
-
-
-
-		// SERVER ////////////////////////////
-
-		// CONNECTION CALLS
-		private void launch_server(int player, string localPassword)
-		{
-			Network.InitializeSecurity ();
-			Network.incomingPassword = localPassword;
-
-			bool use_nat = !Network.HavePublicAddress();
-
-			Network.InitializeServer (player, networkPort, use_nat);
-		}
-
-		private void stop_server()
-		{
-			Network.Disconnect(200);
-		}
-
-		// SERVER EVENTS
-		void OnServerInitialized()                      {  }
-
-		void OnPlayerDisconnected(NetworkPlayer player) {  }
-
-		void OnPlayerConnected(NetworkPlayer player)    {  }
-		
-
-
-
-
+	
 
 		// HELPER ////////////////////
 		private void wake_up() {  }
@@ -448,16 +467,6 @@ namespace PurpleNetwork
 		}
 
 		// SEND TO SENDER
-		/*
-		private void to_sender(NetworkMessageInfo info, string event_name, object message)
-		{
-			to_sender (info.sender, event_name, message, false);
-		}
-		private void to_sender(NetworkMessageInfo info, string event_name, object message, bool forceXML)
-		{
-			to_sender (info.sender, event_name, message, forceXML);
-		}
-		*/
 		private void to_sender(NetworkPlayer player, string event_name, object message)
 		{
 			to_sender (player, event_name, message, false);
@@ -467,9 +476,21 @@ namespace PurpleNetwork
 			string string_message = object_to_string_converter(message, forceXML);
 			purpleNetworkView.RPC("receive_purple_network_message", player, event_name, string_message);
 		}
+
 		
+		// HELPER METHODS ////////////////////
 
+		// TODO: test connection before sending RPC
+		private bool is_connected()
+		{
+			if (Network.connections.Length > 0)
+				return true;
 
+			if(Network.isServer)
+				return true;
+
+			return false;
+		}
 
 
 
