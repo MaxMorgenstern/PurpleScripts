@@ -6,6 +6,7 @@ using System.Text;
 using System.Xml;
 using UnityEngine;
 
+// TODO: separate file reader and delivery option
 namespace ConfigManager {
 	public static class ItemIds {
 

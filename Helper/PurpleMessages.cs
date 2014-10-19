@@ -1,6 +1,9 @@
 using UnityEngine;
 using System;
 using System.Xml.Serialization;
+
+// TODO: Remove PurpleNetwork as well as references
+// TODO: create classes
 namespace PurpleNetwork
 {
 	namespace Messages
@@ -58,7 +61,7 @@ namespace PurpleNetwork
 				public Status()
 				{
 					serverTime = DateTime.Now;
-					serverVersion = PurpleNetwork.Version;
+					serverVersion = "0.0.1.1";
 				}
 			}
 

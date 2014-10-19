@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using UnityEngine;
 using System;
 
+// TODO: Remove PurpleNetwork as well as references
 namespace PurpleNetwork
 {
 	public class PurpleSerializer

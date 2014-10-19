@@ -2,6 +2,9 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _PurpleSerializer = PurpleNetwork.PurpleSerializer;
+using _JSON = Newtonsoft.Json.JsonConvert;
+
 /**
  * 		using _PurpleSerializer = PurpleNetwork.PurpleSerializer;
  *		using _PurpleMessages = PurpleNetwork.Messages;
@@ -26,67 +29,46 @@ using System.Collections.Generic;
  *		}
  **/
 
-using _PurpleSerializer = PurpleNetwork.PurpleSerializer;
-using _JSON = Newtonsoft.Json.JsonConvert;
+
+// TODO: test connection before sending RPC
+// TODO: network data initial settings
 
 namespace PurpleNetwork
 {
 	public class PurpleNetwork : MonoBehaviour
 	{
-
-		//public enum connectionState {disconnected, connected, pending, failed};
-		//public enum loginState {loggedIn, loggedOut, failed};
-		
-		//private string storedData;
-		//private connectionState serverConnectionState;
-		//private loginState 		serverLoginState;
-
-		//public NetworkViewID lastViewId;
-		//private Dictionary<string, Type> callbackTypes = new Dictionary<string, Type>();
-
-
 		// Network Data
 		private static string 	networkHost;
 		private static int 		networkPort;
 		private static String 	networkPassword;
 		private static int 		networkPause;
 	
-		// TODO: Server Restart
-		/*
-		private static bool		serverRestart;
+		// Server Restart
 		private static int 		serverPlayer;
 		private static String 	serverPassword;
-		*/
-
-		// Version intormation
-		private static int 	_Major;
-		private static int 	_Minor;
-		private static int 	_Status;
-		private static int 	_Revision;
 
 		// Singleton
 		private static NetworkView   purpleNetworkView;
 		private static PurpleNetwork instance;
 
+		// Formating
 		private static bool useJSONMessage;
 
+		// Events
 		private Dictionary<string, PurpleNetCallback> eventListeners = new Dictionary<string, PurpleNetCallback>();
 
 
 		// START UP /////////////////////////
 		protected PurpleNetwork ()
 		{
+			// TODO: use other data
 			networkHost = "Max-Laptop.fritz.box";
 			networkPort = 25001;
 			networkPassword = "testPasswort";
+
+			// static data
 			networkPause = 250;
-
 			useJSONMessage = true;
-
-			_Major = 0;		// Major Builds
-			_Minor = 0;		// Minor Builds - Functions added
-			_Status = 0;	// 0 for alpha - 1 for beta - 2 for release candidate - 3 for (final) release
-			_Revision = 1;	// Bugs fixed - changes made to code
 		}
 		
 
@@ -105,17 +87,6 @@ namespace PurpleNetwork
 			}
 		}
 
-		
-		// VERSION /////////////////////////
-		public static string Version 
-		{
-			get
-			{
-				return _Major.ToString() +"."+ _Minor.ToString() +"."+ _Status.ToString() +"."+ _Revision.ToString();
-			}
-		}
-
-
 
 		// SERVER ////////////////////////////
 		public static void LaunchLocalServer (int player, string localPassword)
@@ -130,10 +101,8 @@ namespace PurpleNetwork
 
 		public static void RestartLocalServer()
 		{
-			// stop Server
-			// start Server
+			Instance.restart_server ();
 		}
-		
 	
 		
 		// CLIENT ////////////////////////////
@@ -204,149 +173,8 @@ namespace PurpleNetwork
 		}
 
 
-
-// DEV ////////////////////////////
-/*
-
-	// TODO: PurpleNetworkQueue - klasse klonen die eine queue nutzt
 		
-		public enum queueType {broadcast, server, player};
-		private Queue <message_queue_item> message_queue = new Queue<message_queue_item> (); //new Queue();
-
-
-		public static void Broadcast (string event_name, object message, bool useQueue)
-		{
-			if (useQueue) {
-				Instance.to_queue (event_name, message, queueType.broadcast, new NetworkPlayer ());
-			} else {
-				Broadcast(event_name, message);
-			}
-		}
-		
-		public static void ToServer (string event_name, object message, bool useQueue)
-		{
-			if (useQueue) {
-				Instance.to_queue (event_name, message, queueType.server, new NetworkPlayer());
-			} else {
-				ToServer(event_name, message);
-			}
-		}
-		
-		public static void ToPlayer(NetworkPlayer player, string event_name, object message, bool useQueue)
-		{
-			if (useQueue) {
-				Instance.to_queue (event_name, message, queueType.player, player);
-			} else {
-				ToPlayer(player, event_name, message);
-			}
-		}
-
-		public static void ToPlayer(NetworkMessageInfo info, string event_name, object message, bool useQueue)
-		{
-			if (useQueue) {
-				Instance.to_queue (event_name, message, queueType.player, info.sender);
-			} else {
-				ToPlayer(info, event_name, message);
-			}
-		}
-
-
-
-		private void to_queue(string event_name, object message, queueType type, NetworkPlayer player)
-		{
-			message_queue_item mqi = new message_queue_item (event_name, message, type, player);
-			message_queue.Enqueue (mqi);
-
-		}
-
-		public static void ProcessQueue(){ Instance.process_queue(); }
-
-		private void process_queue()
-		{
-			List<message_queue_item> broadcast_list = new List<message_queue_item> ();
-			List<message_queue_item> server_list = new List<message_queue_item> ();
-
-			while (message_queue.Count > 0)
-			{
-				message_queue_item current_item = message_queue.Dequeue ();
-
-				switch (current_item.type) 
-				{
-					case queueType.broadcast:
-						broadcast_list.Add(current_item);
-						break;
-
-					case queueType.server:
-						server_list.Add(current_item);
-						break;
-
-					case queueType.player:
-						// Each seperate as this does only affect specific player
-						to_sender(current_item.player, current_item.event_name, current_item.message);
-						break;
-
-					default:
-						Debug.LogError("invalid queue type detected: " + current_item.type.ToString());
-						break;
-				}
-			} // END WHILE
-
-			// TODO - send broadcast and server list
-			// queue_broadcast
-			// queue_to_server
-		}
-
-		private class message_queue_item
-		{
-			public string event_name;
-			public object message;
-			public queueType type;
-			public NetworkPlayer player;
-
-			public message_queue_item(string en, object me, queueType ty, NetworkPlayer pl)
-			{
-				event_name = en;
-				message = me;
-				type = ty;
-				player = pl;
-			}
-		}
-
-		// SEND QUEUE TO ALL
-		private void queue_broadcast (string event_name, object message)
-		{
-			string string_message = object_to_string_converter(message);
-			purpleNetworkView.RPC("receive_purple_network_message_queue", RPCMode.All, event_name, string_message);
-		}
-		
-		// SEND QUEUE TO SERVER
-		private void queue_to_server (string event_name, object message)
-		{
-			string string_message = object_to_string_converter(message);
-			if (Network.isServer)
-			{
-				receive_purple_network_message_queue(event_name, string_message, new NetworkMessageInfo());
-			}
-			else
-			{
-				purpleNetworkView.RPC("receive_purple_network_message_queue", RPCMode.Server, event_name, string_message);
-			}
-		}
-
-
-
-		// RECEIVE ALL QUEUE DATA ////////////////////
-		[RPC]
-		void receive_purple_network_message_queue(string event_name, string xml_message, NetworkMessageInfo info)
-		{
-			// TODO
-			Debug.Log ("receive_purple_network_message_queue(string event_name, string xml_message, NetworkMessageInfo info)");
-			Debug.Log (xml_message);
-			eventListeners[event_name](xml_message);
-		}
-
-*/
-// * ////////////////////////////
+		// PRIVATE ////////////////////////////
 
 		
 		// SERVER ////////////////////////////
@@ -354,6 +182,9 @@ namespace PurpleNetwork
 		// CONNECTION CALLS
 		private void launch_server(int player, string localPassword)
 		{
+			serverPlayer = player;
+			serverPassword = localPassword;
+
 			Network.InitializeSecurity ();
 			Network.incomingPassword = localPassword;
 			
@@ -366,6 +197,12 @@ namespace PurpleNetwork
 		{
 			Network.Disconnect(networkPause);
 		}
+
+		private void restart_server()
+		{
+			stop_server ();
+			launch_server(serverPlayer, serverPassword);
+		}
 		
 		// SERVER EVENTS
 		void OnServerInitialized()                      {  }
@@ -376,7 +213,6 @@ namespace PurpleNetwork
 		
 
 
-		
 		// CLIENT ////////////////////////////
 
 		// CONNECTION CALLS
@@ -412,6 +248,7 @@ namespace PurpleNetwork
 		private void wake_up() {  }
 
 
+
 		// EVENT DISPATCH ////////////////////
 		private void add_listener <T> (string event_name, PurpleNetCallback listener)
 		{
@@ -419,12 +256,10 @@ namespace PurpleNetwork
 			{
 				eventListeners.Add(event_name, null);
 			}
-			
 			// delegates can be chained using addition
 			eventListeners[event_name] += listener;
 		}
 		
-
 
 
 		// SEND DATA ////////////////////
@@ -469,10 +304,11 @@ namespace PurpleNetwork
 			purpleNetworkView.RPC("receive_purple_network_message", player, event_name, string_message);
 		}
 
-		
+
+
 		// HELPER METHODS ////////////////////
 
-		// TODO: test connection before sending RPC
+		// TODO:
 		private bool is_connected()
 		{
 			if (Network.connections.Length > 0)
@@ -485,6 +321,8 @@ namespace PurpleNetwork
 		}
 
 
+
+		// CONVERTER METHODS ////////////////////
 
 		// convert an object into a string
 		private string object_to_string_converter(object message)
@@ -513,7 +351,6 @@ namespace PurpleNetwork
 			return return_message;
 		}
 
-
 		private T string_to_object_converter <T> (string message)
 		{
 			try{
@@ -534,6 +371,7 @@ namespace PurpleNetwork
 
 
 		// RECEIVE ALL DATA ////////////////////
+
 		[RPC]
 		void receive_purple_network_message(string event_name, string string_message, NetworkMessageInfo info)
 		{
@@ -551,6 +389,5 @@ namespace PurpleNetwork
 
 	// DELEGATES FOR CALLBACK
 	public delegate void PurpleNetCallback(object converted_object); // With message
-
-
+	
 }
