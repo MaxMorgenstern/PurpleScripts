@@ -51,9 +51,12 @@ namespace PurpleNetwork
 		private static String 	networkPassword;
 		private static int 		networkPause;
 	
+		// TODO: Server Restart
+		/*
 		private static bool		serverRestart;
 		private static int 		serverPlayer;
 		private static String 	serverPassword;
+		*/
 
 		// Version intormation
 		private static int 	_Major;
@@ -77,7 +80,6 @@ namespace PurpleNetwork
 			networkPort = 25001;
 			networkPassword = "testPasswort";
 			networkPause = 250;
-			serverRestart = false;
 
 			useJSONMessage = true;
 
@@ -118,8 +120,6 @@ namespace PurpleNetwork
 		// SERVER ////////////////////////////
 		public static void LaunchLocalServer (int player, string localPassword)
 		{
-			serverPlayer = player;
-			serverPassword = localPassword;
 			Instance.launch_server (player, localPassword);
 		}
 
@@ -130,14 +130,8 @@ namespace PurpleNetwork
 
 		public static void RestartLocalServer()
 		{
-			if(serverRestart)
-			{
-				serverRestart = false;
-				Instance.launch_server (serverPlayer, serverPassword);
-			} else {
-				serverRestart = true;
-				Instance.stop_server ();
-			}
+			// stop Server
+			// start Server
 		}
 		
 	
@@ -398,16 +392,14 @@ namespace PurpleNetwork
 
 		private void disconnect_from()
 		{
-			Network.Disconnect(200);
+			Network.Disconnect(networkPause);
 		}
 		
 		// CLIENT EVENTS
 		private void OnConnectedToServer()      { }
 
 		// ALSO SERVER EVENT ON DISCONNECT
-		private void OnDisconnectedFromServer() { 
-			RestartLocalServer ();
-		}
+		private void OnDisconnectedFromServer() { }
 
 		private void OnFailedToConnect(NetworkConnectionError error)
 		{
