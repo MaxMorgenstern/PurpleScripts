@@ -7,6 +7,8 @@ using System.Xml;
 using UnityEngine;
 
 // TODO: separate file reader and delivery option
+// TODO: Unity Debug
+
 namespace ConfigManager {
 	public static class ItemIds {
 

@@ -120,13 +120,25 @@ namespace PurpleNetwork
 		{
 			Instance.disconnect_from ();
 		}
+		
+		public static void SwitchServer ()
+		{
+			Instance.switch_static_connecton ();
+		}
+		
+		public static void SwitchServer (string hostname, string password)
+		{
+			Instance.switch_connecton (hostname, password);
+		}
+
 
 
 		public static void AddListener<T> (string event_name, PurpleNetCallback listener)
 		{
 			Instance.add_listener<T> (event_name, listener);
 		}
-		
+
+
 		
 		public static void Broadcast (string event_name, object message)
 		{
@@ -229,6 +241,18 @@ namespace PurpleNetwork
 		private void disconnect_from()
 		{
 			Network.Disconnect(networkPause);
+		}
+
+		private void switch_connecton(string hostname, string password)
+		{
+			disconnect_from ();
+			connect_to (hostname, password);
+		}
+
+		private void switch_static_connecton()
+		{
+			disconnect_from ();
+			connect_to_static ();
 		}
 		
 		// CLIENT EVENTS
