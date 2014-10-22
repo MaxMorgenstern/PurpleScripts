@@ -397,18 +397,29 @@ namespace PurpleNetwork
 
 
 		// RECEIVE ALL DATA ////////////////////
-
 		[RPC]
 		void receive_purple_network_message(string event_name, string string_message, NetworkMessageInfo info)
 		{
 			// TODO:
 			Debug.Log ("receive_purple_network_message(string event_name, string xml_message, NetworkMessageInfo info)");
 			Debug.Log (string_message);
+
 			try{
 				eventListeners[event_name](string_message);
 			} catch(Exception e){
 				Debug.LogWarning("Can not call: eventListeners["+event_name+"]("+string_message+") - " + e.ToString());
+
+				purpleNetworkView.RPC("receive_purple_network_error", info.sender, event_name, string_message);
 			}
+		}
+
+		[RPC]
+		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
+		{
+			Debug.LogWarning ("receive_purple_network_error - can not find called function:");
+			Debug.Log (event_name);
+			Debug.Log (string_message);
+			Debug.Log (info.sender.ToString());
 		}
 
 	}

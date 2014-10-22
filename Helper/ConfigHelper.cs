@@ -6,14 +6,11 @@ using System.Text;
 using System.Xml;
 using UnityEngine;
 
-// TODO: separate file reader and delivery option
-// TODO: Unity Debug
-// TODO: Better Debug
-
-
-
 namespace PurpleConfig {
 	public static class ItemIds {
+
+		// config dictionary
+		private static Dictionary<string,string> _configDictionary;
 
 		// constructor - reads the config files and builds the dictionary
 		static ItemIds(){
@@ -37,9 +34,6 @@ namespace PurpleConfig {
 			}
 		}
 
-		// config dictionary
-		private static Dictionary<string,string> _configDictionary;
-
 		public static string getConfigString(string searchString)
 		{
 			string returnData = string.Empty;
@@ -49,7 +43,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("{0} Exception caught.", e);
+				Debug.LogException(e);
 			}
 			return returnData;
 		}
@@ -64,7 +58,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("{0} Exception caught.", e);
+				Debug.LogException(e);
 				return -1;
 			}
 		}
@@ -79,7 +73,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("{0} Exception caught.", e);
+				Debug.LogException(e);
 				return -1;
 			}
 		}
@@ -94,7 +88,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("{0} Exception caught.", e);
+				Debug.LogException(e);
 				return -1;
 			}
 		}
@@ -109,7 +103,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("{0} Exception caught.", e);
+				Debug.LogException(e);
 				return false;
 			}
 		}
