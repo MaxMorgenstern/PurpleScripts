@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using _PurpleSerializer = PurpleNetwork.PurpleSerializer;
+using _PurpleSerializer = PurpleSerializer;
 using _JSON = Newtonsoft.Json.JsonConvert;
 
 /**

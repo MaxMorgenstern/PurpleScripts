@@ -8,54 +8,12 @@ using UnityEngine;
 
 // TODO: separate file reader and delivery option
 // TODO: Unity Debug
+// TODO: Better Debug
 
-namespace ConfigManager {
+
+
+namespace PurpleConfig {
 	public static class ItemIds {
-
-		// Networking
-		public static class Network {
-			public static string IP { get { return getConfigString ("Network.IP"); } }
-			public static string Host { get { return getConfigString ("Network.Host"); } }
-			public static int Port { get { return getConfigInt ("Network.Port"); } }
-			public static int MaxPlayer { get { return getConfigInt ("Network.MaxPlayer"); } }
-
-			public static class MasterServer {
-				public static string GameName { get { return getConfigString ("Network.MasterServer.GameName"); } }
-				public static string GameType { get { return getConfigString ("Network.MasterServer.GameType"); } }
-				public static string ServerURL { get { return getConfigString ("Network.MasterServer.URL"); } }
-			}
-		}
-
-		// Database
-		public static class Database {
-			public static string IP { get { return getConfigString ("Database.IP"); } }
-			public static string Name { get { return getConfigString ("Database.Name"); } }
-			public static string User { get { return getConfigString ("Database.User"); } }
-			public static string Password { get { return getConfigString ("Database.Password"); } }
-		}
-
-		// Password generation/validation
-		public static class Password {
-			public static int SaltByteSize { get { return getConfigInt ("Password.SaltByteSize"); } }
-			public static int HashByteSize { get { return getConfigInt ("Password.HashByteSize"); } }
-			public static int IterationIndex { get { return getConfigInt ("Password.IterationIndex"); } }
-			public static int SaltIndex { get { return getConfigInt ("Password.SaltIndex"); } }
-
-			public static class PBKDF2 {
-				public static int Iterations { get { return getConfigInt ("Password.PBKDF2.Iterations"); } }
-				public static int Index { get { return getConfigInt ("Password.PBKDF2.Index"); } }
-			}
-		}
-
-
-
-
-
-		// TODO: Better Debug
-
-		/**************
-		 * Functions in order to pass the config variables
-		 *************/
 
 		// constructor - reads the config files and builds the dictionary
 		static ItemIds(){
@@ -82,7 +40,7 @@ namespace ConfigManager {
 		// config dictionary
 		private static Dictionary<string,string> _configDictionary;
 
-		private static string getConfigString(string searchString)
+		public static string getConfigString(string searchString)
 		{
 			string returnData = string.Empty;
 			try
@@ -96,7 +54,7 @@ namespace ConfigManager {
 			return returnData;
 		}
 		
-		private static int getConfigInt(string searchString)
+		public static int getConfigInt(string searchString)
 		{
 			string tempData = string.Empty;
 			try
@@ -111,7 +69,7 @@ namespace ConfigManager {
 			}
 		}
 		
-		private static float getConfigFloat(string searchString)
+		public static float getConfigFloat(string searchString)
 		{
 			string tempData = string.Empty;
 			try
@@ -126,7 +84,7 @@ namespace ConfigManager {
 			}
 		}
 		
-		private static double getConfigDouble(string searchString)
+		public static double getConfigDouble(string searchString)
 		{
 			string tempData = string.Empty;
 			try
@@ -141,7 +99,7 @@ namespace ConfigManager {
 			}
 		}
 		
-		private static bool getConfigBoolean(string searchString)
+		public static bool getConfigBoolean(string searchString)
 		{
 			string tempData = string.Empty;
 			try

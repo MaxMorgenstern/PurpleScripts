@@ -12,10 +12,10 @@ using System.Collections.Generic;
 
 public class PurpleDatabase : MonoBehaviour {
 	
-	private string serverIP = ConfigManager.ItemIds.Database.IP;
-	private string serverDatabase = ConfigManager.ItemIds.Database.Name;
-	private string serverUser = ConfigManager.ItemIds.Database.User;
-	private string serverPassword = ConfigManager.ItemIds.Database.Password;
+	private string serverIP = PurpleConfig.Database.IP;
+	private string serverDatabase = PurpleConfig.Database.Name;
+	private string serverUser = PurpleConfig.Database.User;
+	private string serverPassword = PurpleConfig.Database.Password;
 
 	private string connectionString;
 	private MySqlConnection connection;

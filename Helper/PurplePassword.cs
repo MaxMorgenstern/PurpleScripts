@@ -38,13 +38,13 @@ using System;
 
 public class PurplePassword : MonoBehaviour {
 
-	private int SALT_BYTE_SIZE = ConfigManager.ItemIds.Password.SaltByteSize;
-	private int HASH_BYTE_SIZE = ConfigManager.ItemIds.Password.HashByteSize;
-	private int PBKDF2_ITERATIONS = ConfigManager.ItemIds.Password.PBKDF2.Iterations;
+	private int SALT_BYTE_SIZE = PurpleConfig.Password.SaltByteSize;
+	private int HASH_BYTE_SIZE = PurpleConfig.Password.HashByteSize;
+	private int PBKDF2_ITERATIONS = PurpleConfig.Password.PBKDF2.Iterations;
 	
-	private int ITERATION_INDEX = ConfigManager.ItemIds.Password.IterationIndex;
-	private int SALT_INDEX = ConfigManager.ItemIds.Password.SaltIndex;
-	private int PBKDF2_INDEX = ConfigManager.ItemIds.Password.PBKDF2.Index;
+	private int ITERATION_INDEX = PurpleConfig.Password.IterationIndex;
+	private int SALT_INDEX = PurpleConfig.Password.SaltIndex;
+	private int PBKDF2_INDEX = PurpleConfig.Password.PBKDF2.Index;
 
 	public string CreateHash(string password)
 	{
