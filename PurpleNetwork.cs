@@ -45,6 +45,7 @@ namespace PurpleNetwork
 	
 		// Server Restart
 		private static int 		serverPlayer;
+		private static int 		serverPort;
 		private static String 	serverPassword;
 
 		// Singleton
@@ -89,9 +90,9 @@ namespace PurpleNetwork
 
 
 		// SERVER ////////////////////////////
-		public static void LaunchLocalServer (int player, string localPassword)
+		public static void LaunchLocalServer (int player, string localPassword, int localPort)
 		{
-			Instance.launch_server (player, localPassword);
+			Instance.launch_server (player, localPassword, localPort);
 		}
 
 		public static void StopLocalServer ()
@@ -111,9 +112,9 @@ namespace PurpleNetwork
 			Instance.connect_to_static ();
 		}
 
-		public static void ConnectToServer (string hostname, string password)
+		public static void ConnectToServer (string hostname, string password, int port)
 		{
-			Instance.connect_to (hostname, password);
+			Instance.connect_to (hostname, password, port);
 		}
 
 		public static void DisconnectFromServer ()
@@ -126,9 +127,9 @@ namespace PurpleNetwork
 			Instance.switch_static_connecton ();
 		}
 		
-		public static void SwitchServer (string hostname, string password)
+		public static void SwitchServer (string hostname, string password, int port)
 		{
-			Instance.switch_connecton (hostname, password);
+			Instance.switch_connecton (hostname, password, port);
 		}
 
 
@@ -192,17 +193,18 @@ namespace PurpleNetwork
 		// SERVER ////////////////////////////
 		
 		// CONNECTION CALLS
-		private void launch_server(int player, string localPassword)
+		private void launch_server(int player, string localPassword, int localPort)
 		{
 			serverPlayer = player;
 			serverPassword = localPassword;
+			serverPort = localPort;
 
 			Network.InitializeSecurity ();
 			Network.incomingPassword = localPassword;
 			
 			bool use_nat = !Network.HavePublicAddress();
 			
-			Network.InitializeServer (player, networkPort, use_nat);
+			Network.InitializeServer (player, localPort, use_nat);
 		}
 		
 		private void stop_server()
@@ -213,7 +215,7 @@ namespace PurpleNetwork
 		private void restart_server()
 		{
 			stop_server ();
-			launch_server(serverPlayer, serverPassword);
+			launch_server(serverPlayer, serverPassword, serverPort);
 		}
 		
 		// SERVER EVENTS
@@ -228,9 +230,9 @@ namespace PurpleNetwork
 		// CLIENT ////////////////////////////
 
 		// CONNECTION CALLS
-		private void connect_to(string hostname, string password)
+		private void connect_to(string hostname, string password, int port)
 		{
-			Network.Connect(hostname, networkPort, password);
+			Network.Connect(hostname, port, password);
 		}
 
 		private void connect_to_static()
@@ -243,10 +245,10 @@ namespace PurpleNetwork
 			Network.Disconnect(networkPause);
 		}
 
-		private void switch_connecton(string hostname, string password)
+		private void switch_connecton(string hostname, string password, int port)
 		{
 			disconnect_from ();
-			connect_to (hostname, password);
+			connect_to (hostname, password, port);
 		}
 
 		private void switch_static_connecton()
