@@ -63,9 +63,9 @@ namespace PurpleNetwork
 		protected PurpleNetwork ()
 		{
 			// TODO: use other data
-			networkHost = "Max-Laptop.fritz.box";
-			networkPort = 25001;
-			networkPassword = "testPasswort";
+			networkHost = PurpleConfig.Network.Host;//"Max-Laptop.fritz.box";
+			networkPort = PurpleConfig.Network.Port;//25001;
+			networkPassword = PurpleConfig.Network.Password;//"testPasswort";
 
 			// static data
 			networkPause = 250;
@@ -334,7 +334,7 @@ namespace PurpleNetwork
 
 		// HELPER METHODS ////////////////////
 
-		// TODO:
+		// TODO: use it...
 		private bool is_connected()
 		{
 			if (Network.connections.Length > 0)
@@ -400,15 +400,11 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_message(string event_name, string string_message, NetworkMessageInfo info)
 		{
-			// TODO:
-			Debug.Log ("receive_purple_network_message(string event_name, string xml_message, NetworkMessageInfo info)");
-			Debug.Log (string_message);
-
 			try{
 				eventListeners[event_name](string_message);
 			} catch(Exception e){
 				Debug.LogWarning("Can not call: eventListeners["+event_name+"]("+string_message+") - " + e.ToString());
-
+				// notify sender that there was an error
 				purpleNetworkView.RPC("receive_purple_network_error", info.sender, event_name, string_message);
 			}
 		}
@@ -416,6 +412,7 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
+			// TODO: handle this - the call did not went through on server - invalid
 			Debug.LogWarning ("receive_purple_network_error - can not find called function:");
 			Debug.Log (event_name);
 			Debug.Log (string_message);
