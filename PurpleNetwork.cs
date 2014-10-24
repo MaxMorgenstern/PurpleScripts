@@ -334,7 +334,12 @@ namespace PurpleNetwork
 
 		// HELPER METHODS ////////////////////
 
-		// TODO: use it...
+		// TODO: Test
+		public static bool IsConnected()
+		{
+			return Instance.is_connected ();
+		}
+
 		private bool is_connected()
 		{
 			if (Network.connections.Length > 0)
@@ -344,7 +349,7 @@ namespace PurpleNetwork
 				return true;
 
 			return false;
-		}
+		} 
 
 
 
@@ -391,6 +396,8 @@ namespace PurpleNetwork
 				Debug.LogWarning("Can not convert message using XML: " + e.ToString());
 			}
 
+			throw new PurpleException ("Can not convert string to the predefined object!");
+
 			return default (T);
 		}
 
@@ -417,6 +424,8 @@ namespace PurpleNetwork
 			Debug.Log (event_name);
 			Debug.Log (string_message);
 			Debug.Log (info.sender.ToString());
+
+			throw new PurpleException ("Error during network communication!");
 		}
 
 	}
