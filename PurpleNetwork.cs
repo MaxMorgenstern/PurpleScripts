@@ -349,7 +349,30 @@ namespace PurpleNetwork
 				return true;
 
 			return false;
-		} 
+		}
+
+
+		// TODO: implement - and test
+		private static ConnectionTesterStatus _connection_test;
+		private static ConnectionTesterStatus _connection_test_NAT;
+
+		public static void TestNetworkConnection()
+		{
+			// Instance.test_connection ();
+			// Instance.test_connection_nat ();
+		}
+
+
+		private void test_connection()
+		{
+			_connection_test = Network.TestConnection();
+		}
+
+		private void test_connection_nat()
+		{
+			_connection_test_NAT = Network.TestConnectionNAT();
+		}
+
 
 
 
