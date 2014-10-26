@@ -186,9 +186,16 @@ namespace PurpleNetwork
 		}
 
 
+		public static bool IsConnected
+		{
+			get
+			{
+				return Instance.is_connected();
+			}
+		}
+
 		
 		// PRIVATE ////////////////////////////
-
 		
 		// SERVER ////////////////////////////
 		
@@ -334,12 +341,6 @@ namespace PurpleNetwork
 
 		// HELPER METHODS ////////////////////
 
-		// TODO: Test
-		public static bool IsConnected()
-		{
-			return Instance.is_connected ();
-		}
-
 		private bool is_connected()
 		{
 			if (Network.connections.Length > 0)
@@ -351,28 +352,56 @@ namespace PurpleNetwork
 			return false;
 		}
 
+		
+		// DEV ---------------------------
 
 		// TODO: implement - and test
 		private static ConnectionTesterStatus _connection_test;
 		private static ConnectionTesterStatus _connection_test_NAT;
+		
+		private static bool _connection_test_done;
+		private static bool _connection_test_NAT_done;
 
+		/*
 		public static void TestNetworkConnection()
 		{
-			// Instance.test_connection ();
-			// Instance.test_connection_nat ();
+			TestNetworkConnection (false);
 		}
 
+		public static void TestNetworkConnection(bool force)
+		{
+			if (force || !_connection_test_done) {
+				_connection_test_done = false;
+				ConnectionTesterStatus current_state = Instance.test_connection();
 
-		private void test_connection()
+				if(current_state != ConnectionTesterStatus.Undetermined)
+					_connection_test_done = true;
+			}
+		}
+		*/
+		/*
+		public static ConnectionTesterStatus ConnectionTestStatus
+		{
+			get
+			{
+				return Instance._connection_test;
+			}
+		}
+		*/
+		/*
+		private ConnectionTesterStatus test_connection()
 		{
 			_connection_test = Network.TestConnection();
+			return _connection_test;
 		}
 
-		private void test_connection_nat()
+		private ConnectionTesterStatus test_connection_nat()
 		{
 			_connection_test_NAT = Network.TestConnectionNAT();
+			return _connection_test_NAT;
 		}
-
+		*/
+		// DEV ---------------------------
 
 
 
@@ -411,17 +440,13 @@ namespace PurpleNetwork
 				return (T)_JSON.DeserializeObject<T>(message);
 			} catch(Exception e){
 				Debug.LogWarning("Can not convert message using JSON: " + e.ToString());
+				try{
+					return (T)_PurpleSerializer.DeserializeObjectXML<T>(message);		
+				} catch(Exception ex){
+					Debug.LogWarning("Can not convert message using XML: " + ex.ToString());
+					throw new PurpleException ("Can not convert string to the predefined object!");
+				}
 			}
-
-			try{
-				return (T)_PurpleSerializer.DeserializeObjectXML<T>(message);		
-			} catch(Exception e){
-				Debug.LogWarning("Can not convert message using XML: " + e.ToString());
-			}
-
-			throw new PurpleException ("Can not convert string to the predefined object!");
-
-			return default (T);
 		}
 
 
@@ -455,5 +480,5 @@ namespace PurpleNetwork
 
 	// DELEGATES FOR CALLBACK
 	public delegate void PurpleNetCallback(object converted_object); // With message
-	
+
 }
