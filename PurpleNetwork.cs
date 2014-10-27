@@ -58,6 +58,10 @@ namespace PurpleNetwork
 		// Events
 		private Dictionary<string, PurpleNetCallback> eventListeners = new Dictionary<string, PurpleNetCallback>();
 
+		// Test
+		private static ConnectionTesterStatus _connection_test;
+		private static ConnectionTesterStatus _connection_test_NAT;
+
 
 		// START UP /////////////////////////
 		protected PurpleNetwork ()
@@ -68,7 +72,7 @@ namespace PurpleNetwork
 			networkPassword = PurpleConfig.Network.Password;//"testPasswort";
 
 			// static data
-			networkPause = 250;
+			networkPause = 250;		// TODO: config
 			useJSONMessage = true;
 		}
 		
@@ -85,6 +89,33 @@ namespace PurpleNetwork
 					purpleNetworkView		= gameObject.AddComponent<NetworkView>   ();
 				}
 				return instance;
+			}
+		}
+
+
+		// VARIABLES ////////////////////////////
+		
+		public static bool IsConnected
+		{
+			get
+			{
+				return Instance.is_connected();
+			}
+		}
+		
+		public static ConnectionTesterStatus ConnectionTestStatus
+		{
+			get
+			{
+				return Instance.test_connection(false);
+			}
+		}
+		
+		public static ConnectionTesterStatus ConnectionTestNATStatus
+		{
+			get
+			{
+				return Instance.test_connection_nat(false);
 			}
 		}
 
@@ -186,12 +217,9 @@ namespace PurpleNetwork
 		}
 
 
-		public static bool IsConnected
+		public static void ConnectionTestForce()
 		{
-			get
-			{
-				return Instance.is_connected();
-			}
+			Instance.test_connection (true);
 		}
 
 		
@@ -275,11 +303,6 @@ namespace PurpleNetwork
 			Debug.Log("Could not connect to server: " + error);
 		}
 
-	
-
-		// HELPER ////////////////////
-		private void wake_up() {  }
-
 
 
 		// EVENT DISPATCH ////////////////////
@@ -339,7 +362,8 @@ namespace PurpleNetwork
 
 
 
-		// HELPER METHODS ////////////////////
+		// HELPER ////////////////////
+		private void wake_up() {  }
 
 		private bool is_connected()
 		{
@@ -352,56 +376,17 @@ namespace PurpleNetwork
 			return false;
 		}
 
-		
-		// DEV ---------------------------
-
-		// TODO: implement - and test
-		private static ConnectionTesterStatus _connection_test;
-		private static ConnectionTesterStatus _connection_test_NAT;
-		
-		private static bool _connection_test_done;
-		private static bool _connection_test_NAT_done;
-
-		/*
-		public static void TestNetworkConnection()
+		private ConnectionTesterStatus test_connection(bool force)
 		{
-			TestNetworkConnection (false);
-		}
-
-		public static void TestNetworkConnection(bool force)
-		{
-			if (force || !_connection_test_done) {
-				_connection_test_done = false;
-				ConnectionTesterStatus current_state = Instance.test_connection();
-
-				if(current_state != ConnectionTesterStatus.Undetermined)
-					_connection_test_done = true;
-			}
-		}
-		*/
-		/*
-		public static ConnectionTesterStatus ConnectionTestStatus
-		{
-			get
-			{
-				return Instance._connection_test;
-			}
-		}
-		*/
-		/*
-		private ConnectionTesterStatus test_connection()
-		{
-			_connection_test = Network.TestConnection();
+			_connection_test = Network.TestConnection(force);
 			return _connection_test;
 		}
 
-		private ConnectionTesterStatus test_connection_nat()
+		private ConnectionTesterStatus test_connection_nat(bool force)
 		{
-			_connection_test_NAT = Network.TestConnectionNAT();
+			_connection_test_NAT = Network.TestConnectionNAT(force);
 			return _connection_test_NAT;
 		}
-		*/
-		// DEV ---------------------------
 
 
 
