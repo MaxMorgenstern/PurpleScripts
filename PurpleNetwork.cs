@@ -66,17 +66,16 @@ namespace PurpleNetwork
 		protected PurpleNetwork ()
 		{
 			eventListeners = new Dictionary<string, PurpleNetCallback>();
+			useJSONMessage = true;
+			networkPause = 500;
 
 			try{
 				networkHost = PurpleConfig.Network.Host;
 				networkPort = PurpleConfig.Network.Port;
 				networkPassword = PurpleConfig.Network.Password;
 				networkPause = PurpleConfig.Network.Pause;
-				useJSONMessage = true;
-
 			} catch(Exception e){
 				Debug.LogError("Can not read Purple Config! Set network pause to 500ms.");
-				networkPause = 500;
 			}
 		}
 		
@@ -293,8 +292,12 @@ namespace PurpleNetwork
 
 		private void connect_to_static()
 		{
-			// TODO - check if set - otherwise exception
-			Network.Connect(networkHost, networkPort, networkPassword);
+			if(!String.IsNullOrEmpty(networkHost) && !String.IsNullOrEmpty(networkPassword) && networkPort > 0)
+			{
+				Network.Connect(networkHost, networkPort, networkPassword);
+			} else {
+				throw new PurpleException ("Can not connect to server, no connection details set!");
+			}
 		}
 
 		private void disconnect_from()
