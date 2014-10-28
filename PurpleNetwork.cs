@@ -30,8 +30,7 @@ using _JSON = Newtonsoft.Json.JsonConvert;
  **/
 
 
-// TODO: test connection before sending RPC
-// TODO: network data initial settings
+// TODO: if networkHost	- networkPort - networkPassword	- networkPause is not setup - error
 
 namespace PurpleNetwork
 {
@@ -56,9 +55,9 @@ namespace PurpleNetwork
 		private static bool useJSONMessage;
 
 		// Events
-		private Dictionary<string, PurpleNetCallback> eventListeners = new Dictionary<string, PurpleNetCallback>();
+		private Dictionary<string, PurpleNetCallback> eventListeners;
 
-		// Test
+		// Connection Test
 		private static ConnectionTesterStatus _connection_test;
 		private static ConnectionTesterStatus _connection_test_NAT;
 
@@ -66,14 +65,19 @@ namespace PurpleNetwork
 		// START UP /////////////////////////
 		protected PurpleNetwork ()
 		{
-			// TODO: use other data
-			networkHost = PurpleConfig.Network.Host;//"Max-Laptop.fritz.box";
-			networkPort = PurpleConfig.Network.Port;//25001;
-			networkPassword = PurpleConfig.Network.Password;//"testPasswort";
+			eventListeners = new Dictionary<string, PurpleNetCallback>();
 
-			// static data
-			networkPause = 250;		// TODO: config
-			useJSONMessage = true;
+			try{
+				networkHost = PurpleConfig.Network.Host;
+				networkPort = PurpleConfig.Network.Port;
+				networkPassword = PurpleConfig.Network.Password;
+				networkPause = PurpleConfig.Network.Pause;
+				useJSONMessage = true;
+
+			} catch(Exception e){
+				Debug.LogError("Can not read Purple Config! Set network pause to 500ms.");
+				networkPause = 500;
+			}
 		}
 		
 
@@ -117,6 +121,13 @@ namespace PurpleNetwork
 			{
 				return Instance.test_connection_nat(false);
 			}
+		}
+
+		
+		// SETUP ////////////////////////////
+		public static void Setup (string host, int port, string password, int pause)
+		{
+			Instance.purple_setup (host, port, password, pause);
 		}
 
 
@@ -225,6 +236,16 @@ namespace PurpleNetwork
 		
 		// PRIVATE ////////////////////////////
 		
+		// SETUP ////////////////////////////
+		private void purple_setup(string host, int port, string password, int pause)
+		{
+			networkHost = host;
+			networkPort = port;
+			networkPassword = password;
+			networkPause = pause;
+		}
+
+
 		// SERVER ////////////////////////////
 		
 		// CONNECTION CALLS
@@ -272,6 +293,7 @@ namespace PurpleNetwork
 
 		private void connect_to_static()
 		{
+			// TODO - check if set - otherwise exception
 			Network.Connect(networkHost, networkPort, networkPassword);
 		}
 
@@ -452,6 +474,7 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
+
 			// TODO: handle this - the call did not went through on server - invalid
 			Debug.LogWarning ("receive_purple_network_error - can not find called function:");
 			Debug.Log (event_name);

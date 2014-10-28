@@ -8,6 +8,7 @@ namespace PurpleConfig
 		public static int Port { get { return ItemIds.getConfigInt ("Network.Port"); } }
 		public static int MaxPlayer { get { return ItemIds.getConfigInt ("Network.MaxPlayer"); } }
 		public static string Password { get { return ItemIds.getConfigString ("Network.Password"); } }
+		public static int Pause { get { return ItemIds.getConfigInt ("Network.Pause"); } }
 		
 		public static class MasterServer {
 			public static string GameName { get { return ItemIds.getConfigString ("Network.MasterServer.GameName"); } }
