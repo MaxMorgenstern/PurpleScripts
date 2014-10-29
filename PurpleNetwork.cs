@@ -475,7 +475,8 @@ namespace PurpleNetwork
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
 			Debug.LogWarning ("receive_purple_network_error: can not find called function:" + event_name + " - " + info.sender.ToString());
-			throw new PurpleException ("Error during network communication!", new Exception(event_name, new Exception(info.sender.ToString())));
+			// TODO: as this is used as Animator RPC we have to trigger an event
+			// throw new PurpleException ("Error during network communication!", new Exception(event_name, new Exception(info.sender.ToString())));
 		}
 
 	}
