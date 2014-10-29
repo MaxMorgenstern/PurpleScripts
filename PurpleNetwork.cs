@@ -31,6 +31,10 @@ using _JSON = Newtonsoft.Json.JsonConvert;
 
 namespace PurpleNetwork
 {
+	// DELEGATES FOR CALLBACK
+	public delegate void PurpleNetCallback(object converted_object); // With message
+	public delegate void PurpleNetworkEvent();// network event
+
 	public class PurpleNetwork : MonoBehaviour
 	{
 		// Network Data
@@ -271,12 +275,12 @@ namespace PurpleNetwork
 		}
 		
 		// SERVER EVENTS
-		void OnServerInitialized()                      {  }
+		private void OnServerInitialized()                      {  }
 		
-		void OnPlayerDisconnected(NetworkPlayer player) {  }
+		private void OnPlayerDisconnected(NetworkPlayer player) {  }
 		
-		void OnPlayerConnected(NetworkPlayer player)    {  }
-		
+		private void OnPlayerConnected(NetworkPlayer player)    {  }
+
 
 
 		// CLIENT ////////////////////////////
@@ -325,6 +329,13 @@ namespace PurpleNetwork
 			Debug.Log("Could not connect to server: " + error);
 		}
 
+
+		// FURTHER EVENTS
+		private void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info) { }
+		
+		private void OnNetworkInstantiate(NetworkMessageInfo info) {
+			Debug.Log("New object instantiated by " + info.sender);
+		}
 
 
 		// EVENT DISPATCH ////////////////////
@@ -410,6 +421,11 @@ namespace PurpleNetwork
 			return _connection_test_NAT;
 		}
 
+		private void trigger_purple_event(PurpleNetworkEvent eve)
+		{
+			if(eve != null)
+				eve();
+		}
 
 
 		// CONVERTER METHODS ////////////////////
@@ -480,8 +496,5 @@ namespace PurpleNetwork
 		}
 
 	}
-
-	// DELEGATES FOR CALLBACK
-	public delegate void PurpleNetCallback(object converted_object); // With message
 
 }
