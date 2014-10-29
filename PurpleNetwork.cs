@@ -29,9 +29,6 @@ using _JSON = Newtonsoft.Json.JsonConvert;
  *		}
  **/
 
-
-// TODO: if networkHost	- networkPort - networkPassword	- networkPause is not setup - error
-
 namespace PurpleNetwork
 {
 	public class PurpleNetwork : MonoBehaviour
@@ -477,14 +474,8 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
-
-			// TODO: handle this - the call did not went through on server - invalid
-			Debug.LogWarning ("receive_purple_network_error - can not find called function:");
-			Debug.Log (event_name);
-			Debug.Log (string_message);
-			Debug.Log (info.sender.ToString());
-
-			throw new PurpleException ("Error during network communication!");
+			Debug.LogWarning ("receive_purple_network_error: can not find called function:" + event_name + " - " + info.sender.ToString());
+			throw new PurpleException ("Error during network communication!", new Exception(event_name, new Exception(info.sender.ToString())));
 		}
 
 	}
