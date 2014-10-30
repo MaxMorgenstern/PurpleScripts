@@ -62,6 +62,23 @@ namespace PurpleNetwork
 		private static ConnectionTesterStatus _connection_test;
 		private static ConnectionTesterStatus _connection_test_NAT;
 
+		// Purple Network Events
+		public static event PurpleNetworkEvent PurpleServerInitialized;
+		public static event PurpleNetworkEvent PurplePlayerDisconnected;
+		public static event PurpleNetworkEvent PurplePlayerConnected;
+
+		public static event PurpleNetworkEvent ConnectedToPurpleServer;
+		public static event PurpleNetworkEvent DisconnectedFromPurpleServer;
+		public static event PurpleNetworkEvent OnFailedToConnectToPurpleServer;
+
+		public static event PurpleNetworkEvent PurpleNetworkInstantiate;
+		public static event PurpleNetworkEvent SerializePurpleNetworkView;
+
+		public static event PurpleNetworkEvent PurpleNetworkError;
+		/*
+		instance.trigger_purple_event(OnInit);
+		*/
+
 
 		// START UP /////////////////////////
 		protected PurpleNetwork ()
@@ -427,7 +444,6 @@ namespace PurpleNetwork
 				eve();
 		}
 
-
 		// CONVERTER METHODS ////////////////////
 
 		// convert an object into a string
@@ -491,6 +507,7 @@ namespace PurpleNetwork
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
 			Debug.LogWarning ("receive_purple_network_error: can not find called function:" + event_name + " - " + info.sender.ToString());
+
 			// TODO: as this is used as Animator RPC we have to trigger an event
 			// throw new PurpleException ("Error during network communication!", new Exception(event_name, new Exception(info.sender.ToString())));
 		}
