@@ -33,7 +33,7 @@ namespace PurpleNetwork
 {
 	// DELEGATES FOR CALLBACK
 	public delegate void PurpleNetCallback(object converted_object); // With message
-	public delegate void PurpleNetworkEvent();// network event
+	public delegate void PurpleNetworkEvent(object passed_object); // network event
 
 	public class PurpleNetwork : MonoBehaviour
 	{
@@ -69,15 +69,13 @@ namespace PurpleNetwork
 
 		public static event PurpleNetworkEvent ConnectedToPurpleServer;
 		public static event PurpleNetworkEvent DisconnectedFromPurpleServer;
-		public static event PurpleNetworkEvent OnFailedToConnectToPurpleServer;
+		public static event PurpleNetworkEvent FailedToConnectToPurpleServer;
 
 		public static event PurpleNetworkEvent PurpleNetworkInstantiate;
 		public static event PurpleNetworkEvent SerializePurpleNetworkView;
 
 		public static event PurpleNetworkEvent PurpleNetworkError;
-		/*
-		instance.trigger_purple_event(OnInit);
-		*/
+		// instance.trigger_purple_event(OnInit);
 
 
 		// START UP /////////////////////////
@@ -93,7 +91,7 @@ namespace PurpleNetwork
 				networkPassword = PurpleConfig.Network.Password;
 				networkPause = PurpleConfig.Network.Pause;
 			} catch(Exception e){
-				Debug.LogError("Can not read Purple Config! Set network pause to 500ms.");
+				Debug.LogError("Can not read Purple Config! Set network pause to 500ms. " + e.ToString());
 			}
 		}
 		
@@ -292,11 +290,20 @@ namespace PurpleNetwork
 		}
 		
 		// SERVER EVENTS
-		private void OnServerInitialized()                      {  }
+		private void OnServerInitialized()                      
+		{ 
+			instance.trigger_purple_event(PurpleServerInitialized); 
+		}
 		
-		private void OnPlayerDisconnected(NetworkPlayer player) {  }
+		private void OnPlayerDisconnected(NetworkPlayer player) 
+		{ 
+			instance.trigger_purple_event(PurplePlayerDisconnected, player); 
+		}
 		
-		private void OnPlayerConnected(NetworkPlayer player)    {  }
+		private void OnPlayerConnected(NetworkPlayer player)    
+		{ 
+			instance.trigger_purple_event(PurplePlayerConnected, player); 
+		}
 
 
 
@@ -336,22 +343,33 @@ namespace PurpleNetwork
 		}
 		
 		// CLIENT EVENTS
-		private void OnConnectedToServer()      { }
+		private void OnConnectedToServer()      
+		{ 
+			instance.trigger_purple_event(ConnectedToPurpleServer); 
+		}
 
 		// ALSO SERVER EVENT ON DISCONNECT
-		private void OnDisconnectedFromServer() { }
+		private void OnDisconnectedFromServer() 
+		{ 
+			instance.trigger_purple_event(DisconnectedFromPurpleServer); 
+		}
 
 		private void OnFailedToConnect(NetworkConnectionError error)
 		{
 			Debug.Log("Could not connect to server: " + error);
+			instance.trigger_purple_event(FailedToConnectToPurpleServer, error);
 		}
 
 
 		// FURTHER EVENTS
-		private void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info) { }
+		private void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info) 
+		{ 
+			instance.trigger_purple_event(SerializePurpleNetworkView, stream);
+		}
 		
-		private void OnNetworkInstantiate(NetworkMessageInfo info) {
-			Debug.Log("New object instantiated by " + info.sender);
+		private void OnNetworkInstantiate(NetworkMessageInfo info) 
+		{
+			instance.trigger_purple_event(PurpleNetworkInstantiate, info);
 		}
 
 
@@ -362,7 +380,6 @@ namespace PurpleNetwork
 			{
 				eventListeners.Add(event_name, null);
 			}
-			// delegates can be chained using addition
 			eventListeners[event_name] += listener;
 		}
 		
@@ -440,9 +457,15 @@ namespace PurpleNetwork
 
 		private void trigger_purple_event(PurpleNetworkEvent eve)
 		{
-			if(eve != null)
-				eve();
+			trigger_purple_event (eve, null);
 		}
+
+		private void trigger_purple_event(PurpleNetworkEvent eve, object passed_object)
+		{
+			if(eve != null)
+				eve(passed_object);
+		}
+
 
 		// CONVERTER METHODS ////////////////////
 
@@ -507,9 +530,7 @@ namespace PurpleNetwork
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
 			Debug.LogWarning ("receive_purple_network_error: can not find called function:" + event_name + " - " + info.sender.ToString());
-
-			// TODO: as this is used as Animator RPC we have to trigger an event
-			// throw new PurpleException ("Error during network communication!", new Exception(event_name, new Exception(info.sender.ToString())));
+			instance.trigger_purple_event(PurpleNetworkError, event_name);
 		}
 
 	}
