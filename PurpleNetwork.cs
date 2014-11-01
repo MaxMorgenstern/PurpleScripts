@@ -31,10 +31,6 @@ using _JSON = Newtonsoft.Json.JsonConvert;
 
 namespace PurpleNetwork
 {
-	// DELEGATES FOR CALLBACK
-	public delegate void PurpleNetCallback(object converted_object); // With message
-	public delegate void PurpleNetworkEvent(object passed_object); // network event
-
 	// Purple Network
 	public class PurpleNetwork : MonoBehaviour
 	{
