@@ -75,7 +75,6 @@ namespace PurpleNetwork
 		public static event PurpleNetworkEvent SerializePurpleNetworkView;
 
 		public static event PurpleNetworkEvent PurpleNetworkError;
-		// instance.trigger_purple_event(OnInit);
 
 
 		// START UP /////////////////////////
@@ -84,7 +83,6 @@ namespace PurpleNetwork
 			eventListeners = new Dictionary<string, PurpleNetCallback>();
 			useJSONMessage = true;
 			networkPause = 500;
-
 			try{
 				networkHost = PurpleConfig.Network.Host;
 				networkPort = PurpleConfig.Network.Port;
