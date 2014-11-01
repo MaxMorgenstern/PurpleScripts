@@ -17,18 +17,18 @@ namespace PurpleMessages
 		}
 	}
 
-	// EMPTY MESSAGE //////////////////////////// 
+	// EMPTY MESSAGE ////////////////////////////
 	public class Empty : PurpleMessage
 	{
 	}
 
-	// EXAMPLE MESSAGE //////////////////////////// 
+	// EXAMPLE MESSAGE ////////////////////////////
 	public class Example : PurpleMessage
 	{
 		public string example;
 	}
 
-	// PLAYER MESSAGE //////////////////////////// 
+	// PLAYER MESSAGE ////////////////////////////
 	namespace User
 	{
 		// BASIC USER DATA ////////////////////////////
@@ -48,10 +48,10 @@ namespace PurpleMessages
 		}
 	}
 
-	// SERVER RELATED MESSAGES //////////////////////////// 
+	// SERVER RELATED MESSAGES ////////////////////////////
 	namespace Server
 	{
-		// SERVER Credentials //////////////////////////// 
+		// SERVER Credentials ////////////////////////////
 		public class Credentials : PurpleMessage
 		{
 			public string name;
@@ -63,7 +63,7 @@ namespace PurpleMessages
 			public int maxPlayer;
 		}
 
-		// SERVER STATUS //////////////////////////// 
+		// SERVER STATUS ////////////////////////////
 		public class Status : PurpleMessage
 		{
 			public DateTime time;
@@ -79,12 +79,12 @@ namespace PurpleMessages
 			}
 		}
 
-		// PING MESSAGE //////////////////////////// 
+		// PING MESSAGE ////////////////////////////
 		public class Ping : PurpleMessage
 		{
 			public DateTime triggerTime;
 			public DateTime localTime;
-			
+
 			public Ping()
 			{
 				localTime = DateTime.Now;

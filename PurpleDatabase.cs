@@ -9,9 +9,10 @@ using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 
 // TODO: Work in progress
+// TODO: make it mac compatible
 
 public class PurpleDatabase : MonoBehaviour {
-	
+
 	private string serverIP = PurpleConfig.Database.IP;
 	private string serverDatabase = PurpleConfig.Database.Name;
 	private string serverUser = PurpleConfig.Database.User;
@@ -19,7 +20,7 @@ public class PurpleDatabase : MonoBehaviour {
 
 	private string connectionString;
 	private MySqlConnection connection;
-	
+
 	void Start () {
 		Initialize ();
 		SelectStatement();
@@ -48,7 +49,7 @@ public class PurpleDatabase : MonoBehaviour {
 	public List< string >[] SelectStatement()
 	{
 		string query = "SELECT * FROM `one`"; // select statement
-		
+
 		//Create a list to store the result
 		List< string >[] list = new List< string >[3];
 		list[0] = new List< string >();
@@ -59,7 +60,7 @@ public class PurpleDatabase : MonoBehaviour {
 		{
 			MySqlCommand cmd = new MySqlCommand(query, connection);
 			MySqlDataReader dataReader = cmd.ExecuteReader();
-			
+
 			//Read the data and store them in the list
 			while (dataReader.Read())
 			{
@@ -84,11 +85,11 @@ public class PurpleDatabase : MonoBehaviour {
 	private void InsertStatement()
 	{
 		string query = ""; // Insert query
-		
+
 		if (OpenConnection () == true) {
 			MySqlCommand cmd = new MySqlCommand (query, connection);
 
-			cmd.ExecuteNonQuery ();			
+			cmd.ExecuteNonQuery ();
 			CloseConnection ();
 		}
 	}
@@ -108,12 +109,12 @@ public class PurpleDatabase : MonoBehaviour {
 			CloseConnection();
 		}
 	}
-	
+
 	//Delete statement
 	private void DeleteStatement()
 	{
 		string query = ""; // Delete query
-		
+
 		if (OpenConnection() == true)
 		{
 			MySqlCommand cmd = new MySqlCommand(query, connection);
@@ -122,21 +123,21 @@ public class PurpleDatabase : MonoBehaviour {
 			CloseConnection();
 		}
 	}
-	
+
 	/************************************/
-	
-	// initialize database 
+
+	// initialize database
 	private void Initialize(){
 		if(connection == null || connection.State != ConnectionState.Open){
 			try
 			{
 				connectionString = "Server="+serverIP+";" +
-					"Database="+serverDatabase+";" + 
-					"User ID="+serverUser+";" + 
-					"Pooling=false;" + 
+					"Database="+serverDatabase+";" +
+					"User ID="+serverUser+";" +
+					"Pooling=false;" +
 					"Password="+serverPassword+";";
 				connection = new MySqlConnection (connectionString);
-			} 
+			}
 			catch (Exception ex)
 			{
 				Debug.Log(ex.ToString());
@@ -160,7 +161,7 @@ public class PurpleDatabase : MonoBehaviour {
 			case 0:
 				Debug.Log("Cannot connect to server.  Contact administrator");
 				break;
-				
+
 			case 1045:
 				Debug.Log("Invalid username/password, please try again");
 				break;
@@ -168,7 +169,7 @@ public class PurpleDatabase : MonoBehaviour {
 			return false;
 		}
 	}
-	
+
 	//Close connection
 	private bool CloseConnection()
 	{

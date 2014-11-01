@@ -9,19 +9,19 @@ using _JSON = Newtonsoft.Json.JsonConvert;
  * 		using _PurpleSerializer = PurpleNetwork.PurpleSerializer;
  *		using _PurpleMessages = PurpleNetwork.Messages;
  * 		using _PurpleNetwork = PurpleNetwork.PurpleNetwork;
- * 
+ *
  * 		_PurpleNetwork.ConnectToServer ();
  *		_PurpleNetwork.AddListener<_PurpleMessages.Example> ("listenername", dummydamdam);
- *		
+ *
  *		**********
  *
  *		_PurpleMessages.Example message = new _PurpleMessages.Example();
  * 		message.test = "Hallo, Welt!";
  * 		string string_message = object_to_string_converter(message);
- * 		
+ *
  * 		_PurpleNetwork.ToServer ("listenername", string_message);
  * 		_PurpleNetwork.Broadcast("listenername2", string_message);
- * 
+ *
  *		**********
  *
  * 		void listenername (object dummyObject)
@@ -35,6 +35,7 @@ namespace PurpleNetwork
 	public delegate void PurpleNetCallback(object converted_object); // With message
 	public delegate void PurpleNetworkEvent(object passed_object); // network event
 
+	// Purple Network
 	public class PurpleNetwork : MonoBehaviour
 	{
 		// Network Data
@@ -42,7 +43,7 @@ namespace PurpleNetwork
 		private static int 		networkPort;
 		private static String 	networkPassword;
 		private static int 		networkPause;
-	
+
 		// Server Restart
 		private static int 		serverPlayer;
 		private static int 		serverPort;
@@ -92,7 +93,7 @@ namespace PurpleNetwork
 				Debug.LogError("Can not read Purple Config! Set network pause to 500ms. " + e.ToString());
 			}
 		}
-		
+
 
 		// SINGLETON /////////////////////////
 		public static PurpleNetwork Instance
@@ -111,7 +112,7 @@ namespace PurpleNetwork
 
 
 		// VARIABLES ////////////////////////////
-		
+
 		public static bool IsConnected
 		{
 			get
@@ -119,7 +120,7 @@ namespace PurpleNetwork
 				return Instance.is_connected();
 			}
 		}
-		
+
 		public static ConnectionTesterStatus ConnectionTestStatus
 		{
 			get
@@ -127,7 +128,7 @@ namespace PurpleNetwork
 				return Instance.test_connection(false);
 			}
 		}
-		
+
 		public static ConnectionTesterStatus ConnectionTestNATStatus
 		{
 			get
@@ -136,7 +137,7 @@ namespace PurpleNetwork
 			}
 		}
 
-		
+
 		// SETUP ////////////////////////////
 		public static void Setup (string host, int port, string password, int pause)
 		{
@@ -159,8 +160,8 @@ namespace PurpleNetwork
 		{
 			Instance.restart_server ();
 		}
-	
-		
+
+
 		// CLIENT ////////////////////////////
 		public static void ConnectToServer ()
 		{
@@ -176,12 +177,12 @@ namespace PurpleNetwork
 		{
 			Instance.disconnect_from ();
 		}
-		
+
 		public static void SwitchServer ()
 		{
 			Instance.switch_static_connecton ();
 		}
-		
+
 		public static void SwitchServer (string hostname, string password, int port)
 		{
 			Instance.switch_connecton (hostname, password, port);
@@ -195,7 +196,7 @@ namespace PurpleNetwork
 		}
 
 
-		
+
 		public static void Broadcast (string event_name, object message)
 		{
 			Instance.broadcast (event_name, message);
@@ -224,7 +225,7 @@ namespace PurpleNetwork
 		{
 			Instance.to_sender(player, event_name, message, forceXML);
 		}
-		
+
 		public static void ToPlayer(NetworkMessageInfo info, string event_name, object message)
 		{
 			Instance.to_sender(info.sender, event_name, message);
@@ -246,9 +247,9 @@ namespace PurpleNetwork
 			Instance.test_connection (true);
 		}
 
-		
+
 		// PRIVATE ////////////////////////////
-		
+
 		// SETUP ////////////////////////////
 		private void purple_setup(string host, int port, string password, int pause)
 		{
@@ -260,7 +261,7 @@ namespace PurpleNetwork
 
 
 		// SERVER ////////////////////////////
-		
+
 		// CONNECTION CALLS
 		private void launch_server(int player, string localPassword, int localPort)
 		{
@@ -270,12 +271,12 @@ namespace PurpleNetwork
 
 			Network.InitializeSecurity ();
 			Network.incomingPassword = localPassword;
-			
+
 			bool use_nat = !Network.HavePublicAddress();
-			
+
 			Network.InitializeServer (player, localPort, use_nat);
 		}
-		
+
 		private void stop_server()
 		{
 			Network.Disconnect(networkPause);
@@ -286,21 +287,21 @@ namespace PurpleNetwork
 			stop_server ();
 			launch_server(serverPlayer, serverPassword, serverPort);
 		}
-		
+
 		// SERVER EVENTS
-		private void OnServerInitialized()                      
-		{ 
-			instance.trigger_purple_event(PurpleServerInitialized); 
+		private void OnServerInitialized()
+		{
+			instance.trigger_purple_event(PurpleServerInitialized);
 		}
-		
-		private void OnPlayerDisconnected(NetworkPlayer player) 
-		{ 
-			instance.trigger_purple_event(PurplePlayerDisconnected, player); 
+
+		private void OnPlayerDisconnected(NetworkPlayer player)
+		{
+			instance.trigger_purple_event(PurplePlayerDisconnected, player);
 		}
-		
-		private void OnPlayerConnected(NetworkPlayer player)    
-		{ 
-			instance.trigger_purple_event(PurplePlayerConnected, player); 
+
+		private void OnPlayerConnected(NetworkPlayer player)
+		{
+			instance.trigger_purple_event(PurplePlayerConnected, player);
 		}
 
 
@@ -339,17 +340,17 @@ namespace PurpleNetwork
 			disconnect_from ();
 			connect_to_static ();
 		}
-		
+
 		// CLIENT EVENTS
-		private void OnConnectedToServer()      
-		{ 
-			instance.trigger_purple_event(ConnectedToPurpleServer); 
+		private void OnConnectedToServer()
+		{
+			instance.trigger_purple_event(ConnectedToPurpleServer);
 		}
 
 		// ALSO SERVER EVENT ON DISCONNECT
-		private void OnDisconnectedFromServer() 
-		{ 
-			instance.trigger_purple_event(DisconnectedFromPurpleServer); 
+		private void OnDisconnectedFromServer()
+		{
+			instance.trigger_purple_event(DisconnectedFromPurpleServer);
 		}
 
 		private void OnFailedToConnect(NetworkConnectionError error)
@@ -360,12 +361,12 @@ namespace PurpleNetwork
 
 
 		// FURTHER EVENTS
-		private void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info) 
-		{ 
+		private void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+		{
 			instance.trigger_purple_event(SerializePurpleNetworkView, stream);
 		}
-		
-		private void OnNetworkInstantiate(NetworkMessageInfo info) 
+
+		private void OnNetworkInstantiate(NetworkMessageInfo info)
 		{
 			instance.trigger_purple_event(PurpleNetworkInstantiate, info);
 		}
@@ -380,7 +381,7 @@ namespace PurpleNetwork
 			}
 			eventListeners[event_name] += listener;
 		}
-		
+
 
 
 		// SEND DATA ////////////////////
@@ -395,7 +396,7 @@ namespace PurpleNetwork
 			string string_message = object_to_string_converter (message, forceXML);
 			purpleNetworkView.RPC("receive_purple_network_message", RPCMode.All, event_name, string_message);
 		}
-		
+
 		// SEND TO SERVER
 		private void to_server (string event_name, object message)
 		{
@@ -470,7 +471,7 @@ namespace PurpleNetwork
 		// convert an object into a string
 		private string object_to_string_converter(object message)
 		{
-			return object_to_string_converter(message, false);		
+			return object_to_string_converter(message, false);
 		}
 
 		private string object_to_string_converter(object message, bool forceXML)
@@ -487,7 +488,7 @@ namespace PurpleNetwork
 				}
 			}
 
-			if (String.IsNullOrEmpty (return_message)) 
+			if (String.IsNullOrEmpty (return_message))
 			{
 				return_message = _PurpleSerializer.SerializeObjectXML(message);
 			}
@@ -501,7 +502,7 @@ namespace PurpleNetwork
 			} catch(Exception e){
 				Debug.LogWarning("Can not convert message using JSON: " + e.ToString());
 				try{
-					return (T)_PurpleSerializer.DeserializeObjectXML<T>(message);		
+					return (T)_PurpleSerializer.DeserializeObjectXML<T>(message);
 				} catch(Exception ex){
 					Debug.LogWarning("Can not convert message using XML: " + ex.ToString());
 					throw new PurpleException ("Can not convert string to the predefined object!");

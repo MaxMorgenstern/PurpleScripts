@@ -1,15 +1,22 @@
 // ------------------------------------------------------------------------------
 //  TODO : ALL
 // ------------------------------------------------------------------------------
+using UnityEngine;
 using System;
-namespace AssemblyCSharp
+using System.Collections;
+using System.Collections.Generic;
+using _PurpleSerializer = PurpleSerializer;
+using _JSON = Newtonsoft.Json.JsonConvert;
+
+namespace PurpleNetwork
 {
-		public class PurpleNetworkQueue
+	// Purple Network with Queue
+	public class PurpleNetworkQueue
+	{
+		public PurpleNetworkQueue ()
 		{
-				public PurpleNetworkQueue ()
-				{
-				}
 		}
+	}
 }
 
 
