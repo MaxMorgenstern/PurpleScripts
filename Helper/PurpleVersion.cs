@@ -25,13 +25,11 @@ public class PurpleVersion
 		}
 	}
 
-	public void setVersion(int major, int minor, int status, int revision)
+	public void SetVersion(int major, int minor, int status, int revision)
 	{
 		_Major = major;
 		_Minor = minor;
 		_Status = status;
 		_Revision = revision;
 	}
-
 }
-

@@ -1,8 +1,5 @@
 using UnityEngine;
 using System;
-using System.Xml.Serialization;
-
-// TODO: create besser classes
 
 namespace PurpleMessages
 {
@@ -10,11 +7,13 @@ namespace PurpleMessages
 	public class PurpleMessage
 	{
 		public Guid guid;
+		public DateTime timestamp;
 
 		// CONSTRUCTOR
 		public PurpleMessage()
 		{
 			guid = System.Guid.NewGuid ();
+			timestamp = DateTime.Now;
 		}
 	}
 
@@ -26,40 +25,57 @@ namespace PurpleMessages
 	// EXAMPLE MESSAGE //////////////////////////// 
 	public class Example : PurpleMessage
 	{
-		public string test;
+		public string example;
 	}
 
 	// PLAYER MESSAGE //////////////////////////// 
-	public class Player : PurpleMessage
+	namespace User
 	{
-		public NetworkPlayer player;
-		public string player_name;
-	}
+		// BASIC USER DATA ////////////////////////////
+		public class Data : PurpleMessage
+		{
+			public NetworkPlayer player;
+			public string name;
+			public Guid playerGuid;
+		}
 
+		// USER ACTION ////////////////////////////
+		public class Action : PurpleMessage
+		{
+			public NetworkPlayer player;
+			public string playerName;
+			public string actionName;
+		}
+	}
 
 	// SERVER RELATED MESSAGES //////////////////////////// 
 	namespace Server
 	{
-		// SERVER STATUS //////////////////////////// 
-		public class Data : PurpleMessage
+		// SERVER Credentials //////////////////////////// 
+		public class Credentials : PurpleMessage
 		{
-			public string serverName;
-			public string serverHostname;
-			public string serverPassword;
+			public string name;
+			public string hostname;
+			public string ip;
+			public string password;
+			public int port;
+			public int player;
+			public int maxPlayer;
 		}
 
 		// SERVER STATUS //////////////////////////// 
 		public class Status : PurpleMessage
 		{
-			public DateTime serverTime;
-			public DateTime serverUptime;
-			public String serverVersion;
+			public DateTime time;
+			public DateTime uptime;
+			public PurpleVersion version;
 
 			// CONSTRUCTOR
 			public Status()
 			{
-				serverTime = DateTime.Now;
-				serverVersion = "0.0.1.1";
+				time = DateTime.Now;
+				version = new PurpleVersion();
+				version.SetVersion (0, 0, 1, 0);
 			}
 		}
 
@@ -73,6 +89,12 @@ namespace PurpleMessages
 			{
 				localTime = DateTime.Now;
 			}
+		}
+
+		// SERVER MESSAGES ////////////////////////////
+		public class Message : PurpleMessage
+		{
+			public string message;
 		}
 	}
 
