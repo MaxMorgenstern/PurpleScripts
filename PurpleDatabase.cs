@@ -1,4 +1,11 @@
-﻿#if UNITY_EDITOR_WIN
+﻿/**
+ * If you get an error like:
+ * 		Internal compiler error. ... Could not load file or assembly 'System.Drawing,
+ * 		Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies.
+ * change the API compatibility Level from ".NET 2.0 Subset" to ".NET 2.0"!
+ *
+ * Also see: http://answers.unity3d.com/questions/379212/how-to-solve-the-error-type-or-namespace-systemdat.html
+ */
 using UnityEngine;
 using System;
 using System.Collections;
@@ -9,26 +16,80 @@ using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 
 // TODO: Work in progress
-// TODO: make it mac compatible
 
 namespace PurpleDatabase
 {
 	public class PurpleDatabase : MonoBehaviour {
 
-		private string serverIP = PurpleConfig.Database.IP;
-		private string serverDatabase = PurpleConfig.Database.Name;
-		private string serverUser = PurpleConfig.Database.User;
-		private string serverPassword = PurpleConfig.Database.Password;
+		private static string serverIP;
+		private static string serverDatabase;
+		private static string serverUser;
+		private static string serverPassword;
 
-		private string connectionString;
-		private MySqlConnection connection;
+		private static string connectionString;
+		private static MySqlConnection connection;
+		
+		private static PurpleDatabase instance;
 
 		protected PurpleDatabase () {
-			Initialize ();
-			SelectStatement();
+			try{
+				serverIP = PurpleConfig.Database.IP;
+				serverDatabase = PurpleConfig.Database.Name;
+				serverUser = PurpleConfig.Database.User;
+				serverPassword = PurpleConfig.Database.Password;
+			} catch(Exception e){
+				Debug.LogError("Can not read Purple Config! " + e.ToString());
+			}
 		}
 
 
+		// SINGLETON /////////////////////////
+		public static PurpleDatabase Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					GameObject gameObject 	= new GameObject ("PurpleDatabase");
+					instance     			= gameObject.AddComponent<PurpleDatabase> ();
+					instance.initialize();
+				}
+				return instance;
+			}
+		}
+
+		// SETUP ////////////////////////////
+		public static void Setup (string host, string database, string user, string password)
+		{
+			Instance.purple_setup (host, database, user, password);
+		}
+
+
+		public static void Initialize()
+		{
+			Instance.open_connection ();
+			Instance.close_connection ();
+		}
+
+		
+		// PRIVATE ////////////////////////////
+
+		// SETUP ////////////////////////////
+		private void purple_setup(string host, string database, string user, string password)
+		{
+			serverIP = host;
+			serverDatabase = database;
+			serverUser = user;
+			serverPassword = password;
+		}
+
+
+
+
+
+
+
+		/*
 		// move to network manager
 		private bool checkLogin(string username, string password){
 
@@ -52,7 +113,7 @@ namespace PurpleDatabase
 			list[1] = new List< string >();
 			list[2] = new List< string >();
 
-			if (OpenConnection() == true)
+			if (open_connection() == true)
 			{
 				MySqlCommand cmd = new MySqlCommand(query, connection);
 				MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -67,7 +128,7 @@ namespace PurpleDatabase
 				}
 
 				dataReader.Close();
-				CloseConnection();
+				close_connection();
 
 				return list;
 			}
@@ -82,11 +143,11 @@ namespace PurpleDatabase
 		{
 			string query = ""; // Insert query
 
-			if (OpenConnection () == true) {
+			if (open_connection () == true) {
 				MySqlCommand cmd = new MySqlCommand (query, connection);
 
 				cmd.ExecuteNonQuery ();
-				CloseConnection ();
+				close_connection ();
 			}
 		}
 
@@ -95,14 +156,14 @@ namespace PurpleDatabase
 		{
 			string query = ""; // Update query
 
-			if (OpenConnection() == true)
+			if (open_connection() == true)
 			{
 				MySqlCommand cmd = new MySqlCommand();
 				cmd.CommandText = query;
 				cmd.Connection = connection;
 
 				cmd.ExecuteNonQuery();
-				CloseConnection();
+				close_connection();
 			}
 		}
 
@@ -111,19 +172,25 @@ namespace PurpleDatabase
 		{
 			string query = ""; // Delete query
 
-			if (OpenConnection() == true)
+			if (open_connection() == true)
 			{
 				MySqlCommand cmd = new MySqlCommand(query, connection);
 
 				cmd.ExecuteNonQuery();
-				CloseConnection();
+				close_connection();
 			}
 		}
+		*/
 
-		/************************************/
+
+
+
+
+
+		// BASICS /////////////////////////
 
 		// initialize database
-		private void Initialize(){
+		private void initialize(){
 			if(connection == null || connection.State != ConnectionState.Open){
 				try
 				{
@@ -133,6 +200,8 @@ namespace PurpleDatabase
 						"Pooling=false;" +
 						"Password="+serverPassword+";";
 					connection = new MySqlConnection (connectionString);
+
+					Debug.Log (connectionString);
 				}
 				catch (Exception ex)
 				{
@@ -141,7 +210,8 @@ namespace PurpleDatabase
 			}
 		}
 
-		private bool OpenConnection()
+		// open db connection
+		private bool open_connection()
 		{
 			try
 			{
@@ -150,24 +220,34 @@ namespace PurpleDatabase
 			}
 			catch (MySqlException ex)
 			{
-				//0: Cannot connect to server.
-				//1045: Invalid user name and/or password.
 				switch (ex.Number)
 				{
-				case 0:
-					Debug.Log("Cannot connect to server.  Contact administrator");
-					break;
+					case 0:
+						Debug.Log ("Cannot connect to server.");
+						Debug.LogWarning (ex);
+						break;
 
-				case 1045:
-					Debug.Log("Invalid username/password, please try again");
-					break;
-				}
+					case 1042:
+						Debug.Log ("Unable to connect to any of the specified MySQL hosts.");
+						Debug.LogWarning (ex);
+						break;
+
+					case 1045:
+						Debug.Log("Invalid username/password.");
+						Debug.LogWarning (ex);
+						break;
+					
+					default:
+						Debug.Log (ex);
+						Debug.Log (ex.Number);
+						break;
+					}
 				return false;
 			}
 		}
 
-		//Close connection
-		private bool CloseConnection()
+		// close DB connection
+		private bool close_connection()
 		{
 			try
 			{
@@ -182,4 +262,3 @@ namespace PurpleDatabase
 		}
 	}
 }
-#endif
