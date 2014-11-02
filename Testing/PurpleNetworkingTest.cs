@@ -83,13 +83,6 @@ public class PurpleNetworkingTest : MonoBehaviour
 				break;
 				
 			case ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted:
-				testMessage = "Limited NAT punchthrough capabilities. Cannot "+
-					"connect to all types of NAT servers. Running a server "+
-						"is ill advised as not everyone can connect.";
-				useNat = true;
-				doneTesting = true;
-				break;
-				
 			case ConnectionTesterStatus.LimitedNATPunchthroughSymmetric:
 				testMessage = "Limited NAT punchthrough capabilities. Cannot "+
 					"connect to all types of NAT servers. Running a server "+
@@ -99,13 +92,6 @@ public class PurpleNetworkingTest : MonoBehaviour
 				break;
 				
 			case ConnectionTesterStatus.NATpunchthroughAddressRestrictedCone:
-				testMessage = "NAT punchthrough capable. Can connect to all "+
-					"servers and receive connections from all clients. Enabling "+
-						"NAT punchthrough functionality.";
-				useNat = true;
-				doneTesting = true;
-				break;
-
 			case ConnectionTesterStatus.NATpunchthroughFullCone:
 				testMessage = "NAT punchthrough capable. Can connect to all "+
 					"servers and receive connections from all clients. Enabling "+
