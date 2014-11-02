@@ -1,20 +1,24 @@
 // The original script originates from:
 // http://docs.unity3d.com/ScriptReference/Network.TestConnection.html
+//
 // This is a modified version!!!
+
+// TODO: This still needs some modificatons!
 
 using UnityEngine;
 using System.Collections;
 
 public class PurpleNetworkingTest : MonoBehaviour
 {
-
 	string testStatus = "Testing network connection capabilities.";
 	string testMessage = "Test in progress";
 	string shouldEnableNatMessage = "";
+
 	bool doneTesting = false;
 	bool probingPublicIP = false;
-	int serverPort = 9999;
+	int serverPort = 9999;	// TODO - where is this used?
 	ConnectionTesterStatus connectionTestResult = ConnectionTesterStatus.Undetermined;
+	ConnectionTesterStatus connectionTestResultPrev = ConnectionTesterStatus.Undetermined;
 	float timer;
 	
 	// Indicates if the useNat parameter be enabled when starting a server
@@ -121,6 +125,19 @@ public class PurpleNetworkingTest : MonoBehaviour
 			else
 				shouldEnableNatMessage = "NAT punchthrough not needed";
 			testStatus = "Done testing";
+		}
+
+		if(connectionTestResult != connectionTestResultPrev)
+		{
+			Debug.Log ("###############");
+			Debug.Log (testStatus);
+			Debug.Log (testMessage);
+			Debug.Log (shouldEnableNatMessage);
+			Debug.Log ("Use NAT: " + useNat);
+			Debug.Log ("Done Testing: " + doneTesting);
+			Debug.Log ("###############");
+
+			connectionTestResultPrev = connectionTestResult;
 		}
 	}
 
