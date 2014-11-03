@@ -81,6 +81,7 @@ namespace PurpleDatabase
 			serverDatabase = database;
 			serverUser = user;
 			serverPassword = password;
+			Instance.initialize (true);
 		}
 
 
@@ -190,8 +191,14 @@ namespace PurpleDatabase
 		// BASICS /////////////////////////
 
 		// initialize database
-		private void initialize(){
-			if(connection == null || connection.State != ConnectionState.Open){
+		private void initialize()
+		{
+			initialize (false);
+		}
+		
+		private void initialize(bool force)
+		{
+			if(connection == null || force){
 				try
 				{
 					connectionString = "Server="+serverIP+";" +
@@ -200,8 +207,6 @@ namespace PurpleDatabase
 						"Pooling=false;" +
 						"Password="+serverPassword+";";
 					connection = new MySqlConnection (connectionString);
-
-					Debug.Log (connectionString);
 				}
 				catch (Exception ex)
 				{
