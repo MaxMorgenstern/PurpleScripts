@@ -27,29 +27,29 @@ public class PurpleLog : MonoBehaviour
 	private static PurpleLog instance;
 	private static string logText;
 	private static int logPosition;
-	private Rect consoleRect = new Rect(0, 0, Screen.width, Mathf.Min(300, Screen.height));
+	private static Rect consoleRect;
 
-	private const int WINDOW_ID = 50;
+	private static int WINDOW_ID;
 
-	private string htmlTag = "<color=##colorType##>##logText##</color>";
-	private string colorTag = "##colorTag##";
+	private static string htmlTag;
+	private static string colorTag;
 	
-	private string colorLog = "'#FFFFFF'";
-	private string colorError = "'#FF6633'";
-	private string colorWarning = "'#FFCC33'";
-	private string colorUser = "'#39E600'";
+	private static string colorLog;
+	private static string colorError;
+	private static string colorWarning;
+	private static string colorUser;
 
-	private static string consoleInput = "";
-	private static bool consoleDisplay = false;
-	private static int consoleHistory = 50;
-	private static int consoleHistoryCurrent = 0;
+	private static string consoleInput;
+	private static bool consoleDisplay;
+	private static int consoleHistory;
+	private static int consoleHistoryCurrent;
 	
-	private string toggleKey1 = "Caret";
-	private string toggleKey2 = "`";
+	private static string toggleKey1;
+	private static string toggleKey2;
 
-	private static bool consoleActive = false;
+	private static bool consoleActive;
 
-	private Dictionary<string, PurpleLogCallback> eventListeners = new Dictionary<string, PurpleLogCallback>();
+	private Dictionary<string, PurpleLogCallback> eventListeners;
 	
 
 	// OnGUI /////////////////////////
@@ -76,6 +76,33 @@ public class PurpleLog : MonoBehaviour
 	// START UP /////////////////////////
 	public PurpleLog ()
 	{
+		WINDOW_ID = 50;
+		eventListeners = new Dictionary<string, PurpleLogCallback>();
+		consoleDisplay = false;
+		consoleInput = "";
+		toggleKey1 = "Caret";
+		toggleKey2 = "`";
+		consoleHistoryCurrent = 0;
+		colorTag = "##colorTag##";
+		htmlTag = "<color=##colorType##>##logText##</color>";
+		consoleRect = new Rect(0, 0, Screen.width, Mathf.Min(300, Screen.height));
+
+		try{
+			colorLog = convert_hex(PurpleConfig.ConsoleLog.Color.Log);
+			colorError = convert_hex(PurpleConfig.ConsoleLog.Color.Error);
+			colorWarning = convert_hex(PurpleConfig.ConsoleLog.Color.Warning);
+			colorUser = convert_hex(PurpleConfig.ConsoleLog.Color.User);
+			consoleHistory = PurpleConfig.ConsoleLog.History;
+			consoleActive = PurpleConfig.ConsoleLog.Enabled;
+		} catch(Exception e){
+			colorLog = "'#FFFFFF'";
+			colorError = "'#FF6633'";
+			colorWarning = "'#FFCC33'";
+			colorUser = "'#39E600'";
+			consoleHistory = 5;
+			consoleActive = false;
+			Debug.LogError("Can not read Purple Config! Fallback to default. " + e.ToString());
+		}
 	}
 
 
@@ -134,7 +161,6 @@ public class PurpleLog : MonoBehaviour
 	}
 
 
-
 	// PRIVATE FUNCTIONS /////////////////////////
 	private void log_func(string text, string stackTrace, LogType type)
 	{
@@ -175,7 +201,6 @@ public class PurpleLog : MonoBehaviour
 				).Skip(linesToRemove)
 			.FirstOrDefault();
 	}
-
 
 	private void render_window(int id) {
 		handle_submit();
@@ -232,6 +257,7 @@ public class PurpleLog : MonoBehaviour
 		consoleDisplay = false;
 	}
 
+
 	// EVENT DISPATCH ////////////////////
 	private void add_listener(string event_name, PurpleLogCallback listener)
 	{
@@ -262,7 +288,13 @@ public class PurpleLog : MonoBehaviour
 		return Event.current.Equals(Event.KeyboardEvent(key));
 	}
 
+
 	// HELPER ////////////////////
 	private void wake_up() {  }
+
+	private static string convert_hex(string configString)
+	{
+		return "'"+configString+"'";
+	}
 }
 
