@@ -1,7 +1,7 @@
 using System;
 namespace PurpleConfig
 {
-	// Networking
+	// Networking /////////////////////////
 	public static class Network {
 		public static string IP { get { return ItemIds.getConfigString ("Network.IP"); } }
 		public static string Host { get { return ItemIds.getConfigString ("Network.Host"); } }
@@ -17,7 +17,7 @@ namespace PurpleConfig
 		}
 	}
 
-	// Storage
+	// Storage /////////////////////////
 	public static class Storage {
 		public static bool ForcePlayerPrefs { get { return ItemIds.getConfigBoolean ("Storage.ForcePlayerPrefs"); } }
 
@@ -28,7 +28,7 @@ namespace PurpleConfig
 		}
 	}
 
-	// Console Log
+	// Console Log /////////////////////////
 	public static class ConsoleLog {
 		public static bool Enabled { get { return ItemIds.getConfigBoolean ("ConsoleLog.Enabled"); } }
 		public static int History { get { return ItemIds.getConfigInt ("ConsoleLog.History"); } }
@@ -41,7 +41,7 @@ namespace PurpleConfig
 		}
 	}
 
-	// Database
+	// Database /////////////////////////
 	public static class Database {
 		public static string IP { get { return ItemIds.getConfigString ("Database.IP"); } }
 		public static string Name { get { return ItemIds.getConfigString ("Database.Name"); } }
@@ -49,7 +49,7 @@ namespace PurpleConfig
 		public static string Password { get { return ItemIds.getConfigString ("Database.Password"); } }
 	}
 
-	// Password generation/validation
+	// Password generation/validation /////////////////////////
 	public static class Password {
 		public static int SaltByteSize { get { return ItemIds.getConfigInt ("Password.SaltByteSize"); } }
 		public static int HashByteSize { get { return ItemIds.getConfigInt ("Password.HashByteSize"); } }
