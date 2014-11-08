@@ -4,17 +4,17 @@ using System.Linq;
 using System.Collections.Generic;
 /**
  * 		PurpleLog.Enable ();
- *		PurpleLog.AddListener ("trigger", funktionsname); 
+ *		PurpleLog.AddListener ("trigger", functionname);
  *
  *		**********
  *
- *		string funktionsname(string[] stringArrayName)
+ *		string functionname(string[] stringArrayName)
  *		{
  *			for(int i = 0; i < stringArrayName.Length; i++)
  *			{
  *				Debug.Log (stringArrayName[i]);
  *			}
- *			return "rückgabewert";
+ *			return "returnvalue";
  *		}
  **/
 
@@ -33,7 +33,7 @@ public class PurpleLog : MonoBehaviour
 
 	private static string htmlTag;
 	private static string colorTag;
-	
+
 	private static string colorLog;
 	private static string colorError;
 	private static string colorWarning;
@@ -43,38 +43,37 @@ public class PurpleLog : MonoBehaviour
 	private static bool consoleDisplay;
 	private static int consoleHistory;
 	private static int consoleHistoryCurrent;
-	
+
 	private static string toggleKey1;
 	private static string toggleKey2;
 
 	private static bool consoleActive;
 
 	private Dictionary<string, PurpleLogCallback> eventListeners;
-	
+
 
 	// OnGUI /////////////////////////
 	void OnGUI() {
 		if(consoleActive)
 		{
-			if (consoleDisplay) 
+			if (consoleDisplay)
 			{
 				GUIStyle windowStyle = new GUIStyle (GUI.skin.GetStyle ("window"));
 				windowStyle.font = (Font)Resources.Load ("Courier New");
 				windowStyle.fontSize = 14;
 
 				GUILayout.Window (WINDOW_ID, consoleRect, Instance.render_window, "Debug Console", windowStyle);
-			
-			} 
+			}
 			else if(key_down(toggleKey1) || key_down(toggleKey2))
 			{
 				open_console();
 			}
 		}
 	}
-	
-	
+
+
 	// START UP /////////////////////////
-	public PurpleLog ()
+	protected PurpleLog ()
 	{
 		WINDOW_ID = 50;
 		eventListeners = new Dictionary<string, PurpleLogCallback>();
@@ -111,7 +110,7 @@ public class PurpleLog : MonoBehaviour
 		Application.RegisterLogCallback(Log);
 		consoleActive = true;
 	}
-	
+
 	public static void Disable () {
 		Application.RegisterLogCallback(null);
 		consoleActive = false;
@@ -131,7 +130,7 @@ public class PurpleLog : MonoBehaviour
 			return instance;
 		}
 	}
-	
+
 
 	// PUBLIC FUNCTIONS /////////////////////////
 	public static void Log(string text, string stackTrace, LogType type)
@@ -195,8 +194,8 @@ public class PurpleLog : MonoBehaviour
 
 	public static string delete_lines(string s, int linesToRemove)
 	{
-		return s.Split(Environment.NewLine.ToCharArray(), 
-						linesToRemove + 1, 
+		return s.Split(Environment.NewLine.ToCharArray(),
+						linesToRemove + 1,
 						StringSplitOptions.RemoveEmptyEntries
 				).Skip(linesToRemove)
 			.FirstOrDefault();
@@ -205,22 +204,22 @@ public class PurpleLog : MonoBehaviour
 	private void render_window(int id) {
 		handle_submit();
 		handle_escape();
-		
+
 		GUILayout.BeginScrollView(new Vector2(0, getLogPosition), false, true);
-		
+
 		GUIStyle labelStyle = new GUIStyle(GUI.skin.GetStyle("label"));
 		labelStyle.font = (Font)Resources.Load("Courier New");;
 		labelStyle.fontSize = 14;
-		
+
 		GUILayout.Label(getLogText, labelStyle);
 		GUILayout.EndScrollView();
-		
+
 		GUI.SetNextControlName("input");
 		consoleInput = GUILayout.TextField(consoleInput);
-		
+
 		GUI.FocusControl("input");
 	}
-	
+
 	private void handle_submit() {
 		if (key_down("[enter]") || key_down("return")) {
 			if(!String.IsNullOrEmpty(consoleInput))
@@ -238,7 +237,7 @@ public class PurpleLog : MonoBehaviour
 			consoleInput = "";
 		}
 	}
-	
+
 	private void handle_escape() {
 		if (key_down("escape") /*|| key_down(toggleKey1) || key_down(toggleKey2)*/) {
 			close_console();
@@ -265,11 +264,11 @@ public class PurpleLog : MonoBehaviour
 		{
 			eventListeners.Add(event_name, null);
 		}
-		
+
 		// delegates can be chained using addition
 		eventListeners[event_name] += listener;
-	}	
-	
+	}
+
 	private string trigger_listener(string event_name, string[] event_data)
 	{
 		if (has_event(event_name)) {
@@ -277,7 +276,7 @@ public class PurpleLog : MonoBehaviour
 		} else {
 			Debug.LogError("Command not found");
 			return "Command not found";
-		} 
+		}
 	}
 
 	private bool has_event(string event_name) {
