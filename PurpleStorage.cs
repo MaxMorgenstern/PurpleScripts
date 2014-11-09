@@ -5,7 +5,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 
 
-
 // PlayerPrefs - Work in WebPlayer
 //http://docs.unity3d.com/ScriptReference/PlayerPrefs.html 
 
@@ -17,8 +16,9 @@ using System.Collections;
 
 namespace PurpleStorage
 {
-	public class PurpleStorage
+	public class PurpleStorage : MonoBehaviour
 	{
+		private static PurpleStorage instance;
 
 		private static string fileEnding;
 		private static bool binaryFormat;
@@ -30,10 +30,10 @@ namespace PurpleStorage
 		protected PurpleStorage ()
 		{
 			try{
-				fileEnding = "."+PurpleConfig.Storage.File.Extension;
-				forcePlayerPrefs = PurpleConfig.Storage.ForcePlayerPrefs;
-				alternativePath = PurpleConfig.Storage.File.AlternativePath;
-				binaryFormat = PurpleConfig.Storage.File.Binary;
+				fileEnding = "."+PurpleConfig.Storage.File.Extension.TrimStart('.');
+				forcePlayerPrefs = PurpleConfig.Storage.ForcePlayerPrefs;		// ???
+				alternativePath = PurpleConfig.Storage.File.AlternativePath;	// alt store path
+				binaryFormat = PurpleConfig.Storage.File.Binary;				// binary format or raw
 			} catch(Exception e){
 				fileEnding = ".data";
 				forcePlayerPrefs = false;
@@ -43,10 +43,34 @@ namespace PurpleStorage
 			}
 		}
 
+
+		// SINGLETON /////////////////////////
+		public static PurpleStorage Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					GameObject gameObject 	= new GameObject ("PurpleStorageManager");
+					instance     			= gameObject.AddComponent<PurpleStorage> ();
+				}
+				return instance;
+			}
+		}
+
+		
+		// PUBLIC FUNCTIONS /////////////////////////
 		public static void Test()
 		{
-			Debug.Log (Application.persistentDataPath + "/" + "--dummy--" + fileEnding);
-			Debug.Log (alternativePath);
+			Instance.tester ();
+		}
+
+		
+		// PRIVATE FUNCTIONS /////////////////////////
+		private void tester()
+		{
+			Debug.Log (Application.persistentDataPath + "/" + "-- dummy --" + fileEnding);
+			Debug.LogWarning (PurpleConfig.Storage.File.Extension);
 		}
 
 // TODO: web player compatibility check
