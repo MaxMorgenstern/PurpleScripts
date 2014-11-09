@@ -58,46 +58,88 @@ namespace PurpleStorage
 			}
 		}
 
-		
+	
 		// PUBLIC FUNCTIONS /////////////////////////
-		public static void Test()
+
+		public static void SaveFile(string filename, string data)
 		{
-			Instance.tester ();
+			PurpleFileObject fileData = create_purple_file_object (filename, data);
+			Instance.save_binary_file (filename, fileData);
 		}
+
+		public static void SaveFile(string filename, object data)
+		{
+			PurpleFileObject fileData = create_purple_file_object (filename, data);
+			Instance.save_binary_file (filename, fileData);
+		}
+
+		public static void SaveFile(string filename, PurpleFileObject data)
+		{
+			Instance.save_binary_file (filename, data);
+		}
+
+
+		public static PurpleFileObject LoadFile(string filename)
+		{
+			return Instance.load_binary_file (filename);
+		}
+
 
 		
 		// PRIVATE FUNCTIONS /////////////////////////
-		private void tester()
-		{
-			Debug.Log (Application.persistentDataPath + "/" + "-- dummy --" + fileEnding);
-			Debug.LogWarning (PurpleConfig.Storage.File.Extension);
-		}
 
-// TODO: web player compatibility check
-// TODO: JSON?
-		public static void Save(string filename, object data) {
+		private void save_binary_file(string filename, PurpleFileObject data) {
 			BinaryFormatter bf = new BinaryFormatter();
 			FileStream file = File.Create (Application.persistentDataPath + "/" + filename + fileEnding);
 			bf.Serialize(file, data);
 			file.Close();
 		}   
 
-// TODO: web player compatibility check
-// TODO: JSON?
-		public static object Load(string filename) {
+		private PurpleFileObject load_binary_file(string filename) {
 			if(File.Exists(Application.persistentDataPath + "/" + filename + fileEnding)) {
 				BinaryFormatter bf = new BinaryFormatter();
 				FileStream file = File.Open(Application.persistentDataPath + "/" + filename + fileEnding, FileMode.Open);
-				object data = bf.Deserialize(file);
+				PurpleFileObject data = (PurpleFileObject)bf.Deserialize(file);
 				file.Close();
 				return data;
 			}
 			return null;
 		}
+
+
+		
+		// PRIVATE HELPER /////////////////////////
+
+		private PurpleFileObject create_purple_file_object(string filename, string dataString)
+		{
+			return create_purple_file_object (filename, dataString, null);
+		}
+
+		private PurpleFileObject create_purple_file_object(string filename, object dataObject)
+		{
+			return create_purple_file_object (filename, String.Empty, dataObject);
+		}
+
+		private PurpleFileObject create_purple_file_object(string filename, string dataString, object dataObject)
+		{
+			PurpleFileObject pf_object = new PurpleFileObject ();
+			pf_object.created = DateTime.Now;
+			pf_object.updated = DateTime.Now;
+
+			pf_object.name = filename;
+			
+			if(!String.IsNullOrEmpty(dataString))
+				pf_object.dataString = dataString;
+
+			if(dataObject != null)
+				pf_object.dataObject = dataObject;
+
+			return pf_object;
+		}
+
 	}
 
 
-	
 	[Serializable]
 	public class PurpleFileObject
 	{
@@ -114,7 +156,6 @@ namespace PurpleStorage
 		public PurpleFileObject()
 		{
 			guid = System.Guid.NewGuid ();
-			created = DateTime.Now;
 		}
 	}
 }
