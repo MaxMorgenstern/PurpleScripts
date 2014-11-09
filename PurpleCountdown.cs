@@ -1,20 +1,25 @@
 using UnityEngine;
 using System.Collections;
 
-//TODO: a lot!
-// http://docs.unity3d.com/ScriptReference/MonoBehaviour.html
+// TODO: create "instance" if invoke and countdown so we can destinguish between them
 
 public class PurpleCountdown : MonoBehaviour
 {
-	private static float countdown;
-	private static float time;
-	
+	private static float t_countdown;
+	private static float t_time;
+
+	private static float t_trigger;
+	private static float t_trigger_repeating;
+
 	private static PurpleCountdown instance;
 
-	//public delegate void PurpleCountdownEvent(object passed_object); // countdown event
-	//public static event PurpleCountdownEvent TriggerEvent;
+	public delegate void PurpleCountdownEvent(); // countdown event
+	public static event PurpleCountdownEvent CountdownRunEvent;
+	public static event PurpleCountdownEvent CountdownDoneEvent;
+	public static event PurpleCountdownEvent TriggerRepeatEvent;
+	public static event PurpleCountdownEvent TriggerEvent;
 
-	
+
 	// SINGLETON /////////////////////////
 	public static PurpleCountdown Instance
 	{
@@ -32,16 +37,27 @@ public class PurpleCountdown : MonoBehaviour
 
 	// PUBLIC ////////////////////////////
 
-	public static void Trigger(int seconds)
+	public static void Trigger(float offset)
 	{
-		Instance.trigger (seconds);
+		Instance.trigger (offset);
 	}
 
-	public static void CancelTrigger(int seconds)
+	public static void Trigger(float offset, float repeat)
+	{
+		Instance.trigger (offset, repeat);
+	}
+
+	public static void CancelTrigger()
 	{
 		Instance.cancel_trigger ();
 	}
-	
+
+	private static bool TestTrigger()
+	{
+		return Instance.test_trigger();
+	}
+
+
 	public static void Countdown(int seconds)
 	{
 		Instance.count_down (seconds);
@@ -58,66 +74,73 @@ public class PurpleCountdown : MonoBehaviour
 	}
 
 
-	
 	// PRIVATE ////////////////////////////
 
 	// TRIGGER ////////////////////////////
 
-	private void trigger(int seconds)
+	private void trigger(float offset)
 	{
-		trigger (seconds, false);
+		t_trigger = offset;
+		Invoke("invoke_trigger", t_trigger);
 	}
 
-	private void trigger(int seconds, bool force)
+	private void trigger(float offset, float repeat)
 	{
-		if(!IsInvoking("invoke_trigger") || force)	// TODO: ??? Test if there is a active trigger... or force
-		{
-			countdown = (float)seconds;
-			Invoke("invoke_trigger", countdown);
-		}
+		t_trigger_repeating = offset;
+		InvokeRepeating("invoke_trigger_repeating", offset, repeat);
 	}
 
 	private void invoke_trigger()
 	{
-		Debug.Log("Triggered after " + countdown + " seconds!");
-		// TODO: Event
+		Debug.Log("Triggered after " + t_trigger + " seconds!");
+		instance.trigger_purple_event (TriggerEvent);
 	}
-	
+
+	private void invoke_trigger_repeating()
+	{
+		Debug.Log("Repeating... First time triggered after " + t_trigger_repeating + " seconds!");
+		instance.trigger_purple_event (TriggerRepeatEvent);
+	}
+
 	private void cancel_trigger()
 	{
 		CancelInvoke();
 	}
 
+	private bool test_trigger()
+	{
+		return IsInvoking ("invoke_trigger");
+	}
 
 
 	// COUNTDOWN ////////////////////////////
 
 	private void count_down(int seconds)
 	{
-		countdown = (float)seconds;
-		time = (float)seconds;
+		t_countdown = (float)seconds;
+		t_time = (float)seconds;
 		StartCoroutine (countdown_trigger ());
 	}
 
 	private IEnumerator countdown_trigger()
 	{
-		while (time > 0)
+		while (t_time > 0)
 		{
 			yield return new WaitForSeconds(1);
-			
-			Debug.Log ("Triggered after " + (countdown-time+1) + " seconds!");
-			// TODO: Event
-			
-			time -= 1;
+
+			Debug.Log ("Triggered after " + (t_countdown-t_time+1) + " seconds!");
+			instance.trigger_purple_event (CountdownRunEvent);
+
+			t_time -= 1;
 		}
 
-		Debug.Log ("Finished after " + (countdown-time).ToString() + " seconds!");
-		// TODO: Event
+		Debug.Log ("Finished after " + (t_countdown-t_time).ToString() + " seconds!");
+		instance.trigger_purple_event (CountdownDoneEvent);
 	}
-	
+
 	private void cancel_count_down()
 	{
-		StopCoroutine (countdown_trigger ());
+		StopCoroutine ("countdown_trigger");
 	}
 
 	private void cancel_all_count_down()
@@ -126,16 +149,11 @@ public class PurpleCountdown : MonoBehaviour
 	}
 
 
+	// EVENT ////////////////////////////
 
-
-
-
-/*
-	private void trigger_purple_event(PurpleCountdownEvent eve, object passed_object)
+	private void trigger_purple_event(PurpleCountdownEvent eve)
 	{
 		if(eve != null)
-			eve(passed_object);
+			eve();
 	}
-*/
 }
-
