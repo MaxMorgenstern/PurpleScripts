@@ -23,7 +23,6 @@ namespace PurpleConfig
 
 		public static class File {
 			public static string Extension { get { return ItemIds.getConfigString ("Storage.File.Extension"); } }
-			public static bool Binary { get { return ItemIds.getConfigBoolean ("Storage.File.Binary"); } }
 			public static string AlternativePath { get { return ItemIds.getConfigString ("Storage.File.AlternativePath"); } }
 		}
 	}

@@ -4,15 +4,16 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 
-
 // PlayerPrefs - Work in WebPlayer
-//http://docs.unity3d.com/ScriptReference/PlayerPrefs.html 
+//http://docs.unity3d.com/ScriptReference/PlayerPrefs.html
 
 // as well as File saving - does not work in web player!?
 
-// perhaps own object for storage???
+// TODO: Test Web Player - make file work for all devices
+#if UNITY_WEBPLAYER
+#endif
 
-// how to format data
+// TODO: metadata... get them - name - size - when stored - when updated
 
 namespace PurpleStorage
 {
@@ -21,7 +22,6 @@ namespace PurpleStorage
 		private static PurpleStorage instance;
 
 		private static string fileEnding;
-		private static bool binaryFormat;
 		private static string alternativePath;
 		private static bool forcePlayerPrefs;
 
@@ -33,12 +33,10 @@ namespace PurpleStorage
 				fileEnding = "."+PurpleConfig.Storage.File.Extension.TrimStart('.');
 				forcePlayerPrefs = PurpleConfig.Storage.ForcePlayerPrefs;		// ???
 				alternativePath = PurpleConfig.Storage.File.AlternativePath;	// alt store path
-				binaryFormat = PurpleConfig.Storage.File.Binary;				// binary format or raw
 			} catch(Exception e){
 				fileEnding = ".data";
 				forcePlayerPrefs = false;
 				alternativePath = String.Empty;
-				binaryFormat = true;
 				Debug.LogError("Can not read Purple Config! " + e.ToString());
 			}
 		}
@@ -58,24 +56,24 @@ namespace PurpleStorage
 			}
 		}
 
-	
+
 		// PUBLIC FUNCTIONS /////////////////////////
 
-		public static void SaveFile(string filename, string data)
+		public static bool SaveFile(string filename, string data)
 		{
-			PurpleFileObject fileData = create_purple_file_object (filename, data);
-			Instance.save_binary_file (filename, fileData);
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Instance.save_binary_file (filename, fileData);
 		}
 
-		public static void SaveFile(string filename, object data)
+		public static bool SaveFile(string filename, object data)
 		{
-			PurpleFileObject fileData = create_purple_file_object (filename, data);
-			Instance.save_binary_file (filename, fileData);
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Instance.save_binary_file (filename, fileData);
 		}
 
-		public static void SaveFile(string filename, PurpleFileObject data)
+		public static bool SaveFile(string filename, PurpleFileObject data)
 		{
-			Instance.save_binary_file (filename, data);
+			return Instance.save_binary_file (filename, data);
 		}
 
 
@@ -84,18 +82,41 @@ namespace PurpleStorage
 			return Instance.load_binary_file (filename);
 		}
 
+		public static string LoadFileString(string filename)
+		{
+			PurpleFileObject pfo = Instance.load_binary_file (filename);
+			return pfo.dataString;
+		}
 
-		
+		public static object LoadFileObject(string filename)
+		{
+			PurpleFileObject pfo = Instance.load_binary_file (filename);
+			return pfo.dataObject;
+		}
+
+
+
 		// PRIVATE FUNCTIONS /////////////////////////
 
-		private void save_binary_file(string filename, PurpleFileObject data) {
-			BinaryFormatter bf = new BinaryFormatter();
-			FileStream file = File.Create (Application.persistentDataPath + "/" + filename + fileEnding);
-			bf.Serialize(file, data);
-			file.Close();
-		}   
+		private bool save_binary_file(string filename, PurpleFileObject data) 
+		{
+			try
+			{
+				BinaryFormatter bf = new BinaryFormatter();
+				FileStream file = File.Create (Application.persistentDataPath + "/" + filename + fileEnding);
+				bf.Serialize(file, data);
+				file.Close();
+				return true;
+			} 
+			catch (Exception err)
+			{
+				Debug.Log("Got: " + err);
+			}
+			return false;
+		}
 
-		private PurpleFileObject load_binary_file(string filename) {
+		private PurpleFileObject load_binary_file(string filename) 
+		{
 			if(File.Exists(Application.persistentDataPath + "/" + filename + fileEnding)) {
 				BinaryFormatter bf = new BinaryFormatter();
 				FileStream file = File.Open(Application.persistentDataPath + "/" + filename + fileEnding, FileMode.Open);
@@ -107,7 +128,31 @@ namespace PurpleStorage
 		}
 
 
-		
+		// TODO: Test
+		private bool save_player_pref(string filename, string data)
+		{
+			try 
+			{
+				PlayerPrefs.SetString(filename, data);
+				return true;
+			}
+			catch (PlayerPrefsException err) 
+			{
+				Debug.Log("Got: " + err);
+			}
+			return false;
+		}
+
+		// TODO: Test
+		private string load_player_pref(string filename)
+		{
+			if(PlayerPrefs.HasKey (filename))
+				return PlayerPrefs.GetString (filename);
+
+			return String.Empty;
+		}
+
+
 		// PRIVATE HELPER /////////////////////////
 
 		private PurpleFileObject create_purple_file_object(string filename, string dataString)
@@ -127,7 +172,7 @@ namespace PurpleStorage
 			pf_object.updated = DateTime.Now;
 
 			pf_object.name = filename;
-			
+
 			if(!String.IsNullOrEmpty(dataString))
 				pf_object.dataString = dataString;
 
@@ -151,7 +196,7 @@ namespace PurpleStorage
 
 		public string dataString;
 		public object dataObject;
-		
+
 		// CONSTRUCTOR
 		public PurpleFileObject()
 		{
