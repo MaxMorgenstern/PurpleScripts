@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
+
 // This is just an idea to provide a client and autoritative server class
 // This class is not optimized for games with a lot of server interaction but for
 // 		games that are turn based or need less network traffic
@@ -23,9 +24,16 @@ using System.Collections;
 
 namespace PurpleNetwork
 {
+
 	public class PurpleServer : MonoBehaviour
 	{
+		public class Config
+		{
+			public string todo;
+		}
+
 		public enum ServerType { Account, /*Lobby,*/ Game, Multi, Monitoring };
+		private Config stdServerConfig;
 
 		private static PurpleServer instance;
 
@@ -33,7 +41,8 @@ namespace PurpleNetwork
 		// START UP /////////////////////////
 		protected PurpleServer ()
 		{
-			//
+			stdServerConfig = new Config ();
+			// TODO
 		}
 
 
