@@ -24,11 +24,15 @@ namespace PurpleStorage
 		private static string fileEnding;
 		private static string alternativePath;
 		private static bool forcePlayerPrefs;
+		private static string metaObjectName;
 
 
 		// START UP /////////////////////////
 		protected PurpleStorage ()
 		{
+			
+			metaObjectName = "purple_meta_object"; // TODO: add config
+
 			try{
 				fileEnding = "."+PurpleConfig.Storage.File.Extension.TrimStart('.');
 				forcePlayerPrefs = PurpleConfig.Storage.ForcePlayerPrefs;		// ???
@@ -182,8 +186,39 @@ namespace PurpleStorage
 			return pf_object;
 		}
 
+
+		private bool save_meta_object(PurpleMetaObject metaObject)
+		{
+			string data = ""; // TODO metaObject
+
+			try 
+			{
+				PlayerPrefs.SetString(metaObjectName, data);
+				return true;
+			}
+			catch (PlayerPrefsException err) 
+			{
+				Debug.Log("Got: " + err);
+			}
+			return false;
+		}
+
+		private /*PurpleMetaObject*/ string load_meta_object()
+		{
+			if(PlayerPrefs.HasKey (metaObjectName))
+				return PlayerPrefs.GetString (metaObjectName);
+			
+			return String.Empty;
+		}
 	}
 
+
+	[Serializable]
+	public class PurpleMetaObject
+	{
+		public DateTime updated;
+		public Array filelist;
+	}
 
 	[Serializable]
 	public class PurpleFileObject
