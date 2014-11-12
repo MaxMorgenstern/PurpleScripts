@@ -30,17 +30,16 @@ namespace PurpleStorage
 		// START UP /////////////////////////
 		protected PurpleStorage ()
 		{
-			
-			metaObjectName = "purple_meta_object"; // TODO: add config
-
 			try{
 				fileEnding = "."+PurpleConfig.Storage.File.Extension.TrimStart('.');
-				forcePlayerPrefs = PurpleConfig.Storage.ForcePlayerPrefs;		// ???
-				alternativePath = PurpleConfig.Storage.File.AlternativePath;	// alt store path
+				forcePlayerPrefs = PurpleConfig.Storage.ForcePlayerPrefs;
+				alternativePath = PurpleConfig.Storage.File.AlternativePath;
+				metaObjectName = PurpleConfig.Storage.File.MetaName;
 			} catch(Exception e){
 				fileEnding = ".data";
 				forcePlayerPrefs = false;
 				alternativePath = String.Empty;
+				metaObjectName = "purple_meta_object";
 				Debug.LogError("Can not read Purple Config! " + e.ToString());
 			}
 		}
@@ -131,6 +130,12 @@ namespace PurpleStorage
 			return null;
 		}
 
+		private bool delete_binary_file(string filename)
+		{
+			// TODO
+			return false;
+		}
+
 
 		// TODO: Test
 		private bool save_player_pref(string filename, string data)
@@ -155,7 +160,13 @@ namespace PurpleStorage
 
 			return String.Empty;
 		}
-
+		
+		// TODO: Test
+		private bool delete_player_pref(string filename)
+		{
+			// TODO
+			return false;
+		}
 
 		// PRIVATE HELPER /////////////////////////
 
@@ -187,6 +198,18 @@ namespace PurpleStorage
 		}
 
 
+		private bool update_meta_object(string fileName)
+		{
+			/*PurpleMetaObject*/ string tmp_meta_object = load_meta_object ();
+			if (tmp_meta_object != null) 
+			{
+				// TODO
+			}
+
+			// TODO
+			return false;
+		}
+
 		private bool save_meta_object(PurpleMetaObject metaObject)
 		{
 			string data = ""; // TODO metaObject
@@ -208,9 +231,11 @@ namespace PurpleStorage
 			if(PlayerPrefs.HasKey (metaObjectName))
 				return PlayerPrefs.GetString (metaObjectName);
 			
-			return String.Empty;
+			return null;
 		}
+
 	}
+
 
 
 	[Serializable]

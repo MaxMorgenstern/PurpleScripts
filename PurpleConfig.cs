@@ -24,6 +24,7 @@ namespace PurpleConfig
 		public static class File {
 			public static string Extension { get { return ItemIds.getConfigString ("Storage.File.Extension"); } }
 			public static string AlternativePath { get { return ItemIds.getConfigString ("Storage.File.AlternativePath"); } }
+			public static string MetaName { get { return ItemIds.getConfigString ("Storage.File.MetaName"); } }
 		}
 	}
 
