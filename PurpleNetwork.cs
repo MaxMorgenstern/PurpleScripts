@@ -3,10 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _PurpleSerializer = PurpleSerializer;
-using _JSON = Newtonsoft.Json.JsonConvert;
 
 /**
- * 		using _PurpleSerializer = PurpleNetwork.PurpleSerializer;
  *		using _PurpleMessages = PurpleNetwork.Messages;
  * 		using _PurpleNetwork = PurpleNetwork.PurpleNetwork;
  *
@@ -17,10 +15,9 @@ using _JSON = Newtonsoft.Json.JsonConvert;
  *
  *		_PurpleMessages.Example message = new _PurpleMessages.Example();
  * 		message.test = "Hallo, Welt!";
- * 		string string_message = object_to_string_converter(message);
  *
- * 		_PurpleNetwork.ToServer ("listenername", string_message);
- * 		_PurpleNetwork.Broadcast("listenername2", string_message);
+ * 		_PurpleNetwork.ToServer ("listenername", message);
+ * 		_PurpleNetwork.Broadcast("listenername2", message);
  *
  *		**********
  *
@@ -49,9 +46,6 @@ namespace PurpleNetwork
 		private static NetworkView   purpleNetworkView;
 		private static PurpleNetwork instance;
 
-		// Formating
-		private static bool useJSONMessage;
-
 		// Events
 		private Dictionary<string, PurpleNetCallback> eventListeners;
 
@@ -78,7 +72,6 @@ namespace PurpleNetwork
 		protected PurpleNetwork ()
 		{
 			eventListeners = new Dictionary<string, PurpleNetCallback>();
-			useJSONMessage = true;
 			networkPause = 500;
 			try{
 				networkHost = PurpleConfig.Network.Host;
@@ -234,7 +227,7 @@ namespace PurpleNetwork
 
 		public T ConvertToPurpleMessage <T> (string message)
 		{
-			return string_to_object_converter <T> (message);
+			return _PurpleSerializer.StringToObjectConverter <T> (message);
 		}
 
 
@@ -389,7 +382,7 @@ namespace PurpleNetwork
 		}
 		private void broadcast (string event_name, object message, bool forceXML)
 		{
-			string string_message = object_to_string_converter (message, forceXML);
+			string string_message = _PurpleSerializer.ObjectToStringConverter (message, forceXML);
 			purpleNetworkView.RPC("receive_purple_network_message", RPCMode.All, event_name, string_message);
 		}
 
@@ -400,7 +393,7 @@ namespace PurpleNetwork
 		}
 		private void to_server (string event_name, object message, bool forceXML)
 		{
-			string string_message = object_to_string_converter(message, forceXML);
+			string string_message = _PurpleSerializer.ObjectToStringConverter(message, forceXML);
 			if (Network.isServer)
 			{
 				receive_purple_network_message(event_name, string_message, new NetworkMessageInfo());
@@ -418,7 +411,7 @@ namespace PurpleNetwork
 		}
 		private void to_sender(NetworkPlayer player, string event_name, object message, bool forceXML)
 		{
-			string string_message = object_to_string_converter(message, forceXML);
+			string string_message = _PurpleSerializer.ObjectToStringConverter(message, forceXML);
 			purpleNetworkView.RPC("receive_purple_network_message", player, event_name, string_message);
 		}
 
@@ -459,51 +452,6 @@ namespace PurpleNetwork
 		{
 			if(eve != null)
 				eve(passed_object);
-		}
-
-
-		// CONVERTER METHODS ////////////////////
-
-		// convert an object into a string
-		private string object_to_string_converter(object message)
-		{
-			return object_to_string_converter(message, false);
-		}
-
-		private string object_to_string_converter(object message, bool forceXML)
-		{
-			string return_message = null;
-			if(useJSONMessage && !forceXML)
-			{
-				try{
-					return_message = _JSON.SerializeObject(message);
-				} catch(Exception e){
-					Debug.LogWarning("Can not convert object to JSON: " + e.ToString());
-					Debug.Log("Set message encoding standard to XML");
-					useJSONMessage = false;
-				}
-			}
-
-			if (String.IsNullOrEmpty (return_message))
-			{
-				return_message = _PurpleSerializer.SerializeObjectXML(message);
-			}
-			return return_message;
-		}
-
-		private T string_to_object_converter <T> (string message)
-		{
-			try{
-				return (T)_JSON.DeserializeObject<T>(message);
-			} catch(Exception e){
-				Debug.LogWarning("Can not convert message using JSON: " + e.ToString());
-				try{
-					return (T)_PurpleSerializer.DeserializeObjectXML<T>(message);
-				} catch(Exception ex){
-					Debug.LogWarning("Can not convert message using XML: " + ex.ToString());
-					throw new PurpleException ("Can not convert string to the predefined object!");
-				}
-			}
 		}
 
 
