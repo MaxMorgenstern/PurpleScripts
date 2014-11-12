@@ -345,19 +345,20 @@ namespace PurpleNetwork
 		private void OnFailedToConnect(NetworkConnectionError error)
 		{
 			Debug.Log("Could not connect to server: " + error);
-			instance.trigger_purple_event(FailedToConnectToPurpleServer, error);
+			NetworkPlayer network_player = new NetworkPlayer ();
+			instance.trigger_purple_event (FailedToConnectToPurpleServer, network_player, error);
 		}
 
 
 		// FURTHER EVENTS
 		private void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
 		{
-			instance.trigger_purple_event(SerializePurpleNetworkView, stream);
+			instance.trigger_purple_event(SerializePurpleNetworkView, info.sender, stream);
 		}
 
 		private void OnNetworkInstantiate(NetworkMessageInfo info)
 		{
-			instance.trigger_purple_event(PurpleNetworkInstantiate, info);
+			instance.trigger_purple_event(PurpleNetworkInstantiate, info.sender);
 		}
 
 
@@ -445,13 +446,19 @@ namespace PurpleNetwork
 
 		private void trigger_purple_event(PurpleNetworkEvent eve)
 		{
-			trigger_purple_event (eve, null);
+			NetworkPlayer network_player = new NetworkPlayer ();
+			trigger_purple_event (eve, network_player, null);
 		}
 
-		private void trigger_purple_event(PurpleNetworkEvent eve, object passed_object)
+		private void trigger_purple_event(PurpleNetworkEvent eve, NetworkPlayer info)
+		{
+			trigger_purple_event (eve, info, null);
+		}
+
+		private void trigger_purple_event(PurpleNetworkEvent eve, NetworkPlayer info, object passed_object)
 		{
 			if(eve != null)
-				eve(passed_object);
+				eve(passed_object, info);
 		}
 
 
@@ -461,7 +468,7 @@ namespace PurpleNetwork
 		void receive_purple_network_message(string event_name, string string_message, NetworkMessageInfo info)
 		{
 			try{
-				eventListeners[event_name](string_message);
+				eventListeners[event_name](string_message, info.sender);
 			} catch(Exception e){
 				Debug.LogWarning("Can not call: eventListeners["+event_name+"]("+string_message+") - " + e.ToString());
 				// notify sender that there was an error
@@ -473,7 +480,7 @@ namespace PurpleNetwork
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
 			Debug.LogWarning ("receive_purple_network_error: can not find called function:" + event_name + " - " + info.sender.ToString());
-			instance.trigger_purple_event(PurpleNetworkError, event_name);
+			instance.trigger_purple_event(PurpleNetworkError, info.sender, event_name);
 		}
 
 	}
