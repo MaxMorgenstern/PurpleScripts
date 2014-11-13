@@ -3,6 +3,8 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
+using _PurpleSerializer = PurpleSerializer;
+
 
 // PlayerPrefs - Work in WebPlayer
 //http://docs.unity3d.com/ScriptReference/PlayerPrefs.html
@@ -26,6 +28,7 @@ namespace PurpleStorage
 		private static bool forcePlayerPrefs;
 		private static string metaObjectName;
 
+		private static bool usePlayerPrefs;		// TODO - what are we using atm?
 
 		// START UP /////////////////////////
 		protected PurpleStorage ()
@@ -168,6 +171,9 @@ namespace PurpleStorage
 			return false;
 		}
 
+
+
+
 		// PRIVATE HELPER /////////////////////////
 
 		private PurpleFileObject create_purple_file_object(string filename, string dataString)
@@ -198,12 +204,15 @@ namespace PurpleStorage
 		}
 
 
+		// TODO: meta object as file or player pref
+
 		private bool update_meta_object(string fileName)
 		{
-			/*PurpleMetaObject*/ string tmp_meta_object = load_meta_object ();
+			PurpleMetaObject tmp_meta_object = load_meta_object ();
 			if (tmp_meta_object != null) 
 			{
 				// TODO
+
 			}
 
 			// TODO
@@ -212,8 +221,7 @@ namespace PurpleStorage
 
 		private bool save_meta_object(PurpleMetaObject metaObject)
 		{
-			string data = ""; // TODO metaObject
-
+			string data = _PurpleSerializer.ObjectToStringConverter (metaObject);
 			try 
 			{
 				PlayerPrefs.SetString(metaObjectName, data);
@@ -226,11 +234,21 @@ namespace PurpleStorage
 			return false;
 		}
 
-		private /*PurpleMetaObject*/ string load_meta_object()
+		private PurpleMetaObject load_meta_object()
 		{
-			if(PlayerPrefs.HasKey (metaObjectName))
-				return PlayerPrefs.GetString (metaObjectName);
-			
+			string purpleObjectString = String.Empty;
+			try
+			{
+				if(PlayerPrefs.HasKey (metaObjectName))
+				{
+					purpleObjectString = PlayerPrefs.GetString (metaObjectName);
+					return _PurpleSerializer.StringToObjectConverter<PurpleMetaObject> (purpleObjectString);
+				}
+			} 
+			catch(PurpleException ex)
+			{
+				Debug.LogWarning("Can not convert meta data object!");
+			}
 			return null;
 		}
 
