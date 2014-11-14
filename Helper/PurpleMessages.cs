@@ -84,6 +84,7 @@ namespace PurpleMessages
 		{
 			public DateTime triggerTime;
 			public DateTime localTime;
+			public DateTime remoteTime;
 
 			public Ping()
 			{

@@ -25,7 +25,7 @@ namespace PurpleStorage
 
 		private static string fileEnding;
 		private static string alternativePath;
-		private static bool forcePlayerPrefs;
+		private static bool forcePlayerPrefs;	
 		private static string metaObjectName;
 
 		private static bool usePlayerPrefs;		// TODO - what are we using atm?
@@ -85,27 +85,30 @@ namespace PurpleStorage
 
 		public static PurpleFileObject LoadFile(string filename)
 		{
-			return Instance.load_binary_file (filename);
+			return Instance.load_binary_file<PurpleFileObject> (filename);
 		}
 
 		public static string LoadFileString(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_binary_file (filename);
+			PurpleFileObject pfo = Instance.load_binary_file<PurpleFileObject> (filename);
 			return pfo.dataString;
 		}
 
 		public static object LoadFileObject(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_binary_file (filename);
+			PurpleFileObject pfo = Instance.load_binary_file<PurpleFileObject> (filename);
 			return pfo.dataObject;
 		}
 
 
 
+
+
 		// PRIVATE FUNCTIONS /////////////////////////
 
-		private bool save_binary_file(string filename, PurpleFileObject data) 
+		private bool save_binary_file<T>(string filename, T data) 
 		{
+			if (String.IsNullOrEmpty (filename)) return false;
 			try
 			{
 				BinaryFormatter bf = new BinaryFormatter();
@@ -114,60 +117,87 @@ namespace PurpleStorage
 				file.Close();
 				return true;
 			} 
-			catch (Exception err)
+			catch (Exception ex)
 			{
-				Debug.Log("Got: " + err);
+				Debug.Log("an not save file: " + ex);
 			}
 			return false;
 		}
 
-		private PurpleFileObject load_binary_file(string filename) 
+		private T load_binary_file<T>(string filename) 
 		{
+			if (String.IsNullOrEmpty (filename)) return default (T);
 			if(File.Exists(Application.persistentDataPath + "/" + filename + fileEnding)) {
 				BinaryFormatter bf = new BinaryFormatter();
 				FileStream file = File.Open(Application.persistentDataPath + "/" + filename + fileEnding, FileMode.Open);
-				PurpleFileObject data = (PurpleFileObject)bf.Deserialize(file);
+				T data = (T)bf.Deserialize(file);
 				file.Close();
 				return data;
 			}
-			return null;
+			return default (T);
 		}
 
 		private bool delete_binary_file(string filename)
 		{
-			// TODO
-			return false;
-		}
-
-
-		// TODO: Test
-		private bool save_player_pref(string filename, string data)
-		{
-			try 
-			{
-				PlayerPrefs.SetString(filename, data);
+			if (String.IsNullOrEmpty (filename)) return false;
+			if (File.Exists (Application.persistentDataPath + "/" + filename + fileEnding)) {
+				File.Delete (Application.persistentDataPath + "/" + filename + fileEnding);
 				return true;
 			}
-			catch (PlayerPrefsException err) 
+			return false;
+		}
+
+
+
+
+		// TODO: Test
+		private bool save_player_pref<T>(string filename, T data)
+		{
+			if (String.IsNullOrEmpty (filename)) return false;
+			string data_string = _PurpleSerializer.ObjectToStringConverter (data);
+			try 
 			{
-				Debug.Log("Got: " + err);
+				PlayerPrefs.SetString(filename, data_string);
+				return true;
+			}
+			catch (PlayerPrefsException ex) 
+			{
+				Debug.Log("Can not save PlayerPref: " + ex);
 			}
 			return false;
 		}
 
 		// TODO: Test
-		private string load_player_pref(string filename)
+		private T load_player_pref<T>(string filename)
 		{
-			if(PlayerPrefs.HasKey (filename))
-				return PlayerPrefs.GetString (filename);
+			if (String.IsNullOrEmpty (filename)) return default (T);
+			if(!PlayerPrefs.HasKey (filename)) return default (T);
 
-			return String.Empty;
+			string data_string = PlayerPrefs.GetString (filename);
+			try
+			{
+				return _PurpleSerializer.StringToObjectConverter<T> (data_string);
+			} 
+			catch(PurpleException ex)
+			{
+				Debug.LogError("Can not convert PurpleFileObject " + ex);
+			}
+			return default (T);
 		}
 		
 		// TODO: Test
 		private bool delete_player_pref(string filename)
 		{
-			// TODO
+			if (String.IsNullOrEmpty (filename)) return false;
+			if(!PlayerPrefs.HasKey (filename)) return false;
+			try{
+				PlayerPrefs.DeleteKey (filename);
+				return true;
+			} 
+			catch (Exception ex)
+			{
+				Debug.LogError("Can not delete PlayerPref " + ex);
+			}
 			return false;
 		}
 
@@ -204,8 +234,10 @@ namespace PurpleStorage
 		}
 
 
+// TODO... combine with upper functions...
 		// TODO: meta object as file or player pref
 
+		// this is the only aditional function
 		private bool update_meta_object(string fileName)
 		{
 			PurpleMetaObject tmp_meta_object = load_meta_object ();
@@ -227,9 +259,9 @@ namespace PurpleStorage
 				PlayerPrefs.SetString(metaObjectName, data);
 				return true;
 			}
-			catch (PlayerPrefsException err) 
+			catch (PlayerPrefsException ex) 
 			{
-				Debug.Log("Got: " + err);
+				Debug.Log("Got: " + ex);
 			}
 			return false;
 		}
@@ -247,7 +279,7 @@ namespace PurpleStorage
 			} 
 			catch(PurpleException ex)
 			{
-				Debug.LogWarning("Can not convert meta data object!");
+				Debug.LogWarning("Can not convert meta data object! " + ex);
 			}
 			return null;
 		}
@@ -259,6 +291,9 @@ namespace PurpleStorage
 	[Serializable]
 	public class PurpleMetaObject
 	{
+		public Guid guid;
+		public string hashValue;
+
 		public DateTime updated;
 		public Array filelist;
 	}
@@ -268,6 +303,7 @@ namespace PurpleStorage
 	{
 		public Guid guid;
 		public string name;
+		public string hashValue;
 
 		public DateTime created;
 		public DateTime updated;
