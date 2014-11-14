@@ -6,19 +6,16 @@ using System.Collections;
 
 // TODO: mov into helper
 
-public class PurpleHash : MonoBehaviour
+public class PurpleHash
 {
-
-		// Use this for initialization
-		void Start ()
-		{
+	public static int CalculateHash (object hashObject)
+	{
+		return CalculateHash(PurpleSerializer.ObjectToStringConverter (hashObject));
+	}
 	
-		}
-	
-		// Update is called once per frame
-		void Update ()
-		{
-	
-		}
+	public static int CalculateHash (string hashObject)
+	{
+		return hashObject.GetHashCode ();
+	}
 }
 
