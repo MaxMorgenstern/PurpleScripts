@@ -15,14 +15,14 @@ public class PurpleHash
 		return CalculateHash(PurpleSerializer.ObjectToStringConverter (hashObject), hashObject.ToString());
 	}
 	
-	public static string CalculateHash (string hashObject, string hashObjectType)
+	public static string CalculateHash (string hashObject, string salt)
 	{
-		return convert_string_to_MD5(hashObject.ToString() + hashObjectType.ToString());
+		return convert_string_to_MD5(hashObject + salt);
 	}
 
 	public static string CalculateHash (string hashObject)
 	{
-		return convert_string_to_MD5(hashObject.ToString());
+		return convert_string_to_MD5(hashObject);
 	}
 
 
