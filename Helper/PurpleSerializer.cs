@@ -10,6 +10,24 @@ public class PurpleSerializer
 {
 	// Formating
 	private static bool useJSONMessage = true;
+	public enum serializerFormat {XML, JSON};
+
+	public static bool SwitchFormat()
+	{
+		return SwitchFormat (serializerFormat.XML);
+	}
+	public static bool SwitchFormat(serializerFormat format)
+	{
+		if (format == serializerFormat.JSON)
+		{
+			useJSONMessage = true;
+		}
+		else if (format == serializerFormat.XML)
+		{
+			useJSONMessage = false;
+		}
+		return true;
+	}
 
 	// convert an object into a string
 	public static string ObjectToStringConverter(object message)
