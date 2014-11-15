@@ -17,7 +17,7 @@ public class PurpleStorageTest : MonoBehaviour
 	private string kb512_tempData;
 	private int count = 0;
 
-	private string keyPrefix = "key_";
+	// private string keyPrefix = "key_";
 
 	public void OnGUI() {
 		if (!startTesting)
