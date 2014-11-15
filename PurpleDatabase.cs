@@ -7,6 +7,10 @@
  * Also see: http://answers.unity3d.com/questions/379212/how-to-solve-the-error-type-or-namespace-systemdat.html
  */
 using UnityEngine;
+
+// TODO: not working in webplayer
+#if !UNITY_WEBPLAYER
+#endif
 using System;
 using System.Collections;
 using System.IO;
@@ -16,7 +20,6 @@ using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 
 // TODO: Work in progress
-
 namespace PurpleDatabase
 {
 	public class PurpleDatabase : MonoBehaviour {

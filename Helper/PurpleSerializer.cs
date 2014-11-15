@@ -14,7 +14,14 @@ public class PurpleSerializer
 
 	public static bool SwitchFormat()
 	{
-		return SwitchFormat (serializerFormat.XML);
+		if(useJSONMessage)
+		{
+			return SwitchFormat (serializerFormat.XML);
+		}
+		else 
+		{
+			return SwitchFormat (serializerFormat.JSON);
+		}
 	}
 	public static bool SwitchFormat(serializerFormat format)
 	{
