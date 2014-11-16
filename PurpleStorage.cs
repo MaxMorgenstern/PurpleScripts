@@ -24,8 +24,8 @@ namespace PurpleStorage
 		private static PurpleStorage instance;
 
 		private static string fileEnding;
-		private static string alternativePath;
-		private static bool forcePlayerPrefs;	
+		private static string filePath;	
+		private static bool forcePlayerPrefs;	// TODO - use
 		private static string metaObjectName;
 
 		private static bool usePlayerPrefs;		// TODO - what are we using atm?
@@ -36,14 +36,18 @@ namespace PurpleStorage
 			try{
 				fileEnding = "."+PurpleConfig.Storage.File.Extension.TrimStart('.');
 				forcePlayerPrefs = PurpleConfig.Storage.ForcePlayerPrefs;
-				alternativePath = PurpleConfig.Storage.File.AlternativePath;
+				filePath = PurpleConfig.Storage.File.AlternativePath;
 				metaObjectName = PurpleConfig.Storage.File.MetaName;
 			} catch(Exception e){
 				fileEnding = ".data";
 				forcePlayerPrefs = false;
-				alternativePath = String.Empty;
+				filePath = String.Empty;
 				metaObjectName = "purple_meta_object";
 				Debug.LogError("Can not read Purple Config! " + e.ToString());
+			}
+			if(String.IsNullOrEmpty(filePath))
+			{
+				filePath = Application.persistentDataPath;
 			}
 		}
 
@@ -112,7 +116,7 @@ namespace PurpleStorage
 			try
 			{
 				BinaryFormatter bf = new BinaryFormatter();
-				FileStream file = File.Create (Application.persistentDataPath + "/" + filename + fileEnding);
+				FileStream file = File.Create (filePath + "/" + filename + fileEnding);
 				bf.Serialize(file, data);
 				file.Close();
 				return true;
@@ -127,9 +131,9 @@ namespace PurpleStorage
 		private T load_binary_file<T>(string filename) 
 		{
 			if (String.IsNullOrEmpty (filename)) return default (T);
-			if(File.Exists(Application.persistentDataPath + "/" + filename + fileEnding)) {
+			if(File.Exists(filePath + "/" + filename + fileEnding)) {
 				BinaryFormatter bf = new BinaryFormatter();
-				FileStream file = File.Open(Application.persistentDataPath + "/" + filename + fileEnding, FileMode.Open);
+				FileStream file = File.Open(filePath + "/" + filename + fileEnding, FileMode.Open);
 				T data = (T)bf.Deserialize(file);
 				file.Close();
 				return data;
@@ -140,8 +144,8 @@ namespace PurpleStorage
 		private bool delete_binary_file(string filename)
 		{
 			if (String.IsNullOrEmpty (filename)) return false;
-			if (File.Exists (Application.persistentDataPath + "/" + filename + fileEnding)) {
-				File.Delete (Application.persistentDataPath + "/" + filename + fileEnding);
+			if (File.Exists (filePath + "/" + filename + fileEnding)) {
+				File.Delete (filePath + "/" + filename + fileEnding);
 				return true;
 			}
 			return false;
@@ -233,6 +237,15 @@ namespace PurpleStorage
 			return pf_object;
 		}
 
+		private PurpleMetaObject create_purple_meta_object(string filename)
+		{
+			PurpleMetaObject pm_object = new PurpleMetaObject ();
+			pm_object.updated = DateTime.Now;
+			return pm_object;
+		}
+
+			
+
 
 // TODO... combine with upper functions...
 		// TODO: meta object as file or player pref
@@ -295,7 +308,7 @@ namespace PurpleStorage
 		public string hashValue;
 
 		public DateTime updated;
-		public Array filelist;
+		public string[] filelist;		// TODO... length unknown
 	}
 
 	[Serializable]
