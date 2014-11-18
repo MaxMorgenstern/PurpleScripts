@@ -1,0 +1,15 @@
+15. Nov 2014 - 12:30
+
+Test:
+	- Webplayer
+	- Flash / Browser
+
+TODO:
+	- Exclude using UnityEditor for Webplayer
+	- Purple Database is not webplayer compatible - exclude!
+	- Add Platform Dependent Compilation for all classes needed!
+	- Commandline Test
+	- Commandline for Windows/Mac
+
+Issues:
+
