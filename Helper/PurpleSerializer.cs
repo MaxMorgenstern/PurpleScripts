@@ -23,6 +23,7 @@ public class PurpleSerializer
 			return SwitchFormat (serializerFormat.JSON);
 		}
 	}
+
 	public static bool SwitchFormat(serializerFormat format)
 	{
 		if (format == serializerFormat.JSON)
