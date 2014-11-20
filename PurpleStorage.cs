@@ -25,10 +25,9 @@ namespace PurpleStorage
 
 		private static string fileEnding;
 		private static string filePath;	
-		private static bool forcePlayerPrefs;	// TODO - use
+		private static bool forcePlayerPrefs;
 		private static string metaObjectName;
-
-		private static bool usePlayerPrefs;		// TODO - what are we using atm?
+		private static bool usePlayerPrefs;
 
 		// START UP /////////////////////////
 		protected PurpleStorage ()
@@ -45,6 +44,7 @@ namespace PurpleStorage
 				metaObjectName = "purple_meta_object";
 				Debug.LogError("Can not read Purple Config! " + e.ToString());
 			}
+			usePlayerPrefs = true;
 			if(String.IsNullOrEmpty(filePath))
 			{
 				filePath = Application.persistentDataPath;
@@ -69,43 +69,103 @@ namespace PurpleStorage
 
 		// PUBLIC FUNCTIONS /////////////////////////
 
+		public static bool SwitchPlayerPrefs()
+		{
+			if(usePlayerPrefs)
+			{
+				return SwitchPlayerPrefs (false);
+			}
+			else 
+			{
+				return SwitchPlayerPrefs (true);
+			}
+		}
+
+		public static bool SwitchPlayerPrefs(bool usePPref)
+		{
+			usePlayerPrefs = usePPref;
+			return usePlayerPrefs;
+		}
+
+
 		public static bool SaveFile(string filename, string data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			return Instance.save_binary_file (filename, fileData);
+			if(usePlayerPrefs)
+			{
+				return Instance.save_player_pref (filename, fileData);
+			} 
+			else 
+			{
+				return Instance.save_binary_file (filename, fileData);
+			}
 		}
 
 		public static bool SaveFile(string filename, object data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			return Instance.save_binary_file (filename, fileData);
+			if(usePlayerPrefs)
+			{
+				return Instance.save_player_pref (filename, fileData);
+			} 
+			else 
+			{
+				return Instance.save_binary_file (filename, fileData);
+			}
 		}
 
 		public static bool SaveFile(string filename, PurpleFileObject data)
 		{
-			return Instance.save_binary_file (filename, data);
+			if(usePlayerPrefs)
+			{
+				return Instance.save_player_pref(filename, data);
+			}
+			else
+			{
+				return Instance.save_binary_file (filename, data);
+			}
 		}
 
 
 		public static PurpleFileObject LoadFile(string filename)
 		{
-			return Instance.load_binary_file<PurpleFileObject> (filename);
+			if(usePlayerPrefs)
+			{
+				return Instance.load_player_pref<PurpleFileObject> (filename);
+			}
+			else
+			{
+				return Instance.load_binary_file<PurpleFileObject> (filename);
+			}
 		}
 
 		public static string LoadFileString(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_binary_file<PurpleFileObject> (filename);
+			PurpleFileObject pfo;
+			if(usePlayerPrefs)
+			{
+				pfo = Instance.load_player_pref<PurpleFileObject> (filename);
+			}
+			else
+			{
+				pfo = Instance.load_binary_file<PurpleFileObject> (filename);
+			}
 			return pfo.dataString;
 		}
 
 		public static object LoadFileObject(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_binary_file<PurpleFileObject> (filename);
+			PurpleFileObject pfo;
+			if(usePlayerPrefs)
+			{
+				pfo = Instance.load_player_pref<PurpleFileObject> (filename);
+			}
+			else
+			{
+				pfo = Instance.load_binary_file<PurpleFileObject> (filename);
+			}
 			return pfo.dataObject;
 		}
-
-
-
 
 
 		// PRIVATE FUNCTIONS /////////////////////////
