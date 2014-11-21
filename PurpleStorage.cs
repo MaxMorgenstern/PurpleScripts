@@ -24,7 +24,7 @@ namespace PurpleStorage
 		private static PurpleStorage instance;
 
 		private static string fileEnding;
-		private static string filePath;	
+		private static string filePath;
 		private static bool forcePlayerPrefs;
 		private static string metaObjectName;
 		private static bool usePlayerPrefs;
@@ -75,7 +75,7 @@ namespace PurpleStorage
 			{
 				return SwitchPlayerPrefs (false);
 			}
-			else 
+			else
 			{
 				return SwitchPlayerPrefs (true);
 			}
@@ -91,32 +91,19 @@ namespace PurpleStorage
 		public static bool SaveFile(string filename, string data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			if(usePlayerPrefs)
-			{
-				return Instance.save_player_pref (filename, fileData);
-			} 
-			else 
-			{
-				return Instance.save_binary_file (filename, fileData);
-			}
+			return SaveFile (filename, fileData);
 		}
 
 		public static bool SaveFile(string filename, object data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			if(usePlayerPrefs)
-			{
-				return Instance.save_player_pref (filename, fileData);
-			} 
-			else 
-			{
-				return Instance.save_binary_file (filename, fileData);
-			}
+			return SaveFile (filename, fileData);
 		}
 
 		public static bool SaveFile(string filename, PurpleFileObject data)
 		{
-			if(usePlayerPrefs)
+			// TODO - check if saving fails do falback!?
+			if(usePlayerPrefs || forcePlayerPrefs)
 			{
 				return Instance.save_player_pref(filename, data);
 			}
@@ -129,48 +116,49 @@ namespace PurpleStorage
 
 		public static PurpleFileObject LoadFile(string filename)
 		{
-			if(usePlayerPrefs)
-			{
-				return Instance.load_player_pref<PurpleFileObject> (filename);
-			}
-			else
-			{
-				return Instance.load_binary_file<PurpleFileObject> (filename);
-			}
+			return Instance.load_pfo_helper (filename, usePlayerPrefs);
 		}
 
 		public static string LoadFileString(string filename)
 		{
-			PurpleFileObject pfo;
-			if(usePlayerPrefs)
-			{
-				pfo = Instance.load_player_pref<PurpleFileObject> (filename);
-			}
-			else
-			{
-				pfo = Instance.load_binary_file<PurpleFileObject> (filename);
-			}
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs);
 			return pfo.dataString;
 		}
 
 		public static object LoadFileObject(string filename)
 		{
-			PurpleFileObject pfo;
-			if(usePlayerPrefs)
-			{
-				pfo = Instance.load_player_pref<PurpleFileObject> (filename);
-			}
-			else
-			{
-				pfo = Instance.load_binary_file<PurpleFileObject> (filename);
-			}
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs);
 			return pfo.dataObject;
+		}
+
+		public static PurpleFileObject LoadPlayerPref(string filename)
+		{
+			return Instance.load_pfo_helper (filename, true);
+		}
+
+		public static PurpleFileObject LoadBinaryFile(string filename)
+		{
+			return Instance.load_pfo_helper (filename, false);
 		}
 
 
 		// PRIVATE FUNCTIONS /////////////////////////
 
-		private bool save_binary_file<T>(string filename, T data) 
+		private PurpleFileObject load_pfo_helper(string filename, bool usePPref)
+		{
+			PurpleFileObject pfo;
+			if(usePPref)
+			{
+				pfo = load_player_pref<PurpleFileObject> (filename);
+			}
+			else
+			{
+				pfo = load_binary_file<PurpleFileObject> (filename);
+			}
+			return pfo;
+		}
+
+		private bool save_binary_file<T>(string filename, T data)
 		{
 			if (String.IsNullOrEmpty (filename)) return false;
 			try
@@ -180,15 +168,15 @@ namespace PurpleStorage
 				bf.Serialize(file, data);
 				file.Close();
 				return true;
-			} 
+			}
 			catch (Exception ex)
 			{
-				Debug.Log("an not save file: " + ex);
+				Debug.Log("Can not save file: " + ex);
 			}
 			return false;
 		}
 
-		private T load_binary_file<T>(string filename) 
+		private T load_binary_file<T>(string filename)
 		{
 			if (String.IsNullOrEmpty (filename)) return default (T);
 			if(File.Exists(filePath + "/" + filename + fileEnding)) {
@@ -219,12 +207,12 @@ namespace PurpleStorage
 		{
 			if (String.IsNullOrEmpty (filename)) return false;
 			string data_string = _PurpleSerializer.ObjectToStringConverter (data);
-			try 
+			try
 			{
 				PlayerPrefs.SetString(filename, data_string);
 				return true;
 			}
-			catch (PlayerPrefsException ex) 
+			catch (PlayerPrefsException ex)
 			{
 				Debug.Log("Can not save PlayerPref: " + ex);
 			}
@@ -241,23 +229,24 @@ namespace PurpleStorage
 			try
 			{
 				return _PurpleSerializer.StringToObjectConverter<T> (data_string);
-			} 
+			}
 			catch(PurpleException ex)
 			{
 				Debug.LogError("Can not convert PurpleFileObject " + ex);
 			}
 			return default (T);
 		}
-		
+
 		// TODO: Test
 		private bool delete_player_pref(string filename)
 		{
 			if (String.IsNullOrEmpty (filename)) return false;
 			if(!PlayerPrefs.HasKey (filename)) return false;
-			try{
+			try
+			{
 				PlayerPrefs.DeleteKey (filename);
 				return true;
-			} 
+			}
 			catch (Exception ex)
 			{
 				Debug.LogError("Can not delete PlayerPref " + ex);
@@ -304,7 +293,7 @@ namespace PurpleStorage
 			return pm_object;
 		}
 
-			
+
 
 
 // TODO... combine with upper functions...
@@ -314,7 +303,7 @@ namespace PurpleStorage
 		private bool update_meta_object(string fileName)
 		{
 			PurpleMetaObject tmp_meta_object = load_meta_object ();
-			if (tmp_meta_object != null) 
+			if (tmp_meta_object != null)
 			{
 				// TODO
 
@@ -327,12 +316,12 @@ namespace PurpleStorage
 		private bool save_meta_object(PurpleMetaObject metaObject)
 		{
 			string data = _PurpleSerializer.ObjectToStringConverter (metaObject);
-			try 
+			try
 			{
 				PlayerPrefs.SetString(metaObjectName, data);
 				return true;
 			}
-			catch (PlayerPrefsException ex) 
+			catch (PlayerPrefsException ex)
 			{
 				Debug.Log("Got: " + ex);
 			}
@@ -349,7 +338,7 @@ namespace PurpleStorage
 					purpleObjectString = PlayerPrefs.GetString (metaObjectName);
 					return _PurpleSerializer.StringToObjectConverter<PurpleMetaObject> (purpleObjectString);
 				}
-			} 
+			}
 			catch(PurpleException ex)
 			{
 				Debug.LogWarning("Can not convert meta data object! " + ex);
