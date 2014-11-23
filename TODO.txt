@@ -10,6 +10,8 @@ TODO:
 	- Add Platform Dependent Compilation for all classes needed!
 	- Commandline Test
 	- Commandline for Windows/Mac
+	- Licensing class
+		- integration for other classes
 
 Issues:
 
