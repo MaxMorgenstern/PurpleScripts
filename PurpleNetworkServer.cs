@@ -26,7 +26,7 @@ namespace PurpleNetwork
 		}
 
 		public enum ServerType { Account, /*Lobby,*/ Game, Multi, Monitoring };
-		private Config stdServerConfig;
+		private Config stdServerConfig;	
 
 		private static PurpleServer instance;
 
@@ -36,6 +36,7 @@ namespace PurpleNetwork
 		{
 			stdServerConfig = new Config ();
 			// TODO
+			Debug.Log (stdServerConfig);
 		}
 
 
