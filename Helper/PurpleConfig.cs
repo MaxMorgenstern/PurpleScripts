@@ -61,4 +61,10 @@ namespace PurpleConfig
 			public static int Index { get { return ItemIds.getConfigInt ("Password.PBKDF2.Index"); } }
 		}
 	}
+
+	// License /////////////////////////
+	public static class License {
+		public static int KeySize { get { return ItemIds.getConfigInt ("License.KeySize"); } }
+		public static string CryptoConfig { get { return ItemIds.getConfigString ("License.CryptoConfig"); } }
+	}
 }
