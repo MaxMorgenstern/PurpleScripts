@@ -9,6 +9,7 @@ using UnityEngine;
 
 // TODO : a lot!
 using System.Text;
+using System.Collections.Generic;
 
 namespace PurpleLicense
 {
@@ -47,8 +48,8 @@ namespace PurpleLicense
 				{
 					GameObject gameObject 	= new GameObject ("PurpleLicenseManager");
 					instance     			= gameObject.AddComponent<PurpleLicense> ();
+					instance.create_new_key_pair();
 				}
-				instance.create_new_key_pair();
 				return instance;
 			}
 		}
@@ -82,7 +83,6 @@ namespace PurpleLicense
 
 
 		// PUBLIC ////////////////////////////
-
 		public static void CreateKeyPair()
 		{
 			Instance.create_new_key_pair (keySize);
@@ -96,6 +96,24 @@ namespace PurpleLicense
 		public static void SetLicenseKey(string XMLKey)
 		{
 			Instance.set_key_pair_from_xml (XMLKey);
+		}
+
+		
+		// License Term ////////////////////////////
+
+		public static LicenseTerm CreateLicenseTerm(DateTime start, DateTime end, string name, string key)
+		{
+			return Instance.create_license_term (start, end, name, key);
+		}
+		
+		public static bool ValidateLicenseTerm (LicenseTerm licenseTerm)
+		{
+			return Instance.validate_license_term (licenseTerm);
+		}
+		
+		public static string GetLicenseTermKey(LicenseTerm licenseTerm)
+		{
+			return Instance.get_license_term_key (licenseTerm);
 		}
 
 
@@ -121,6 +139,9 @@ namespace PurpleLicense
 			_rsaPublicKey = _rsaProvider.ToXmlString(false);
 		}
 
+
+		// Hash + Crypting ////////////////////////////
+
 		private string sign_data_base64(string data)
 		{
 			var dataToSign = Encoding.UTF8.GetBytes(data);
@@ -143,6 +164,38 @@ namespace PurpleLicense
 			return Encoding.UTF8.GetString(_rsaProvider.Decrypt(System.Convert.FromBase64String(data), false));
 		}
 
+		
+		// License Term ////////////////////////////
+
+		private LicenseTerm create_license_term(DateTime start, DateTime end, string name, string key)
+		{
+			LicenseTerm lt = new LicenseTerm (){
+				StartDate = start,
+				EndDate = end,
+				Name = name,
+				Key = encrypt_data_base64(key)
+			};
+			lt.Base64Hash = sign_data_base64 (lt.GetReferenceString ());
+			return lt;
+		}
+		
+		private string get_license_term_key(LicenseTerm license)
+		{
+			if(validate_license_term(license))
+			{
+				return decrypt_data_base64(license.Key);
+			}
+			return String.Empty;
+		}
+		
+		private bool validate_license_term(LicenseTerm license)
+		{
+			if(license.StartDate <= DateTime.Now && license.EndDate >= DateTime.Now)
+			{
+				return validate_data (license.GetReferenceString (), license.Base64Hash);
+			}
+			return false;
+		}
 
 
 
@@ -203,36 +256,52 @@ namespace PurpleLicense
 
 
 
-		public static bool ValidateLicense (License license)
+
+		public static void Test()
 		{
-			return true;
+			Instance.test ();
 		}
 
-
-
-		public static LicenseTerm CreateLicenseTerm(DateTime start, DateTime end, string name, string key)
+		private void test()
 		{
-			return Instance.create_license_term (start, end, name, key);
+			LicenseTerm ltOne = create_license_term(DateTime.MinValue, DateTime.MaxValue, "DummynameOne", "DummykeyOne");
+			LicenseTerm ltTwo = create_license_term(DateTime.MinValue, DateTime.MaxValue, "DummynameTwo", "DummykeyTwo");
+			LicenseTerm ltdummy = create_license_term(DateTime.MinValue, DateTime.MaxValue, "DummynameDummy", "DummykeyDummy");
+
+			License li = create_license ("Dummyname");
+			
+			li = add_term (li, ltOne);
+			Debug.Log (li.GetReferenceString());
+
+			li = add_term (li, ltTwo);
+			Debug.Log (li.GetReferenceString());
+
+			li = add_term (li, ltdummy);
+			Debug.Log (li.GetReferenceString());
 		}
 
-		public static string GetLicenseTermKey(LicenseTerm license)
-		{
-			return Instance.get_license_key (license);
-		}
+		// License ////////////////////////////
 		
-		
-		private LicenseTerm create_license_term(DateTime start, DateTime end, string name, string key)
+		private License create_license(string name)
 		{
-			LicenseTerm lt = new LicenseTerm (){
-				StartDate = start,
-				EndDate = end,
-				Name = name,
-				Key = encrypt_data_base64(key)
+			License li = new License (){
+				Name = name
 			};
-			lt.Base64Hash = sign_data_base64 (lt.GetLicenseDetails ());
-			return lt;
+			li.Base64Hash = sign_data_base64 (li.GetReferenceString ());
+			return li;
 		}
 
+		private License add_term(License license, LicenseTerm licenseTerm)
+		{
+			license.AddTerm (licenseTerm);
+			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
+			return license;
+		}
+
+		// validate
+		// get term
+
+		/*
 		private string get_license_key(LicenseTerm license)
 		{
 			if(validate_license_term(license))
@@ -241,17 +310,17 @@ namespace PurpleLicense
 			}
 			return String.Empty;
 		}
-
-		private bool validate_license_term(LicenseTerm license)
+		
+		private bool validate_license(LicenseTerm license)
 		{
 			if(license.StartDate <= DateTime.Now && license.EndDate >= DateTime.Now)
 			{
-				// TODO: this has an error
-				return validate_data (license.GetLicenseDetails (), license.Base64Hash);
+				return validate_data (license.GetReferenceString (), license.Base64Hash);
 			}
 			return false;
 		}
-		
+		*/
+
 		
 	}
 
@@ -259,11 +328,42 @@ namespace PurpleLicense
 	[Serializable]
 	public class License
 	{
-		public string LicenseTerms;
-		public string Signature;
-		public string Name;
+		public List<LicenseTerm> LicenseTermList = new List<LicenseTerm>();
 
-		public String Base64Hash;
+		public string Name;
+		public string Base64Hash;
+
+
+		public void AddTerm(LicenseTerm licenseTerm)
+		{
+			LicenseTermList.Add (licenseTerm);
+		}
+
+		public void RemoveTerm(LicenseTerm licenseTerm)
+		{
+			//LicenseTermList.Add (licenseTerm);
+		}
+
+		public string GetReferenceString()
+		{
+			return GetReferenceString (false);
+		}
+		
+		public string GetReferenceString(bool extended)
+		{
+			string termDetails = String.Empty;
+			var salt = String.Empty;
+			if(extended)
+			{
+				salt = Base64Hash;
+			}
+
+			foreach (LicenseTerm lt in LicenseTermList)
+			{
+				termDetails += lt.GetReferenceString(true);
+			}
+			return Name + termDetails + salt;
+		}
 	}
 
 	
@@ -278,11 +378,22 @@ namespace PurpleLicense
 
 		public String Base64Hash;
 
-		public string GetLicenseDetails()
+		public string GetReferenceString()
 		{
+			return GetReferenceString (false);
+		}
+
+		public string GetReferenceString(bool extended)
+		{
+			var salt = String.Empty;
+			if(extended)
+			{
+				salt = Base64Hash;
+			}
+
 			string sd = StartDate.ToLongTimeString ();
 			string ed = EndDate.ToLongTimeString ();
-			string termDetails = sd + Name + Key + ed;
+			string termDetails = sd + Name + Key + salt + ed;
 			return System.Convert.ToBase64String (Encoding.UTF8.GetBytes(termDetails));
 		}
 	}
