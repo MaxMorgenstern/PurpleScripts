@@ -119,6 +119,7 @@ namespace PurpleLicense
 
 
 		// PRIVATE ////////////////////////////
+
 		private void create_new_key_pair()
 		{
 			create_new_key_pair (keySize);
@@ -204,54 +205,6 @@ namespace PurpleLicense
 
 
 
-		/*
-		public static License CreateLicense (DateTime start, DateTime end, String productName, String userName, String privateKey)
-		{
-			LicenseTerm terms = new LicenseTerm()
-			{
-				StartDate = start,
-				EndDate = end,
-				Name = productName
-			};
-
-			DSACryptoServiceProvider dsa = new DSACryptoServiceProvider();
-
-			dsa.FromXmlString(privateKey);
-
-			byte[] license = terms.GetLicenseData_OLD();
-
-			byte[] signature = dsa.SignData(license);
-			
-			return new License()
-			{
-				LicenseTerms = Convert.ToBase64String(license),
-				Signature = Convert.ToBase64String(signature)
-			};
-		}
-		*/
-
-
-
-		/*
-		public static LicenseTerm GetLicenseDetails (License license, String publicKey)
-		{
-			DSACryptoServiceProvider dsa = new DSACryptoServiceProvider();
-			dsa.FromXmlString(publicKey);
-			
-			byte[] terms = Convert.FromBase64String(license.LicenseTerms);
-			
-			byte[] signature = Convert.FromBase64String(license.Signature);
-			
-			if (dsa.VerifyData(terms, signature))
-			{
-				return LicenseTerm.FromString(license.LicenseTerms);
-			}
-			else
-			{
-				throw new SecurityException("Signature Not Verified!");
-			}
-		}
-		*/
 
 
 
@@ -269,16 +222,24 @@ namespace PurpleLicense
 			LicenseTerm ltdummy = create_license_term(DateTime.MinValue, DateTime.MaxValue, "DummynameDummy", "DummykeyDummy");
 
 			License li = create_license ("Dummyname");
-			
 			li = add_term (li, ltOne);
-			Debug.Log (li.GetReferenceString());
-
 			li = add_term (li, ltTwo);
-			Debug.Log (li.GetReferenceString());
-
 			li = add_term (li, ltdummy);
 			Debug.Log (li.GetReferenceString());
+
+			li = remove_term (li, "DummynameTwo");
+
+			Debug.LogWarning (validate_license(li));
+
+			List<LicenseTerm> ltlist = get_license_terms (li);
+
+			foreach (LicenseTerm lt in ltlist)
+			{
+				Debug.Log (lt.Name);
+			}
 		}
+		// TODO: add public methods
+
 
 		// License ////////////////////////////
 		
@@ -298,28 +259,32 @@ namespace PurpleLicense
 			return license;
 		}
 
-		// validate
-		// get term
+		private License remove_term(License license, LicenseTerm licenseTerm)
+		{
+			return remove_term (license, licenseTerm.Name);
+		}
 
-		/*
-		private string get_license_key(LicenseTerm license)
+		private License remove_term(License license, string licenseName)
 		{
-			if(validate_license_term(license))
-			{
-				return decrypt_data_base64(license.Key);
-			}
-			return String.Empty;
+			license.RemoveTerm (licenseName);
+			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
+			return license;
 		}
-		
-		private bool validate_license(LicenseTerm license)
+
+		private bool validate_license(License license)
 		{
-			if(license.StartDate <= DateTime.Now && license.EndDate >= DateTime.Now)
-			{
-				return validate_data (license.GetReferenceString (), license.Base64Hash);
-			}
-			return false;
+			return validate_data (license.GetReferenceString (), license.Base64Hash);
 		}
-		*/
+
+		private List<LicenseTerm> get_license_terms(License license)
+		{
+			if(validate_license(license))
+			{
+				// TODO: validate terms
+				return license.GetLicenseTermList();
+			}
+			return null;
+		}
 
 		
 	}
@@ -328,20 +293,19 @@ namespace PurpleLicense
 	[Serializable]
 	public class License
 	{
-		public List<LicenseTerm> LicenseTermList = new List<LicenseTerm>();
+		private List<LicenseTerm> LicenseTermList = new List<LicenseTerm>();
 
 		public string Name;
 		public string Base64Hash;
-
 
 		public void AddTerm(LicenseTerm licenseTerm)
 		{
 			LicenseTermList.Add (licenseTerm);
 		}
 
-		public void RemoveTerm(LicenseTerm licenseTerm)
+		public void RemoveTerm(string licenseName)
 		{
-			//LicenseTermList.Add (licenseTerm);
+			LicenseTermList.Remove (LicenseTermList.Find (x => x.Name == licenseName));
 		}
 
 		public string GetReferenceString()
@@ -363,6 +327,11 @@ namespace PurpleLicense
 				termDetails += lt.GetReferenceString(true);
 			}
 			return Name + termDetails + salt;
+		}
+
+		public List<LicenseTerm> GetLicenseTermList()
+		{
+			return LicenseTermList;
 		}
 	}
 

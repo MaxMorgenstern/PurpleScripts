@@ -66,5 +66,10 @@ namespace PurpleConfig
 	public static class License {
 		public static int KeySize { get { return ItemIds.getConfigInt ("License.KeySize"); } }
 		public static string CryptoConfig { get { return ItemIds.getConfigString ("License.CryptoConfig"); } }
+
+		public static class XMLKey {
+			public static string Private { get { return ItemIds.getConfigString ("License.XMLKey.Private"); } }
+			public static string Public { get { return ItemIds.getConfigString ("License.XMLKey.Public"); } }
+		}
 	}
 }
