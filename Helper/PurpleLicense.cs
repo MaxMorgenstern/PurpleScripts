@@ -99,7 +99,12 @@ namespace PurpleLicense
 		}
 
 		
-		// License Term ////////////////////////////
+		// LICENSE ////////////////////////////
+
+		// TODO:
+
+
+		// LICENSE TERMS ////////////////////////////
 
 		public static LicenseTerm CreateLicenseTerm(DateTime start, DateTime end, string name, string key)
 		{
@@ -115,6 +120,7 @@ namespace PurpleLicense
 		{
 			return Instance.get_license_term_key (licenseTerm);
 		}
+
 
 
 
@@ -166,6 +172,59 @@ namespace PurpleLicense
 		}
 
 		
+		// License ////////////////////////////
+		
+		private License create_license(string name)
+		{
+			License li = new License (){
+				Name = name
+			};
+			li.Base64Hash = sign_data_base64 (li.GetReferenceString ());
+			return li;
+		}
+		
+		private License add_term(License license, LicenseTerm licenseTerm)
+		{
+			license.AddTerm (licenseTerm);
+			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
+			return license;
+		}
+		
+		private License remove_term(License license, LicenseTerm licenseTerm)
+		{
+			return remove_term (license, licenseTerm.Name);
+		}
+		
+		private License remove_term(License license, string licenseName)
+		{
+			license.RemoveTerm (licenseName);
+			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
+			return license;
+		}
+		
+		private bool validate_license(License license)
+		{
+			return validate_data (license.GetReferenceString (), license.Base64Hash);
+		}
+		
+		private List<LicenseTerm> get_license_terms(License license)
+		{
+			List<LicenseTerm> returnList = new List<LicenseTerm>();
+			if(validate_license(license))
+			{
+				List<LicenseTerm> ltlist = license.GetLicenseTermList();
+				foreach (LicenseTerm lt in ltlist)
+				{
+					if(validate_license_term(lt))
+					{
+						returnList.Add(lt);
+					}
+				}
+			}
+			return returnList;
+		}
+
+
 		// License Term ////////////////////////////
 
 		private LicenseTerm create_license_term(DateTime start, DateTime end, string name, string key)
@@ -198,95 +257,6 @@ namespace PurpleLicense
 			return false;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-		public static void Test()
-		{
-			Instance.test ();
-		}
-
-		private void test()
-		{
-			LicenseTerm ltOne = create_license_term(DateTime.MinValue, DateTime.MaxValue, "DummynameOne", "DummykeyOne");
-			LicenseTerm ltTwo = create_license_term(DateTime.MinValue, DateTime.MaxValue, "DummynameTwo", "DummykeyTwo");
-			LicenseTerm ltdummy = create_license_term(DateTime.MinValue, DateTime.MaxValue, "DummynameDummy", "DummykeyDummy");
-
-			License li = create_license ("Dummyname");
-			li = add_term (li, ltOne);
-			li = add_term (li, ltTwo);
-			li = add_term (li, ltdummy);
-			Debug.Log (li.GetReferenceString());
-
-			li = remove_term (li, "DummynameTwo");
-
-			Debug.LogWarning (validate_license(li));
-
-			List<LicenseTerm> ltlist = get_license_terms (li);
-
-			foreach (LicenseTerm lt in ltlist)
-			{
-				Debug.Log (lt.Name);
-			}
-		}
-		// TODO: add public methods
-
-
-		// License ////////////////////////////
-		
-		private License create_license(string name)
-		{
-			License li = new License (){
-				Name = name
-			};
-			li.Base64Hash = sign_data_base64 (li.GetReferenceString ());
-			return li;
-		}
-
-		private License add_term(License license, LicenseTerm licenseTerm)
-		{
-			license.AddTerm (licenseTerm);
-			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
-			return license;
-		}
-
-		private License remove_term(License license, LicenseTerm licenseTerm)
-		{
-			return remove_term (license, licenseTerm.Name);
-		}
-
-		private License remove_term(License license, string licenseName)
-		{
-			license.RemoveTerm (licenseName);
-			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
-			return license;
-		}
-
-		private bool validate_license(License license)
-		{
-			return validate_data (license.GetReferenceString (), license.Base64Hash);
-		}
-
-		private List<LicenseTerm> get_license_terms(License license)
-		{
-			if(validate_license(license))
-			{
-				// TODO: validate terms
-				return license.GetLicenseTermList();
-			}
-			return null;
-		}
-
-		
 	}
 
 
