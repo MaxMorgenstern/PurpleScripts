@@ -101,7 +101,35 @@ namespace PurpleLicense
 		
 		// LICENSE ////////////////////////////
 
-		// TODO:
+		public static License CreateLicense(string name)
+		{
+			return Instance.create_license (name);
+		}
+
+		public static License AddTerm(License license, LicenseTerm licenseTerm)
+		{
+			return Instance.add_term (license, licenseTerm); 
+		}
+
+		public static License RemoveTerm(License license, string term)
+		{
+			return Instance.remove_term (license, term);
+		}
+
+		public static License RemoveTerm(License license, LicenseTerm term)
+		{
+			return Instance.remove_term (license, term);
+		}
+
+		public static bool ValidateLicense(License license)
+		{
+			return Instance.validate_license (license);
+		}
+
+		public static List<LicenseTerm> GetLicenseTerms(License license)
+		{
+			return Instance.get_license_terms (license);
+		}
 
 
 		// LICENSE TERMS ////////////////////////////
@@ -120,7 +148,6 @@ namespace PurpleLicense
 		{
 			return Instance.get_license_term_key (licenseTerm);
 		}
-
 
 
 
@@ -173,7 +200,7 @@ namespace PurpleLicense
 
 		
 		// License ////////////////////////////
-		
+
 		private License create_license(string name)
 		{
 			License li = new License (){
@@ -256,7 +283,6 @@ namespace PurpleLicense
 			}
 			return false;
 		}
-
 	}
 
 
@@ -337,4 +363,3 @@ namespace PurpleLicense
 		}
 	}
 }
-
