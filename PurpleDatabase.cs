@@ -6,18 +6,19 @@
  *
  * Also see: http://answers.unity3d.com/questions/379212/how-to-solve-the-error-type-or-namespace-systemdat.html
  */
-using UnityEngine;
-
-// TODO: not working in webplayer
-#if !UNITY_WEBPLAYER
-#endif
 using System;
 using System.Collections;
-using System.IO;
+using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.Text.RegularExpressions;
 using MySql.Data;
 using MySql.Data.MySqlClient;
-using System.Collections.Generic;
+using UnityEngine;
+
+#if !UNITY_WEBPLAYER
+#endif
+
 
 // TODO: Work in progress
 namespace PurpleDatabase
@@ -88,9 +89,9 @@ namespace PurpleDatabase
 		}
 
 
+		// HELPER ////////////////////////////
 
-		/*
-		public static string MySQLEscape(string str)
+		public static string my_SQL_escape(string str)
 		{
 			return Regex.Replace(str, @"[\x00'""\b\n\r\t\cZ\\%_]",
 			                     delegate(Match match)
@@ -115,7 +116,7 @@ namespace PurpleDatabase
 				}
 			});
 		}
-		*/
+
 		
 		
 	
@@ -213,7 +214,52 @@ namespace PurpleDatabase
 		*/
 
 
+		// CREATE, INSERT, UPDATE, and DELETE
+		private void sql_write_statement(string query)
+		{
+			if (open_connection () == true) {
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand (query, connection);
+					cmd.ExecuteNonQuery ();
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError("Can not execute query. " + ex.ToString());
+				}
+				close_connection ();
+			}
+		}
 
+		// SELECT
+		private void sql_read_statement(string query)
+		{
+			if (open_connection () == true) {
+				MySqlDataReader reader = null;
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand (query, connection);
+					reader = cmd.ExecuteReader ();
+					while (reader.Read()) 
+					{
+						// TODO				row 0						row 1
+						//Debug.Log(reader.GetInt32(0) + ": "  + reader.GetString(1));
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError("Can not execute query. " + ex.ToString());
+				} 
+				finally 
+				{
+					if (reader != null) 
+					{
+						reader.Close();
+					}
+				}
+				close_connection ();
+			}
+		}
 
 
 
@@ -239,6 +285,7 @@ namespace PurpleDatabase
 				}
 				catch (Exception ex)
 				{
+					connection = null;
 					Debug.Log(ex.ToString());
 				}
 			}
@@ -272,10 +319,11 @@ namespace PurpleDatabase
 						break;
 					
 					default:
-						Debug.Log (ex);
+						Debug.Log (ex.Message);
 						Debug.Log (ex.Number);
 						break;
-					}
+				}
+				connection = null;
 				return false;
 			}
 		}
@@ -291,6 +339,7 @@ namespace PurpleDatabase
 			catch (MySqlException ex)
 			{
 				Debug.Log(ex.Message);
+				connection = null;
 				return false;
 			}
 		}
