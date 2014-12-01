@@ -1,15 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
 using System.Security.Cryptography;
-using UnityEngine;
-
-// TODO : a lot!
 using System.Text;
-using System.Collections.Generic;
+using UnityEngine;
 
 namespace PurpleLicense
 {
@@ -18,9 +16,9 @@ namespace PurpleLicense
 		private static RSACryptoServiceProvider _rsaProvider;
 		private static string _rsaPrivateKey;
 		private static string _rsaPublicKey;
-		
+
 		private static PurpleLicense instance;
-		
+
 		private static int keySize;
 		private static string cryptoConfig;
 
@@ -92,13 +90,13 @@ namespace PurpleLicense
 		{
 			Instance.create_new_key_pair (keySize);
 		}
-		
+
 		public static void SetLicenseKey(string XMLKey)
 		{
 			Instance.set_key_pair_from_xml (XMLKey);
 		}
 
-		
+
 		// LICENSE ////////////////////////////
 
 		public static License CreateLicense(string name)
@@ -108,7 +106,7 @@ namespace PurpleLicense
 
 		public static License AddTerm(License license, LicenseTerm licenseTerm)
 		{
-			return Instance.add_term (license, licenseTerm); 
+			return Instance.add_term (license, licenseTerm);
 		}
 
 		public static License RemoveTerm(License license, string term)
@@ -138,12 +136,12 @@ namespace PurpleLicense
 		{
 			return Instance.create_license_term (start, end, name, key);
 		}
-		
+
 		public static bool ValidateLicenseTerm (LicenseTerm licenseTerm)
 		{
 			return Instance.validate_license_term (licenseTerm);
 		}
-		
+
 		public static string GetLicenseTermKey(LicenseTerm licenseTerm)
 		{
 			return Instance.get_license_term_key (licenseTerm);
@@ -157,7 +155,7 @@ namespace PurpleLicense
 		{
 			create_new_key_pair (keySize);
 		}
-		
+
 		private void create_new_key_pair(int keySize)
 		{
 			_rsaProvider = new RSACryptoServiceProvider(keySize);
@@ -184,7 +182,7 @@ namespace PurpleLicense
 		}
 
 		private bool validate_data(string data, string base64SignedData)
-		{	
+		{
 			return _rsaProvider.VerifyData (Encoding.UTF8.GetBytes (data), CryptoConfig.CreateFromName (cryptoConfig), System.Convert.FromBase64String (base64SignedData));
 		}
 
@@ -198,7 +196,7 @@ namespace PurpleLicense
 			return Encoding.UTF8.GetString(_rsaProvider.Decrypt(System.Convert.FromBase64String(data), false));
 		}
 
-		
+
 		// License ////////////////////////////
 
 		private License create_license(string name)
@@ -209,31 +207,31 @@ namespace PurpleLicense
 			li.Base64Hash = sign_data_base64 (li.GetReferenceString ());
 			return li;
 		}
-		
+
 		private License add_term(License license, LicenseTerm licenseTerm)
 		{
 			license.AddTerm (licenseTerm);
 			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
 			return license;
 		}
-		
+
 		private License remove_term(License license, LicenseTerm licenseTerm)
 		{
 			return remove_term (license, licenseTerm.Name);
 		}
-		
+
 		private License remove_term(License license, string licenseName)
 		{
 			license.RemoveTerm (licenseName);
 			license.Base64Hash = sign_data_base64 (license.GetReferenceString ());
 			return license;
 		}
-		
+
 		private bool validate_license(License license)
 		{
 			return validate_data (license.GetReferenceString (), license.Base64Hash);
 		}
-		
+
 		private List<LicenseTerm> get_license_terms(License license)
 		{
 			List<LicenseTerm> returnList = new List<LicenseTerm>();
@@ -265,7 +263,7 @@ namespace PurpleLicense
 			lt.Base64Hash = sign_data_base64 (lt.GetReferenceString ());
 			return lt;
 		}
-		
+
 		private string get_license_term_key(LicenseTerm license)
 		{
 			if(validate_license_term(license))
@@ -274,7 +272,7 @@ namespace PurpleLicense
 			}
 			return String.Empty;
 		}
-		
+
 		private bool validate_license_term(LicenseTerm license)
 		{
 			if(license.StartDate <= DateTime.Now && license.EndDate >= DateTime.Now)
@@ -308,7 +306,7 @@ namespace PurpleLicense
 		{
 			return GetReferenceString (false);
 		}
-		
+
 		public string GetReferenceString(bool extended)
 		{
 			string termDetails = String.Empty;
@@ -331,7 +329,7 @@ namespace PurpleLicense
 		}
 	}
 
-	
+
 	[Serializable]
 	public class LicenseTerm
 	{

@@ -89,64 +89,6 @@ namespace PurpleDatabase
 
 
 
-		public void New()
-		{
-			
-		}
-
-		public void Execute()
-		{
-			
-		}
-		
-		public void SQL()
-		{
-			
-		}
-
-
-		public void Select()
-		{
-			
-		}
-		
-		public void From()
-		{
-			
-		}
-
-		public void Where()
-		{
-			
-		}
-
-		public void Limit()
-		{
-			
-		}
-
-		public void Offset()
-		{
-			
-		}
-
-		
-		public void Update()
-		{
-			
-		}
-		
-		public void Set()
-		{
-			
-		}
-
-		
-		public void Delete()
-		{
-			
-		}
-
 		/*
 		public static string MySQLEscape(string str)
 		{
@@ -176,21 +118,7 @@ namespace PurpleDatabase
 		*/
 		
 		
-
-		
-		/*
-
-		TableNameFromUserInput
-
-		string mysqlstring = @"Unescaped but with at";
-
-		Idea:
-		dbConnection.select("age").from("user").where("name = 'Max'").execute();	SELECT age FROM user WHERE name = 'Max';
-		dbConnection.from("account").execute();										SELECT * FROM account;
-		dbConnection.sql("SELECT * FROM dummy LIMIT 5;");
-		 */
-
-
+	
 		/*
 		// move to network manager
 		private bool checkLogin(string username, string password){
