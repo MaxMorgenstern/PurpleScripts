@@ -120,98 +120,10 @@ namespace PurpleDatabase
 		
 		
 	
-		/*
-		// move to network manager
-		private bool checkLogin(string username, string password){
-
-			string pwDatabaseHash = "dummy";
-
-			PurplePassword pm = new PurplePassword ();
-			bool pwValid = pm.ValidatePassword (password, pwDatabaseHash);
-			return pwValid;
-		}
 
 
-		// TODO - make all statements dynamic
-		//Select statement
-		public List< string >[] SelectStatement()
-		{
-			string query = "SELECT * FROM `one`"; // select statement
 
-			//Create a list to store the result
-			List< string >[] list = new List< string >[3];
-			list[0] = new List< string >();
-			list[1] = new List< string >();
-			list[2] = new List< string >();
 
-			if (open_connection() == true)
-			{
-				MySqlCommand cmd = new MySqlCommand(query, connection);
-				MySqlDataReader dataReader = cmd.ExecuteReader();
-
-				//Read the data and store them in the list
-				while (dataReader.Read())
-				{
-					list[0].Add(dataReader["id"] + "");
-					list[1].Add(dataReader["name"] + "");
-					list[2].Add(dataReader["counter"] + "");
-					Debug.Log (dataReader["id"] + " " + dataReader["name"] + " " + dataReader["counter"]);
-				}
-
-				dataReader.Close();
-				close_connection();
-
-				return list;
-			}
-			else
-			{
-				return list;
-			}
-		}
-
-		// Insert statement
-		private void InsertStatement()
-		{
-			string query = ""; // Insert query
-
-			if (open_connection () == true) {
-				MySqlCommand cmd = new MySqlCommand (query, connection);
-
-				cmd.ExecuteNonQuery ();
-				close_connection ();
-			}
-		}
-
-		//Update statement
-		private void UpdateStatement()
-		{
-			string query = ""; // Update query
-
-			if (open_connection() == true)
-			{
-				MySqlCommand cmd = new MySqlCommand();
-				cmd.CommandText = query;
-				cmd.Connection = connection;
-
-				cmd.ExecuteNonQuery();
-				close_connection();
-			}
-		}
-
-		//Delete statement
-		private void DeleteStatement()
-		{
-			string query = ""; // Delete query
-
-			if (open_connection() == true)
-			{
-				MySqlCommand cmd = new MySqlCommand(query, connection);
-
-				cmd.ExecuteNonQuery();
-				close_connection();
-			}
-		}
-		*/
 
 
 		// CREATE, INSERT, UPDATE, and DELETE
@@ -234,16 +146,36 @@ namespace PurpleDatabase
 		// SELECT
 		private void sql_read_statement(string query)
 		{
+			int col_count = 0;
+			int row_count = 0;
 			if (open_connection () == true) {
 				MySqlDataReader reader = null;
 				try
 				{
 					MySqlCommand cmd = new MySqlCommand (query, connection);
 					reader = cmd.ExecuteReader ();
-					while (reader.Read()) 
+					if(reader.HasRows)
 					{
-						// TODO				row 0						row 1
-						//Debug.Log(reader.GetInt32(0) + ": "  + reader.GetString(1));
+						col_count = reader.FieldCount;
+						while (reader.Read()) 
+						{
+							row_count++;
+
+							/*
+							var columns = new List<string>();
+							for(int i=0;i<reader.FieldCount;i++)
+							{
+								columns.Add(reader.GetName(i));
+							}
+							*/
+
+							//reader.GetFieldType("name");
+							// reader.GetName(0);
+
+							// TODO				row 0						row 1
+							// Debug.Log(reader.GetInt32(0) + ": "  + reader.GetString(1));
+							// reader["rowname1"]
+						}
 					}
 				}
 				catch (Exception ex)
