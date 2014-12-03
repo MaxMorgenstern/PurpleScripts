@@ -90,7 +90,7 @@ namespace PurpleDatabase
 
 
 		// HELPER ////////////////////////////
-
+		/*
 		public static string my_SQL_escape(string str)
 		{
 			return Regex.Replace(str, @"[\x00'""\b\n\r\t\cZ\\%_]",
@@ -116,7 +116,7 @@ namespace PurpleDatabase
 				}
 			});
 		}
-
+		*/
 		
 		
 	
