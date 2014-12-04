@@ -143,6 +143,12 @@ namespace PurpleDatabase
 			}
 		}
 
+		// TEST:
+		public static void SelectQuery(string str)
+		{
+			Instance.sql_read_statement (str);
+		}
+
 		// SELECT
 		private void sql_read_statement(string query)
 		{
@@ -153,30 +159,45 @@ namespace PurpleDatabase
 				try
 				{
 					MySqlCommand cmd = new MySqlCommand (query, connection);
+
 					reader = cmd.ExecuteReader ();
 					if(reader.HasRows)
 					{
 						col_count = reader.FieldCount;
+
+						DataTable dt = new DataTable();
+						dt.Clear();
+
+						bool first_run = true;
+
 						while (reader.Read()) 
 						{
 							row_count++;
 
-							/*
-							var columns = new List<string>();
+							DataRow dt_row = dt.NewRow();
+
 							for(int i=0;i<reader.FieldCount;i++)
 							{
-								columns.Add(reader.GetName(i));
+								if(first_run)
+								{
+									dt.Columns.Add(reader.GetName(i));
+								}
+								dt_row[i] = reader[i];
+
+								// string col_name = reader.GetName(i);
+								// Debug.Log (col_name + " - " + reader[col_name] + " - " + reader.GetFieldType(col_name));
 							}
-							*/
 
-							//reader.GetFieldType("name");
-							// reader.GetName(0);
+							dt.Rows.Add(dt_row);
 
-							// TODO				row 0						row 1
-							// Debug.Log(reader.GetInt32(0) + ": "  + reader.GetString(1));
-							// reader["rowname1"]
+							first_run = false;
 						}
+
+						// TODO
+						Debug.Log(dt);
+
 					}
+					Debug.Log ("Row: " + row_count + "  -  Col: " + col_count);
 				}
 				catch (Exception ex)
 				{
@@ -228,8 +249,11 @@ namespace PurpleDatabase
 		{
 			try
 			{
-				connection.Open();
-				return true;
+				if(connection != null)
+				{
+					connection.Open();
+					return true;
+				}
 			}
 			catch (MySqlException ex)
 			{
@@ -256,8 +280,8 @@ namespace PurpleDatabase
 						break;
 				}
 				connection = null;
-				return false;
 			}
+			return false;
 		}
 
 		// close DB connection
@@ -265,15 +289,18 @@ namespace PurpleDatabase
 		{
 			try
 			{
-				connection.Close();
-				return true;
+				if(connection != null)
+				{
+					connection.Close();
+					return true;
+				}
 			}
 			catch (MySqlException ex)
 			{
 				Debug.Log(ex.Message);
 				connection = null;
-				return false;
 			}
+			return false;
 		}
 	}
 }
