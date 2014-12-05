@@ -85,7 +85,7 @@ namespace PurpleNetwork
 
 
 		// SINGLETON /////////////////////////
-		public static PurpleNetwork Instance
+		private static PurpleNetwork Instance
 		{
 			get
 			{

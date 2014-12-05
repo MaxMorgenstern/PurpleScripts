@@ -118,7 +118,7 @@ public class PurpleLog : MonoBehaviour
 
 
 	// SINGLETON /////////////////////////
-	public static PurpleLog Instance
+	private static PurpleLog Instance
 	{
 		get
 		{

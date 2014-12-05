@@ -48,7 +48,7 @@ namespace PurpleNetwork
 
 
 		// SINGLETON /////////////////////////
-		public static PurpleClient Instance
+		private static PurpleClient Instance
 		{
 			get
 			{

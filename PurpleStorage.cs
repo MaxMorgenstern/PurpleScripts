@@ -53,7 +53,7 @@ namespace PurpleStorage
 
 
 		// SINGLETON /////////////////////////
-		public static PurpleStorage Instance
+		private static PurpleStorage Instance
 		{
 			get
 			{

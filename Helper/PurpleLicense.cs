@@ -38,7 +38,7 @@ namespace PurpleLicense
 
 
 		// SINGLETON /////////////////////////
-		public static PurpleLicense Instance
+		private static PurpleLicense Instance
 		{
 			get
 			{

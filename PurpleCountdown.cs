@@ -21,7 +21,7 @@ public class PurpleCountdown : MonoBehaviour
 
 
 	// SINGLETON /////////////////////////
-	public static PurpleCountdown Instance
+	private static PurpleCountdown Instance
 	{
 		get
 		{
