@@ -143,37 +143,78 @@ namespace PurpleDatabase
 			}
 		}
 
-		// TEST:
-		public static void SelectQuery(string str)
+
+
+// -- ////////////////////////////
+		public static DataTable SelectQuery(string query)
 		{
-			Instance.sql_read_statement (str);
+			int rowCount = 0, colCount = 0;
+			return Instance.sql_read_statement (query, out rowCount, out colCount);
+		}
+		public static DataTable SelectQuery(string query, out int rowCount)
+		{
+			int colCount = 0;
+			return Instance.sql_read_statement (query, out rowCount, out colCount);
+		}
+		public static DataTable SelectQuery(string query, out int rowCount, out int colCount)
+		{
+			return Instance.sql_read_statement (query, out rowCount, out colCount);
 		}
 
-		// SELECT
-		private void sql_read_statement(string query)
+		public static DataRow SelectQuerySingle(string query)
 		{
-			int col_count = 0;
-			int row_count = 0;
+			int colCount;
+			DataColumnCollection colums;
+			return SelectQuerySingle (query, colCount, colums);
+		}
+		public static DataRow SelectQuerySingle(string query, out DataColumnCollection colums)
+		{
+			int colCount;
+			return SelectQuerySingle (query, colCount, colums);
+		}
+		public static DataRow SelectQuerySingle(string query, out int colCount)
+		{
+			DataColumnCollection colums;
+			return SelectQuerySingle (query, colCount, colums);
+		}
+		public static DataRow SelectQuerySingle(string query, out int colCount, out DataColumnCollection colums)
+		{
+			int rowCount;
+			DataTable dt = Instance.sql_read_statement (query, out rowCount, out colCount);
+
+			colums = dt.Columns;
+			if(rowCount > 0)
+				return dt.Rows[0];
+			return null;
+		}
+
+// -- ////////////////////////////
+
+
+
+
+		private DataTable sql_read_statement(string query, out int rowCount, out int colCount)
+		{
+			colCount = 0;
+			rowCount = 0;
+			DataTable dt = new DataTable();
+			dt.Clear();
+
 			if (open_connection () == true) {
 				MySqlDataReader reader = null;
 				try
 				{
 					MySqlCommand cmd = new MySqlCommand (query, connection);
-
 					reader = cmd.ExecuteReader ();
+
 					if(reader.HasRows)
 					{
-						col_count = reader.FieldCount;
-
-						DataTable dt = new DataTable();
-						dt.Clear();
-
+						colCount = reader.FieldCount;
 						bool first_run = true;
 
 						while (reader.Read()) 
 						{
-							row_count++;
-
+							rowCount++;
 							DataRow dt_row = dt.NewRow();
 
 							for(int i=0;i<reader.FieldCount;i++)
@@ -181,23 +222,16 @@ namespace PurpleDatabase
 								if(first_run)
 								{
 									dt.Columns.Add(reader.GetName(i));
+									//dt_row = dt.NewRow();
 								}
 								dt_row[i] = reader[i];
-
-								// string col_name = reader.GetName(i);
-								// Debug.Log (col_name + " - " + reader[col_name] + " - " + reader.GetFieldType(col_name));
 							}
 
 							dt.Rows.Add(dt_row);
 
 							first_run = false;
 						}
-
-						// TODO
-						Debug.Log(dt);
-
 					}
-					Debug.Log ("Row: " + row_count + "  -  Col: " + col_count);
 				}
 				catch (Exception ex)
 				{
@@ -212,6 +246,7 @@ namespace PurpleDatabase
 				}
 				close_connection ();
 			}
+			return dt;
 		}
 
 
