@@ -48,7 +48,7 @@ namespace PurpleDatabase
 
 
 		// SINGLETON /////////////////////////
-		public static PurpleDatabase Instance
+		private static PurpleDatabase Instance
 		{
 			get
 			{
@@ -62,12 +62,12 @@ namespace PurpleDatabase
 			}
 		}
 
+
 		// SETUP ////////////////////////////
 		public static void Setup (string host, string database, string user, string password)
 		{
 			Instance.purple_setup (host, database, user, password);
 		}
-
 
 		public static void Initialize()
 		{
@@ -75,7 +75,53 @@ namespace PurpleDatabase
 			Instance.close_connection ();
 		}
 
+
+		// SELECT
+		public static DataTable SelectQuery(string query)
+		{
+			int rowCount = 0, colCount = 0;
+			return Instance.sql_read_statement (query, out rowCount, out colCount);
+		}
+		public static DataTable SelectQuery(string query, out int rowCount)
+		{
+			int colCount = 0;
+			return Instance.sql_read_statement (query, out rowCount, out colCount);
+		}
+		public static DataTable SelectQuery(string query, out int rowCount, out int colCount)
+		{
+			return Instance.sql_read_statement (query, out rowCount, out colCount);
+		}
 		
+		
+		// SELECT One Result
+		public static DataRow SelectQuerySingle(string query)
+		{
+			int colCount;
+			DataColumnCollection colums;
+			return SelectQuerySingle (query, out colCount, out colums);
+		}
+		public static DataRow SelectQuerySingle(string query, out DataColumnCollection colums)
+		{
+			int colCount;
+			return SelectQuerySingle (query, out colCount, out colums);
+		}
+		public static DataRow SelectQuerySingle(string query, out int colCount)
+		{
+			DataColumnCollection colums;
+			return SelectQuerySingle (query, out colCount, out colums);
+		}
+		public static DataRow SelectQuerySingle(string query, out int colCount, out DataColumnCollection colums)
+		{
+			int rowCount;
+			DataTable dt = Instance.sql_read_statement (query, out rowCount, out colCount);
+			
+			colums = dt.Columns;
+			if(rowCount > 0)
+				return dt.Rows[0];
+			return null;
+		}
+
+
 		// PRIVATE ////////////////////////////
 
 		// SETUP ////////////////////////////
@@ -143,56 +189,6 @@ namespace PurpleDatabase
 			}
 		}
 
-
-
-// -- ////////////////////////////
-		public static DataTable SelectQuery(string query)
-		{
-			int rowCount = 0, colCount = 0;
-			return Instance.sql_read_statement (query, out rowCount, out colCount);
-		}
-		public static DataTable SelectQuery(string query, out int rowCount)
-		{
-			int colCount = 0;
-			return Instance.sql_read_statement (query, out rowCount, out colCount);
-		}
-		public static DataTable SelectQuery(string query, out int rowCount, out int colCount)
-		{
-			return Instance.sql_read_statement (query, out rowCount, out colCount);
-		}
-
-		public static DataRow SelectQuerySingle(string query)
-		{
-			int colCount;
-			DataColumnCollection colums;
-			return SelectQuerySingle (query, colCount, colums);
-		}
-		public static DataRow SelectQuerySingle(string query, out DataColumnCollection colums)
-		{
-			int colCount;
-			return SelectQuerySingle (query, colCount, colums);
-		}
-		public static DataRow SelectQuerySingle(string query, out int colCount)
-		{
-			DataColumnCollection colums;
-			return SelectQuerySingle (query, colCount, colums);
-		}
-		public static DataRow SelectQuerySingle(string query, out int colCount, out DataColumnCollection colums)
-		{
-			int rowCount;
-			DataTable dt = Instance.sql_read_statement (query, out rowCount, out colCount);
-
-			colums = dt.Columns;
-			if(rowCount > 0)
-				return dt.Rows[0];
-			return null;
-		}
-
-// -- ////////////////////////////
-
-
-
-
 		private DataTable sql_read_statement(string query, out int rowCount, out int colCount)
 		{
 			colCount = 0;
@@ -248,7 +244,6 @@ namespace PurpleDatabase
 			}
 			return dt;
 		}
-
 
 
 		// BASICS /////////////////////////
