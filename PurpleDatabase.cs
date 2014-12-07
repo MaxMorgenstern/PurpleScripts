@@ -16,11 +16,6 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using UnityEngine;
 
-#if !UNITY_WEBPLAYER
-#endif
-
-
-// TODO: Work in progress
 namespace PurpleDatabase
 {
 	public class PurpleDatabase : MonoBehaviour {
@@ -73,6 +68,13 @@ namespace PurpleDatabase
 		{
 			Instance.open_connection ();
 			Instance.close_connection ();
+		}
+
+
+		// ExecuteQuery - CREATE, INSERT, UPDATE, and DELETE
+		public static int ExecuteQuery(string query)
+		{
+			return Instance.sql_write_statement (query);
 		}
 
 
@@ -163,23 +165,35 @@ namespace PurpleDatabase
 			});
 		}
 		*/
-		
-		
+
+		// TODO
+		private bool is_sql_valid(string query)
+		{
+			return is_sql_valid (query, true);
+		}
+
+		private bool is_sql_valid(string query, bool isWrite)
+		{
+			return true;
+		}
 	
 
 
 
 
 
-
 		// CREATE, INSERT, UPDATE, and DELETE
-		private void sql_write_statement(string query)
+		private int sql_write_statement(string query)
 		{
+			if (!is_sql_valid (query, true))
+				return 0;
+
+			int affectedRows = 0;
 			if (open_connection () == true) {
 				try
 				{
 					MySqlCommand cmd = new MySqlCommand (query, connection);
-					cmd.ExecuteNonQuery ();
+					affectedRows = cmd.ExecuteNonQuery ();
 				}
 				catch (Exception ex)
 				{
@@ -187,14 +201,19 @@ namespace PurpleDatabase
 				}
 				close_connection ();
 			}
+			return affectedRows;
 		}
 
+		// SELECT
 		private DataTable sql_read_statement(string query, out int rowCount, out int colCount)
 		{
 			colCount = 0;
 			rowCount = 0;
 			DataTable dt = new DataTable();
 			dt.Clear();
+
+			if (!is_sql_valid (query, true))
+				return dt;
 
 			if (open_connection () == true) {
 				MySqlDataReader reader = null;

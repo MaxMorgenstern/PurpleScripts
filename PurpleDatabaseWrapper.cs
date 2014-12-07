@@ -38,6 +38,22 @@ namespace PurpleDatabase
 
 		}
 
+
+
+		Hashtable args = new Hashtable();
+		object this[string key]
+		{
+			get
+			{
+				return args[key];
+			}
+			set 
+			{
+				args[key] = value;
+			}
+		}
+
+
 		// TODO - lists for operations...
 		// OPTION
 		// FIELDS
