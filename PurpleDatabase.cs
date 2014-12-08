@@ -27,16 +27,19 @@ namespace PurpleDatabase
 
 		private static string connectionString;
 		private static MySqlConnection connection;
-		
+
 		private static PurpleDatabase instance;
 
 		protected PurpleDatabase () {
-			try{
+			try
+			{
 				serverIP = PurpleConfig.Database.IP;
 				serverDatabase = PurpleConfig.Database.Name;
 				serverUser = PurpleConfig.Database.User;
 				serverPassword = PurpleConfig.Database.Password;
-			} catch(Exception e){
+			}
+			catch(Exception e)
+			{
 				Debug.LogError("Can not read Purple Config! " + e.ToString());
 			}
 		}
@@ -93,8 +96,8 @@ namespace PurpleDatabase
 		{
 			return Instance.sql_read_statement (query, out rowCount, out colCount);
 		}
-		
-		
+
+
 		// SELECT One Result
 		public static DataRow SelectQuerySingle(string query)
 		{
@@ -116,7 +119,7 @@ namespace PurpleDatabase
 		{
 			int rowCount;
 			DataTable dt = Instance.sql_read_statement (query, out rowCount, out colCount);
-			
+
 			colums = dt.Columns;
 			if(rowCount > 0)
 				return dt.Rows[0];
@@ -166,7 +169,7 @@ namespace PurpleDatabase
 		}
 		*/
 
-		// TODO
+
 		private bool is_sql_valid(string query)
 		{
 			return is_sql_valid (query, true);
@@ -174,12 +177,21 @@ namespace PurpleDatabase
 
 		private bool is_sql_valid(string query, bool isWrite)
 		{
+			string[] invalidForRead = { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
+				"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
+				"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
+				"table", "update" };
+
+			if(isWrite)
+			{
+				// TODO
+			} 
+			else
+			{
+				// TODO
+			}
 			return true;
 		}
-	
-
-
-
 
 
 		// CREATE, INSERT, UPDATE, and DELETE
@@ -189,7 +201,8 @@ namespace PurpleDatabase
 				return 0;
 
 			int affectedRows = 0;
-			if (open_connection () == true) {
+			if (open_connection () == true) 
+			{
 				try
 				{
 					MySqlCommand cmd = new MySqlCommand (query, connection);
@@ -212,10 +225,11 @@ namespace PurpleDatabase
 			DataTable dt = new DataTable();
 			dt.Clear();
 
-			if (!is_sql_valid (query, true))
+			if (!is_sql_valid (query, false))
 				return dt;
 
-			if (open_connection () == true) {
+			if (open_connection () == true) 
+			{
 				MySqlDataReader reader = null;
 				try
 				{
@@ -227,7 +241,7 @@ namespace PurpleDatabase
 						colCount = reader.FieldCount;
 						bool first_run = true;
 
-						while (reader.Read()) 
+						while (reader.Read())
 						{
 							rowCount++;
 							DataRow dt_row = dt.NewRow();
@@ -237,13 +251,11 @@ namespace PurpleDatabase
 								if(first_run)
 								{
 									dt.Columns.Add(reader.GetName(i));
-									//dt_row = dt.NewRow();
 								}
 								dt_row[i] = reader[i];
 							}
 
 							dt.Rows.Add(dt_row);
-
 							first_run = false;
 						}
 					}
@@ -251,10 +263,10 @@ namespace PurpleDatabase
 				catch (Exception ex)
 				{
 					Debug.LogError("Can not execute query. " + ex.ToString());
-				} 
-				finally 
+				}
+				finally
 				{
-					if (reader != null) 
+					if (reader != null)
 					{
 						reader.Close();
 					}
@@ -272,10 +284,11 @@ namespace PurpleDatabase
 		{
 			initialize (false);
 		}
-		
+
 		private void initialize(bool force)
 		{
-			if(connection == null || force){
+			if(connection == null || force)
+			{
 				try
 				{
 					connectionString = "Server="+serverIP+";" +
@@ -293,7 +306,7 @@ namespace PurpleDatabase
 			}
 		}
 
-		// open db connection
+		// open DB connection
 		private bool open_connection()
 		{
 			try
@@ -322,10 +335,10 @@ namespace PurpleDatabase
 						Debug.Log("Invalid username/password.");
 						Debug.LogWarning (ex);
 						break;
-					
+
 					default:
-						Debug.Log (ex.Message);
-						Debug.Log (ex.Number);
+						Debug.Log (ex.Number + " - " + ex.Message);
+						Debug.LogWarning (ex);
 						break;
 				}
 				connection = null;
