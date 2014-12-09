@@ -149,6 +149,29 @@ namespace PurpleStorage
 		}
 
 
+		public static bool DeleteFile(string filename)
+		{
+			if(usePlayerPrefs)
+			{
+				return Instance.delete_player_pref(filename);
+			}
+			else
+			{
+				return Instance.delete_binary_file (filename);
+			}
+		}
+		
+		public static bool DeletePlayerPref(string filename)
+		{
+			return Instance.delete_player_pref(filename);
+		}
+		
+		public static bool DeleteBinaryFile(string filename)
+		{
+			return Instance.delete_binary_file (filename);
+		}
+
+
 		// PRIVATE FUNCTIONS /////////////////////////
 
 		private PurpleFileObject load_pfo_helper(string filename, bool usePPref)
@@ -206,10 +229,6 @@ namespace PurpleStorage
 			return false;
 		}
 
-
-
-
-		// TODO: Test
 		private bool save_player_pref<T>(string filename, T data)
 		{
 			if (String.IsNullOrEmpty (filename)) return false;
@@ -226,7 +245,6 @@ namespace PurpleStorage
 			return false;
 		}
 
-		// TODO: Test
 		private T load_player_pref<T>(string filename)
 		{
 			if (String.IsNullOrEmpty (filename)) return default (T);
@@ -244,7 +262,6 @@ namespace PurpleStorage
 			return default (T);
 		}
 
-		// TODO: Test
 		private bool delete_player_pref(string filename)
 		{
 			if (String.IsNullOrEmpty (filename)) return false;
@@ -293,15 +310,15 @@ namespace PurpleStorage
 			return pf_object;
 		}
 
+
+
+
 		private PurpleMetaObject create_purple_meta_object(string filename)
 		{
 			PurpleMetaObject pm_object = new PurpleMetaObject ();
 			pm_object.updated = DateTime.Now;
 			return pm_object;
 		}
-
-
-
 
 // TODO... combine with upper functions...
 		// TODO: meta object as file or player pref
