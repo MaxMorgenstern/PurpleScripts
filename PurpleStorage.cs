@@ -69,19 +69,19 @@ namespace PurpleStorage
 
 		// PUBLIC FUNCTIONS /////////////////////////
 
-		public static bool SwitchPlayerPrefs()
+		public static bool SwitchUsePlayerPrefs()
 		{
 			if(usePlayerPrefs)
 			{
-				return SwitchPlayerPrefs (false);
+				return SwitchUsePlayerPrefs (false);
 			}
 			else
 			{
-				return SwitchPlayerPrefs (true);
+				return SwitchUsePlayerPrefs (true);
 			}
 		}
 
-		public static bool SwitchPlayerPrefs(bool usePPref)
+		public static bool SwitchUsePlayerPrefs(bool usePPref)
 		{
 			usePlayerPrefs = usePPref;
 			return usePlayerPrefs;
@@ -102,10 +102,17 @@ namespace PurpleStorage
 
 		public static bool SaveFile(string filename, PurpleFileObject data)
 		{
-			// TODO - check if saving fails do falback!?
 			if(usePlayerPrefs || forcePlayerPrefs)
 			{
-				return Instance.save_player_pref(filename, data);
+				try
+				{
+					return Instance.save_player_pref(filename, data);
+				} 
+				catch (Exception ex) 
+				{
+					usePlayerPrefs = false;
+					return Instance.save_binary_file (filename, data);
+				}
 			}
 			else
 			{
