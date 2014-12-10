@@ -123,18 +123,18 @@ namespace PurpleStorage
 
 		public static PurpleFileObject LoadFile(string filename)
 		{
-			return Instance.load_pfo_helper (filename, usePlayerPrefs);
+			return Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
 		}
 
 		public static string LoadFileString(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs);
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
 			return pfo.dataString;
 		}
 
 		public static object LoadFileObject(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs);
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
 			return pfo.dataObject;
 		}
 
@@ -151,7 +151,7 @@ namespace PurpleStorage
 
 		public static bool DeleteFile(string filename)
 		{
-			if(usePlayerPrefs)
+			if(usePlayerPrefs || forcePlayerPrefs)
 			{
 				return Instance.delete_player_pref(filename);
 			}
@@ -173,6 +173,11 @@ namespace PurpleStorage
 
 
 		// PRIVATE FUNCTIONS /////////////////////////
+		private PurpleFileObject load_pfo_helper(string filename, bool usePPref, bool forcePPref)
+		{
+			bool boolDisjunktion = (usePPref || forcePPref) ? true : false;
+			return load_pfo_helper (filename, boolDisjunktion);
+		}
 
 		private PurpleFileObject load_pfo_helper(string filename, bool usePPref)
 		{
@@ -279,8 +284,6 @@ namespace PurpleStorage
 		}
 
 
-
-
 		// PRIVATE HELPER /////////////////////////
 
 		private PurpleFileObject create_purple_file_object(string filename, string dataString)
@@ -311,7 +314,9 @@ namespace PurpleStorage
 		}
 
 
+		// PRIVATE META OBJECTS /////////////////////////
 
+		// TODO: public functions or add at topper
 
 		private PurpleMetaObject create_purple_meta_object(string filename)
 		{
@@ -320,23 +325,25 @@ namespace PurpleStorage
 			return pm_object;
 		}
 
-// TODO... combine with upper functions...
-		// TODO: meta object as file or player pref
-
-		// this is the only aditional function
-		private bool update_meta_object(string fileName)
+		// TODO: pass additional data
+		private bool update_meta_object(string todo_additional_data_or_so)
 		{
 			PurpleMetaObject tmp_meta_object = load_meta_object ();
 			if (tmp_meta_object != null)
 			{
-				// TODO
-
+				// TODO: add additional data to object
+				return update_meta_object(tmp_meta_object);
 			}
-
-			// TODO
 			return false;
 		}
 
+		private bool update_meta_object(PurpleMetaObject metaObject)
+		{
+			return save_meta_object (metaObject);
+		}
+
+
+		// TODO: PlayerPref or File
 		private bool save_meta_object(PurpleMetaObject metaObject)
 		{
 			string data = _PurpleSerializer.ObjectToStringConverter (metaObject);
@@ -352,6 +359,7 @@ namespace PurpleStorage
 			return false;
 		}
 
+		// TODO: PlayerPref or File
 		private PurpleMetaObject load_meta_object()
 		{
 			string purpleObjectString = String.Empty;
