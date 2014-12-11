@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using _PurpleSerializer = PurpleSerializer;
@@ -12,6 +13,9 @@ using _PurpleSerializer = PurpleSerializer;
 // as well as File saving - does not work in web player!?
 
 // TODO: Test Web Player - make file work for all devices
+
+
+
 #if UNITY_WEBPLAYER
 #endif
 
@@ -325,13 +329,25 @@ namespace PurpleStorage
 			return pm_object;
 		}
 
-		// TODO: pass additional data
-		private bool update_meta_object(string todo_additional_data_or_so)
+		private bool update_meta_object(string data)
+		{
+			return update_meta_object (data, true);
+		}
+
+		private bool update_meta_object(string data, bool add)
 		{
 			PurpleMetaObject tmp_meta_object = load_meta_object ();
 			if (tmp_meta_object != null)
 			{
-				// TODO: add additional data to object
+				if(add)
+				{
+					tmp_meta_object.filelist.Add(data);
+				}
+				else
+				{
+					tmp_meta_object.filelist.Remove(data);
+
+				}
 				return update_meta_object(tmp_meta_object);
 			}
 			return false;
@@ -389,7 +405,13 @@ namespace PurpleStorage
 		public string hashValue;
 
 		public DateTime updated;
-		public string[] filelist;		// TODO... length unknown
+		public List<string> filelist;
+
+		// CONSTRUCTOR
+		public PurpleMetaObject()
+		{
+			guid = System.Guid.NewGuid ();
+		}
 	}
 
 	[Serializable]
