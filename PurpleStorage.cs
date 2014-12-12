@@ -11,15 +11,9 @@ using _PurpleSerializer = PurpleSerializer;
 //http://docs.unity3d.com/ScriptReference/PlayerPrefs.html
 
 // as well as File saving - does not work in web player!?
-
 // TODO: Test Web Player - make file work for all devices
-
-
-
 #if UNITY_WEBPLAYER
 #endif
-
-// TODO: metadata... get them - name - size - when stored - when updated
 
 namespace PurpleStorage
 {
@@ -92,19 +86,60 @@ namespace PurpleStorage
 		}
 
 
-		public static bool SaveFile(string filename, string data)
+		// SAVE /////////////////////////
+		public static bool SavePlayerPref(string filename, string data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			return SaveFile (filename, fileData);
+			try
+			{
+				return Instance.save_player_pref(filename, fileData);
+			}
+			catch (Exception ex) 
+			{
+				Debug.LogWarning(ex);
+				return false;
+			}
 		}
 
-		public static bool SaveFile(string filename, object data)
+		public static bool SavePlayerPref(string filename, object data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			return SaveFile (filename, fileData);
+			try
+			{
+				return Instance.save_player_pref(filename, fileData);
+			}
+			catch (Exception ex) 
+			{
+				Debug.LogWarning(ex);
+				return false;
+			}
 		}
 
-		public static bool SaveFile(string filename, PurpleFileObject data)
+		public static bool SaveBinaryFile(string filename, string data)
+		{
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Instance.save_binary_file (filename, data);
+		}
+
+		public static bool SaveBinaryFile(string filename, object data)
+		{
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Instance.save_binary_file (filename, data);
+		}
+
+		public static bool Save(string filename, string data)
+		{
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Save (filename, fileData);
+		}
+
+		public static bool Save(string filename, object data)
+		{
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Save (filename, fileData);
+		}
+
+		public static bool Save(string filename, PurpleFileObject data)
 		{
 			if(usePlayerPrefs || forcePlayerPrefs)
 			{
@@ -114,6 +149,7 @@ namespace PurpleStorage
 				} 
 				catch (Exception ex) 
 				{
+					Debug.LogWarning(ex);
 					usePlayerPrefs = false;
 					return Instance.save_binary_file (filename, data);
 				}
@@ -124,19 +160,20 @@ namespace PurpleStorage
 			}
 		}
 
-
-		public static PurpleFileObject LoadFile(string filename)
+		
+		// LOAD /////////////////////////
+		public static PurpleFileObject Load(string filename)
 		{
 			return Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
 		}
 
-		public static string LoadFileString(string filename)
+		public static string LoadString(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
 			return pfo.dataString;
 		}
 
-		public static object LoadFileObject(string filename)
+		public static object LoadObject(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
 			return pfo.dataObject;
@@ -152,7 +189,8 @@ namespace PurpleStorage
 			return Instance.load_pfo_helper (filename, false);
 		}
 
-
+		
+		// DELETE /////////////////////////
 		public static bool DeleteFile(string filename)
 		{
 			if(usePlayerPrefs || forcePlayerPrefs)
@@ -174,6 +212,39 @@ namespace PurpleStorage
 		{
 			return Instance.delete_binary_file (filename);
 		}
+
+
+		// META /////////////////////////
+		public static PurpleMetaObject CreateMetaObject()
+		{
+			return Instance.create_purple_meta_object ();
+		}
+		
+		public static bool SaveMetaObject(PurpleMetaObject metaObject)
+		{
+			return Instance.save_meta_object(metaObject);
+		}
+		
+		public static PurpleMetaObject LoadMetaObject()
+		{
+			return Instance.load_meta_object ();
+		}
+		
+		public static bool UpdateMetaObject(PurpleMetaObject metaObject)
+		{
+			return Instance.update_meta_object (metaObject);
+		}
+
+		public static bool UpdateMetaObject(string data)
+		{
+			return Instance.update_meta_object (data);
+		}
+		
+		public static bool UpdateMetaObject(string data, bool add)
+		{
+			return Instance.update_meta_object (data, add);
+		}
+
 
 
 		// PRIVATE FUNCTIONS /////////////////////////
@@ -320,9 +391,7 @@ namespace PurpleStorage
 
 		// PRIVATE META OBJECTS /////////////////////////
 
-		// TODO: public functions or add at topper
-
-		private PurpleMetaObject create_purple_meta_object(string filename)
+		private PurpleMetaObject create_purple_meta_object()
 		{
 			PurpleMetaObject pm_object = new PurpleMetaObject ();
 			pm_object.updated = DateTime.Now;

@@ -177,11 +177,11 @@ namespace PurpleDatabase
 
 		private bool is_sql_valid(string query, bool isWrite)
 		{
-			string[] invalidForRead = { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
-				"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
-				"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
-				"table", "update" };
-
+			//string[] invalidForRead = { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
+			//	"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
+			//	"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
+			//	"table", "update" };
+			
 			if(isWrite)
 			{
 				// TODO
