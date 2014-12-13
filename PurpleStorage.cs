@@ -69,7 +69,7 @@ namespace PurpleStorage
 
 		public static bool SwitchUsePlayerPrefs()
 		{
-			if(usePlayerPrefs)
+			if(Instance.get_ppref_setting())
 			{
 				return SwitchUsePlayerPrefs (false);
 			}
@@ -81,8 +81,7 @@ namespace PurpleStorage
 
 		public static bool SwitchUsePlayerPrefs(bool usePPref)
 		{
-			usePlayerPrefs = usePPref;
-			return usePlayerPrefs;
+			return Instance.switch_player_pref (usePPref);
 		}
 
 
@@ -141,41 +140,25 @@ namespace PurpleStorage
 
 		public static bool Save(string filename, PurpleFileObject data)
 		{
-			if(usePlayerPrefs || forcePlayerPrefs)
-			{
-				try
-				{
-					return Instance.save_player_pref(filename, data);
-				} 
-				catch (Exception ex) 
-				{
-					Debug.LogWarning(ex);
-					usePlayerPrefs = false;
-					return Instance.save_binary_file (filename, data);
-				}
-			}
-			else
-			{
-				return Instance.save_binary_file (filename, data);
-			}
+			return Instance.save_pfo_helper (filename, data);
 		}
 
 		
 		// LOAD /////////////////////////
 		public static PurpleFileObject Load(string filename)
 		{
-			return Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
+			return Instance.load_pfo_helper (filename);
 		}
 
 		public static string LoadString(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
 			return pfo.dataString;
 		}
 
 		public static object LoadObject(string filename)
 		{
-			PurpleFileObject pfo = Instance.load_pfo_helper (filename, usePlayerPrefs, forcePlayerPrefs);
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
 			return pfo.dataObject;
 		}
 
@@ -193,14 +176,7 @@ namespace PurpleStorage
 		// DELETE /////////////////////////
 		public static bool DeleteFile(string filename)
 		{
-			if(usePlayerPrefs || forcePlayerPrefs)
-			{
-				return Instance.delete_player_pref(filename);
-			}
-			else
-			{
-				return Instance.delete_binary_file (filename);
-			}
+			return Instance.delete_pfo_helper (filename);
 		}
 		
 		public static bool DeletePlayerPref(string filename)
@@ -248,9 +224,42 @@ namespace PurpleStorage
 
 
 		// PRIVATE FUNCTIONS /////////////////////////
-		private PurpleFileObject load_pfo_helper(string filename, bool usePPref, bool forcePPref)
+		private bool save_pfo_helper(string filename, PurpleFileObject data)
 		{
-			bool boolDisjunktion = (usePPref || forcePPref) ? true : false;
+			if(usePlayerPrefs || forcePlayerPrefs)
+			{
+				try
+				{
+					return save_player_pref(filename, data);
+				} 
+				catch (Exception ex) 
+				{
+					Debug.LogWarning(ex);
+					usePlayerPrefs = false;
+					return save_binary_file (filename, data);
+				}
+			}
+			else
+			{
+				return save_binary_file (filename, data);
+			}
+		}
+
+		private bool delete_pfo_helper(string filename)
+		{
+			if(usePlayerPrefs || forcePlayerPrefs)
+			{
+				return delete_player_pref(filename);
+			}
+			else
+			{
+				return delete_binary_file (filename);
+			}
+		}
+
+		private PurpleFileObject load_pfo_helper(string filename)
+		{
+			bool boolDisjunktion = (usePlayerPrefs || forcePlayerPrefs) ? true : false;
 			return load_pfo_helper (filename, boolDisjunktion);
 		}
 
@@ -360,7 +369,6 @@ namespace PurpleStorage
 
 
 		// PRIVATE HELPER /////////////////////////
-
 		private PurpleFileObject create_purple_file_object(string filename, string dataString)
 		{
 			return create_purple_file_object (filename, dataString, null);
@@ -386,6 +394,17 @@ namespace PurpleStorage
 				pf_object.dataObject = dataObject;
 
 			return pf_object;
+		}
+
+		private bool get_ppref_setting()
+		{
+			return usePlayerPrefs;
+		}
+
+		private bool switch_player_pref(bool usePPref)
+		{
+			usePlayerPrefs = usePPref;
+			return usePlayerPrefs;
 		}
 
 
@@ -480,6 +499,7 @@ namespace PurpleStorage
 		public PurpleMetaObject()
 		{
 			guid = System.Guid.NewGuid ();
+			filelist = new List<string>();
 		}
 	}
 
