@@ -14,6 +14,7 @@ using _PurpleSerializer = PurpleSerializer;
 // TODO: Test Web Player - make file work for all devices
 #if UNITY_WEBPLAYER
 #endif
+// Note: meta files only available for ppref
 
 namespace PurpleStorage
 {
@@ -446,8 +447,6 @@ namespace PurpleStorage
 			return save_meta_object (metaObject);
 		}
 
-
-		// TODO: PlayerPref or File
 		private bool save_meta_object(PurpleMetaObject metaObject)
 		{
 			string data = _PurpleSerializer.ObjectToStringConverter (metaObject);
@@ -463,7 +462,6 @@ namespace PurpleStorage
 			return false;
 		}
 
-		// TODO: PlayerPref or File
 		private PurpleMetaObject load_meta_object()
 		{
 			string purpleObjectString = String.Empty;
