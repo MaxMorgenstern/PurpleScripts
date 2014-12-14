@@ -13,9 +13,9 @@ namespace PurpleLicense
 {
 	public class PurpleLicense : MonoBehaviour
 	{
-		private static RSACryptoServiceProvider _rsaProvider;
-		private static string _rsaPrivateKey;
-		private static string _rsaPublicKey;
+		private static RSACryptoServiceProvider rsaProvider;
+		private static string rsaPrivateKey;
+		private static string rsaPublicKey;
 
 		private static PurpleLicense instance;
 
@@ -59,11 +59,11 @@ namespace PurpleLicense
 		{
 			get
 			{
-				if(_rsaProvider == null)
+				if(Instance.rsaProvider == null)
 				{
 					Instance.create_new_key_pair();
 				}
-				return _rsaPrivateKey;
+				return Instance.rsaPrivateKey;
 			}
 		}
 
@@ -71,11 +71,11 @@ namespace PurpleLicense
 		{
 			get
 			{
-				if(_rsaProvider == null)
+				if(Instance.rsaProvider == null)
 				{
 					Instance.create_new_key_pair();
 				}
-				return _rsaPublicKey;
+				return Instance.rsaPublicKey;
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace PurpleLicense
 		// PUBLIC ////////////////////////////
 		public static void CreateKeyPair()
 		{
-			Instance.create_new_key_pair (keySize);
+			Instance.create_new_key_pair (Instance.keySize);
 		}
 
 		public static void CreateKeyPair(int keySize)
@@ -158,17 +158,17 @@ namespace PurpleLicense
 
 		private void create_new_key_pair(int keySize)
 		{
-			_rsaProvider = new RSACryptoServiceProvider(keySize);
-			_rsaPrivateKey = _rsaProvider.ToXmlString(true);
-			_rsaPublicKey = _rsaProvider.ToXmlString(false);
+			rsaProvider = new RSACryptoServiceProvider(keySize);
+			rsaPrivateKey = rsaProvider.ToXmlString(true);
+			rsaPublicKey = rsaProvider.ToXmlString(false);
 		}
 
 		private void set_key_pair_from_xml(string XMLKey)
 		{
-			_rsaProvider = new RSACryptoServiceProvider(keySize);
-			_rsaProvider.FromXmlString(XMLKey);
-			_rsaPrivateKey = _rsaProvider.ToXmlString(true);
-			_rsaPublicKey = _rsaProvider.ToXmlString(false);
+			rsaProvider = new RSACryptoServiceProvider(keySize);
+			rsaProvider.FromXmlString(XMLKey);
+			rsaPrivateKey = rsaProvider.ToXmlString(true);
+			rsaPublicKey = rsaProvider.ToXmlString(false);
 		}
 
 
@@ -177,23 +177,23 @@ namespace PurpleLicense
 		private string sign_data_base64(string data)
 		{
 			var dataToSign = Encoding.UTF8.GetBytes(data);
-			var dataSigned = _rsaProvider.SignData (dataToSign, CryptoConfig.CreateFromName(cryptoConfig));
+			var dataSigned = rsaProvider.SignData (dataToSign, CryptoConfig.CreateFromName(cryptoConfig));
 			return System.Convert.ToBase64String (dataSigned);
 		}
 
 		private bool validate_data(string data, string base64SignedData)
 		{
-			return _rsaProvider.VerifyData (Encoding.UTF8.GetBytes (data), CryptoConfig.CreateFromName (cryptoConfig), System.Convert.FromBase64String (base64SignedData));
+			return rsaProvider.VerifyData (Encoding.UTF8.GetBytes (data), CryptoConfig.CreateFromName (cryptoConfig), System.Convert.FromBase64String (base64SignedData));
 		}
 
 		private string encrypt_data_base64(string data)
 		{
-			return System.Convert.ToBase64String (_rsaProvider.Encrypt(Encoding.UTF8.GetBytes(data), false));
+			return System.Convert.ToBase64String (rsaProvider.Encrypt(Encoding.UTF8.GetBytes(data), false));
 		}
 
 		private string decrypt_data_base64(string data)
 		{
-			return Encoding.UTF8.GetString(_rsaProvider.Decrypt(System.Convert.FromBase64String(data), false));
+			return Encoding.UTF8.GetString(rsaProvider.Decrypt(System.Convert.FromBase64String(data), false));
 		}
 
 
