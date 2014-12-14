@@ -59,11 +59,11 @@ namespace PurpleLicense
 		{
 			get
 			{
-				if(Instance.rsaProvider == null)
+				if(rsaProvider == null)
 				{
 					Instance.create_new_key_pair();
 				}
-				return Instance.rsaPrivateKey;
+				return rsaPrivateKey;
 			}
 		}
 
@@ -71,11 +71,11 @@ namespace PurpleLicense
 		{
 			get
 			{
-				if(Instance.rsaProvider == null)
+				if(rsaProvider == null)
 				{
 					Instance.create_new_key_pair();
 				}
-				return Instance.rsaPublicKey;
+				return rsaPublicKey;
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace PurpleLicense
 		// PUBLIC ////////////////////////////
 		public static void CreateKeyPair()
 		{
-			Instance.create_new_key_pair (Instance.keySize);
+			Instance.create_new_key_pair (keySize);
 		}
 
 		public static void CreateKeyPair(int keySize)
