@@ -83,7 +83,7 @@ namespace PurpleLicense
 		// PUBLIC ////////////////////////////
 		public static void CreateKeyPair()
 		{
-			Instance.create_new_key_pair (keySize);
+			Instance.create_new_key_pair ();
 		}
 
 		public static void CreateKeyPair(int keySize)
