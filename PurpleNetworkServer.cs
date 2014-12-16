@@ -24,8 +24,9 @@ namespace PurpleNetwork
 		public class ServerConfig
 		{
 			public string name;
-			public string password;
 			public ServerType type;
+
+			public string password;
 			public int maxUser;
 			public int port;
 
@@ -33,16 +34,9 @@ namespace PurpleNetwork
 			public ServerConfig ()
 			{
 				name = "GameServer";
-				password = "purple";
 				type = ServerType.Game;
-				maxUser = 32;
-				port = 1000;
-			}
-			public ServerConfig (string serverName, string serverPassword, ServerType serverType)
-			{
-				name = serverName;
-				password = serverPassword;
-				type = serverType;
+				
+				password = "purple";
 				maxUser = 32;
 				port = 1000;
 			}
@@ -70,14 +64,15 @@ namespace PurpleNetwork
 		{
 
 			private ServerConfig stdServerConfig;	
-
 			private static PurpleServer instance;
+			private static int stdServerdelay;
 
 
 			// START UP /////////////////////////
 			protected PurpleServer ()
 			{
 				stdServerConfig = new ServerConfig ();
+				stdServerdelay = 10;
 			}
 
 			
@@ -123,40 +118,56 @@ namespace PurpleNetwork
 				PurpleNetwork.LaunchLocalServer(player, password, port);
 			}
 
-/*
-			public static void LaunchServer(string type)
-			{
-				LaunchServer(Instance.parse_server_type (type));
-			}
 
-			public static void LaunchServer(ServerType type)
-			{
-				// TODO
-			}
-*/
-			// LaunchLocalServer (int player, string localPassword, int localPort)
+
 
 			public static void StopServer()
 			{
-				StopServer (0);
+				StopServer (stdServerdelay);
 			}
 
 			public static void StopServer(float time)
 			{
-				// TODO: float is time in seconds
+				Instance.stop_server (time);
 			}
+
+			private void stop_server(float time)
+			{
+				PurpleCountdown.TriggerEvent += stop_server_trigger;
+				PurpleCountdown.Trigger (time);
+			}
+
+			private void stop_server_trigger()
+			{
+				PurpleCountdown.TriggerEvent -= stop_server_trigger;
+				PurpleNetwork.StopLocalServer ();
+			}
+
 
 
 			public static void RestartServer()
 			{
-				RestartServer (0);
+				RestartServer (stdServerdelay);
 			}
 			
 			public static void RestartServer(float time)
 			{
-				// TODO: float is time in seconds
+				Instance.restart_server (time);
 			}
-			
+
+			private void restart_server(float time)
+			{
+				PurpleCountdown.TriggerEvent += restart_server_trigger;
+				PurpleCountdown.Trigger (time);
+			}
+
+			private void restart_server_trigger()
+			{
+				PurpleCountdown.TriggerEvent -= restart_server_trigger;
+				PurpleNetwork.RestartLocalServer ();
+			}
+
+
 
 
 
