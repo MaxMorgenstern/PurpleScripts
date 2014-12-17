@@ -73,6 +73,11 @@ public class PurpleCountdown : MonoBehaviour
 		Instance.cancel_all_count_down ();
 	}
 
+	public static float CountdownTimeLeft()
+	{
+		return Instance.count_down_time_left ();
+	}
+
 
 	// PRIVATE ////////////////////////////
 
@@ -148,6 +153,10 @@ public class PurpleCountdown : MonoBehaviour
 		StopAllCoroutines ();
 	}
 
+	private float count_down_time_left()
+	{
+		return t_time;
+	}
 
 	// EVENT ////////////////////////////
 
