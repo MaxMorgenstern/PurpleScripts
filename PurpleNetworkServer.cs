@@ -126,20 +126,28 @@ namespace PurpleNetwork
 				StopServer (stdServerdelay);
 			}
 
-			public static void StopServer(float time)
+			public static void StopServer(int seconds)
 			{
-				Instance.stop_server (time);
+				Instance.stop_server (seconds);
 			}
 
-			private void stop_server(float time)
+			private void stop_server(int seconds)
 			{
-				PurpleCountdown.TriggerEvent += stop_server_trigger;
-				PurpleCountdown.Trigger (time);
+				PurpleCountdown.CountdownDoneEvent += stop_server_done;
+				PurpleCountdown.CountdownRunEvent += stop_server_run;
+				PurpleCountdown.Countdown (seconds);
 			}
 
-			private void stop_server_trigger()
+			private void stop_server_run()
 			{
-				PurpleCountdown.TriggerEvent -= stop_server_trigger;
+				float time_left = PurpleCountdown.CountdownTimeLeft ();
+				// TODO...
+			}
+
+			private void stop_server_done()
+			{
+				PurpleCountdown.CountdownDoneEvent -= stop_server_done;
+				PurpleCountdown.CountdownRunEvent -= stop_server_run;
 				PurpleNetwork.StopLocalServer ();
 			}
 
@@ -150,20 +158,28 @@ namespace PurpleNetwork
 				RestartServer (stdServerdelay);
 			}
 			
-			public static void RestartServer(float time)
+			public static void RestartServer(int seconds)
 			{
-				Instance.restart_server (time);
+				Instance.restart_server (seconds);
 			}
 
-			private void restart_server(float time)
+			private void restart_server(int seconds)
 			{
-				PurpleCountdown.TriggerEvent += restart_server_trigger;
-				PurpleCountdown.Trigger (time);
+				PurpleCountdown.CountdownDoneEvent += restart_server_done;
+				PurpleCountdown.CountdownRunEvent += restart_server_run;
+				PurpleCountdown.Countdown (seconds);
+			}
+			
+			private void restart_server_run()
+			{
+				float time_left = PurpleCountdown.CountdownTimeLeft ();
+				// TODO...
 			}
 
-			private void restart_server_trigger()
+			private void restart_server_done()
 			{
-				PurpleCountdown.TriggerEvent -= restart_server_trigger;
+				PurpleCountdown.CountdownDoneEvent -= restart_server_done;
+				PurpleCountdown.CountdownRunEvent -= restart_server_run;
 				PurpleNetwork.RestartLocalServer ();
 			}
 
