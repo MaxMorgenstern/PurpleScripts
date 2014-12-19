@@ -14,6 +14,7 @@ using System.Collections;
  * 	Listener
  * 	Login
  */
+using System.Collections.Generic;
 
 namespace PurpleNetwork
 {
@@ -185,6 +186,45 @@ namespace PurpleNetwork
 
 
 
+
+
+			
+			private static string notificationMessage;
+
+			public static void SetNotificationMessage(string message)
+			{
+				Instance.set_notification_message (message);
+			}
+			
+			private void set_notification_message(string message)
+			{
+				notificationMessage = message;
+			}
+
+
+			
+			private static List <int> intervalList;
+
+			public static void SetNotificationInterval(List <int> interval)
+			{
+				Instance.set_notification_interval (interval);
+			}
+			
+			private void set_notification_interval(List <int> interval)
+			{
+				intervalList = interval;
+			}
+
+
+			public static List <int> GetNotificationInterval()
+			{
+				return Instance.get_notification_interval ();
+			}
+			
+			private List <int> get_notification_interval()
+			{
+				return intervalList;
+			}
 
 
 
