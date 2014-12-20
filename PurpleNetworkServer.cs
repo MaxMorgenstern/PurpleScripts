@@ -201,9 +201,26 @@ namespace PurpleNetwork
 				notificationMessage = message;
 			}
 
+			public static string GetNotificationMessage()
+			{
+				return Instance.get_notification_message ();
+			}
+			
+			private string get_notification_message()
+			{
+				return notificationMessage;
+			}
+
 
 			
 			private static List <int> intervalList;
+
+			public static void SetNotificationInterval(int interval)
+			{
+				List<int> intervalList = new List<int> ();
+				intervalList.Add (interval);
+				Instance.set_notification_interval (intervalList);
+			}
 
 			public static void SetNotificationInterval(List <int> interval)
 			{
@@ -214,7 +231,6 @@ namespace PurpleNetwork
 			{
 				intervalList = interval;
 			}
-
 
 			public static List <int> GetNotificationInterval()
 			{
