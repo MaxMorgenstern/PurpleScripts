@@ -14,6 +14,16 @@ using System.Collections;
  * 	Listener
  * 	Login
  */
+
+// Game List - or game instance list
+// CreateGame(name, password, player, game, version, options, public);
+
+// event handler
+
+// interval update
+
+// option autoritative
+
 using System.Collections.Generic;
 
 namespace PurpleNetwork
@@ -67,6 +77,9 @@ namespace PurpleNetwork
 			private ServerConfig stdServerConfig;	
 			private static PurpleServer instance;
 			private static int stdServerdelay;
+			
+			private static string notificationMessage;
+			private static List <int> intervalList;
 
 
 			// START UP /////////////////////////
@@ -104,8 +117,50 @@ namespace PurpleNetwork
 			}
 
 
+			public static void StopServer()
+			{
+				StopServer (stdServerdelay);
+			}
+			
+			public static void StopServer(int seconds)
+			{
+				Instance.stop_server (seconds);
+			}
+
+
+			public static void RestartServer()
+			{
+				RestartServer (stdServerdelay);
+			}
+			
+			public static void RestartServer(int seconds)
+			{
+				Instance.restart_server (seconds);
+			}
 
 			
+			public static void SetNotificationInterval(int interval)
+			{
+				List<int> intervalList = new List<int> ();
+				intervalList.Add (interval);
+				Instance.set_notification_interval (intervalList);
+			}
+			
+			public static void SetNotificationInterval(List <int> interval)
+			{
+				Instance.set_notification_interval (interval);
+			}
+
+
+			public static void SetNotificationMessage(string message)
+			{
+				Instance.set_notification_message (message);
+			}
+
+
+			
+			// PRIVATE FUNCTIONS /////////////////////////
+			// START
 			private void launch_server()
 			{
 				launch_server (stdServerConfig);
@@ -120,18 +175,7 @@ namespace PurpleNetwork
 			}
 
 
-
-
-			public static void StopServer()
-			{
-				StopServer (stdServerdelay);
-			}
-
-			public static void StopServer(int seconds)
-			{
-				Instance.stop_server (seconds);
-			}
-
+			// STOP
 			private void stop_server(int seconds)
 			{
 				PurpleCountdown.CountdownDoneEvent += stop_server_done;
@@ -153,17 +197,7 @@ namespace PurpleNetwork
 			}
 
 
-
-			public static void RestartServer()
-			{
-				RestartServer (stdServerdelay);
-			}
-			
-			public static void RestartServer(int seconds)
-			{
-				Instance.restart_server (seconds);
-			}
-
+			// RESTART
 			private void restart_server(int seconds)
 			{
 				PurpleCountdown.CountdownDoneEvent += restart_server_done;
@@ -185,17 +219,7 @@ namespace PurpleNetwork
 			}
 
 
-
-
-
-			
-			private static string notificationMessage;
-
-			public static void SetNotificationMessage(string message)
-			{
-				Instance.set_notification_message (message);
-			}
-			
+			// SET NOTIFICATION MESSAGE
 			private void set_notification_message(string message)
 			{
 				notificationMessage = message;
@@ -211,22 +235,8 @@ namespace PurpleNetwork
 				return notificationMessage;
 			}
 
-
 			
-			private static List <int> intervalList;
-
-			public static void SetNotificationInterval(int interval)
-			{
-				List<int> intervalList = new List<int> ();
-				intervalList.Add (interval);
-				Instance.set_notification_interval (intervalList);
-			}
-
-			public static void SetNotificationInterval(List <int> interval)
-			{
-				Instance.set_notification_interval (interval);
-			}
-			
+			// SET NOTIFICATION INTERVAL
 			private void set_notification_interval(List <int> interval)
 			{
 				intervalList = interval;
@@ -241,20 +251,7 @@ namespace PurpleNetwork
 			{
 				return intervalList;
 			}
-
-
-
-			// Game List - or game instance list
-			// CreateGame(name, password, player, game, version, options, public);
-
-			// event handler
-
-			// interval update
-
-			// option autoritative
-
-
-
+		
 		}
 	}
 }
