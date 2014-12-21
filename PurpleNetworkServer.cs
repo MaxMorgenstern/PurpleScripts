@@ -145,16 +145,26 @@ namespace PurpleNetwork
 				intervalList.Add (interval);
 				Instance.set_notification_interval (intervalList);
 			}
+
+			public static void SetNotificationMessage(string message)
+			{
+				Instance.set_notification_message (message);
+			}
+						
+			public static string GetNotificationMessage()
+			{
+				return Instance.get_notification_message ();
+			}
+
 			
 			public static void SetNotificationInterval(List <int> interval)
 			{
 				Instance.set_notification_interval (interval);
 			}
 
-
-			public static void SetNotificationMessage(string message)
+			public static List <int> GetNotificationInterval()
 			{
-				Instance.set_notification_message (message);
+				return Instance.get_notification_interval ();
 			}
 
 
@@ -186,7 +196,9 @@ namespace PurpleNetwork
 			private void stop_server_run()
 			{
 				float time_left = PurpleCountdown.CountdownTimeLeft ();
-				// TODO...
+				// TODO - check time left
+				PurpleNetwork.Broadcast ("server_broadcast", 
+						combine_notification_message(notificationMessage, (int)PurpleCountdown.CountdownTimeLeft()));
 			}
 
 			private void stop_server_done()
@@ -208,7 +220,9 @@ namespace PurpleNetwork
 			private void restart_server_run()
 			{
 				float time_left = PurpleCountdown.CountdownTimeLeft ();
-				// TODO...
+				// TODO - check time left
+				PurpleNetwork.Broadcast ("server_broadcast", 
+				                         combine_notification_message(notificationMessage, (int)PurpleCountdown.CountdownTimeLeft()));
 			}
 
 			private void restart_server_done()
@@ -225,11 +239,6 @@ namespace PurpleNetwork
 				notificationMessage = message;
 			}
 
-			public static string GetNotificationMessage()
-			{
-				return Instance.get_notification_message ();
-			}
-			
 			private string get_notification_message()
 			{
 				return notificationMessage;
@@ -242,16 +251,21 @@ namespace PurpleNetwork
 				intervalList = interval;
 			}
 
-			public static List <int> GetNotificationInterval()
-			{
-				return Instance.get_notification_interval ();
-			}
-			
+
+			// GET NOTIFICATION INTERVAL
 			private List <int> get_notification_interval()
 			{
 				return intervalList;
 			}
 		
+
+			
+			// HELPER ////////////////////
+			private string combine_notification_message(string message, int time)
+			{
+				// TODO - keyword
+				return message;
+			}
 		}
 	}
 }
