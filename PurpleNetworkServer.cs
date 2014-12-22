@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 // This is just an idea to provide a client and autoritative server class
 // This class is not optimized for games with a lot of server interaction but for
@@ -24,62 +25,20 @@ using System.Collections;
 
 // option autoritative
 
-using System.Collections.Generic;
 
 namespace PurpleNetwork
 {
 	namespace Server
 	{
-		public enum ServerType { Account, Lobby, Game, Monitoring };
-
-		public class ServerConfig
-		{
-			public string name;
-			public ServerType type;
-
-			public string password;
-			public int maxUser;
-			public int port;
-
-			// CONSTRUCTOR
-			public ServerConfig ()
-			{
-				name = "GameServer";
-				type = ServerType.Game;
-				
-				password = "purple";
-				maxUser = 32;
-				port = 1000;
-			}
-
-			public void SetType(string serverType)
-			{
-				SetType(parse_server_type (serverType));
-			}
-
-			public void SetType(ServerType serverType)
-			{
-				type = serverType;
-			}
-
-			// PRIVATE HELPER /////////////////////////
-			private ServerType parse_server_type(string serverType)
-			{
-				return (ServerType) Enum.Parse(typeof(ServerType), serverType, true);
-			}
-		}
-
-
-
 		public class PurpleServer : MonoBehaviour
 		{
-
 			private ServerConfig stdServerConfig;	
 			private static PurpleServer instance;
 			private static int stdServerdelay;
+			private static List<int> stdNotificationIntervalList;
 			
 			private static string notificationMessage;
-			private static List <int> intervalList;
+			private static List <int> NotificationIntervalList;
 
 
 			// START UP /////////////////////////
@@ -87,6 +46,7 @@ namespace PurpleNetwork
 			{
 				stdServerConfig = new ServerConfig ();
 				stdServerdelay = 10;
+				stdNotificationIntervalList = new List<int> (new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
 			}
 
 			
@@ -156,7 +116,12 @@ namespace PurpleNetwork
 				return Instance.get_notification_message ();
 			}
 
-			
+
+			public static void SetNotificationInterval()
+			{
+				Instance.set_notification_interval ();
+			}
+
 			public static void SetNotificationInterval(List <int> interval)
 			{
 				Instance.set_notification_interval (interval);
@@ -196,15 +161,20 @@ namespace PurpleNetwork
 			private void stop_server_run()
 			{
 				float time_left = PurpleCountdown.CountdownTimeLeft ();
-				// TODO - check time left
-				PurpleNetwork.Broadcast ("server_broadcast", 
-						combine_notification_message(notificationMessage, (int)PurpleCountdown.CountdownTimeLeft()));
+
+				if(NotificationIntervalList.Contains((int)time_left))
+				{
+					PurpleNetwork.Broadcast ("server_broadcast", 
+					                         combine_notification_message(notificationMessage, (int)time_left));
+				}
 			}
 
 			private void stop_server_done()
 			{
 				PurpleCountdown.CountdownDoneEvent -= stop_server_done;
 				PurpleCountdown.CountdownRunEvent -= stop_server_run;
+				PurpleNetwork.Broadcast ("server_broadcast", 
+					combine_notification_message(notificationMessage, 0));
 				PurpleNetwork.StopLocalServer ();
 			}
 
@@ -220,15 +190,20 @@ namespace PurpleNetwork
 			private void restart_server_run()
 			{
 				float time_left = PurpleCountdown.CountdownTimeLeft ();
-				// TODO - check time left
-				PurpleNetwork.Broadcast ("server_broadcast", 
-				                         combine_notification_message(notificationMessage, (int)PurpleCountdown.CountdownTimeLeft()));
+
+				if(NotificationIntervalList.Contains((int)time_left))
+				{
+					PurpleNetwork.Broadcast ("server_broadcast", 
+						combine_notification_message(notificationMessage, (int)time_left));
+				}
 			}
 
 			private void restart_server_done()
 			{
 				PurpleCountdown.CountdownDoneEvent -= restart_server_done;
 				PurpleCountdown.CountdownRunEvent -= restart_server_run;
+				PurpleNetwork.Broadcast ("server_broadcast", 
+					combine_notification_message(notificationMessage, 0));
 				PurpleNetwork.RestartLocalServer ();
 			}
 
@@ -246,16 +221,20 @@ namespace PurpleNetwork
 
 			
 			// SET NOTIFICATION INTERVAL
-			private void set_notification_interval(List <int> interval)
+			private void set_notification_interval()
 			{
-				intervalList = interval;
+				NotificationIntervalList = stdNotificationIntervalList;
 			}
 
+			private void set_notification_interval(List <int> interval)
+			{
+				NotificationIntervalList = interval;
+			}
 
 			// GET NOTIFICATION INTERVAL
 			private List <int> get_notification_interval()
 			{
-				return intervalList;
+				return NotificationIntervalList;
 			}
 		
 
