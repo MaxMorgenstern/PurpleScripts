@@ -39,6 +39,7 @@ namespace PurpleNetwork
 			
 			private static string notificationMessage;
 			private static List <int> NotificationIntervalList;
+			private static string notificationPlaceholder;
 
 
 			// START UP /////////////////////////
@@ -47,6 +48,7 @@ namespace PurpleNetwork
 				stdServerConfig = new ServerConfig ();
 				stdServerdelay = 10;
 				stdNotificationIntervalList = new List<int> (new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
+				notificationPlaceholder = "<time>";
 			}
 
 			
@@ -115,7 +117,11 @@ namespace PurpleNetwork
 			{
 				return Instance.get_notification_message ();
 			}
-
+			
+			public static void SetNotificationKeyword(string keyword)
+			{
+				Instance.set_notification_keyword (keyword);
+			}
 
 			public static void SetNotificationInterval()
 			{
@@ -165,7 +171,7 @@ namespace PurpleNetwork
 				if(NotificationIntervalList.Contains((int)time_left))
 				{
 					PurpleNetwork.Broadcast ("server_broadcast", 
-					                         combine_notification_message(notificationMessage, (int)time_left));
+						combine_notification_message(notificationMessage, (int)time_left));
 				}
 			}
 
@@ -219,6 +225,11 @@ namespace PurpleNetwork
 				return notificationMessage;
 			}
 
+			private string set_notification_keyword(string keyword)
+			{
+				notificationPlaceholder = keyword
+			}
+
 			
 			// SET NOTIFICATION INTERVAL
 			private void set_notification_interval()
@@ -242,7 +253,8 @@ namespace PurpleNetwork
 			// HELPER ////////////////////
 			private string combine_notification_message(string message, int time)
 			{
-				// TODO - keyword
+				// TODO... all seconds... 600 seconds... 15 seconds... 1 seconds 
+				message.Replace(notificationPlaceholder, time.ToString());
 				return message;
 			}
 		}
