@@ -3,11 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-// This is just an idea to provide a client and autoritative server class
+// This is just an idea to provide a client and (autoritative) server class
 // This class is not optimized for games with a lot of server interaction but for
 // 		games that are turn based or need less network traffic
-
-// TODO: A lot
 
 /*
  * Server: 
@@ -16,15 +14,10 @@ using System.Collections.Generic;
  * 	Login
  */
 
-// Game List - or game instance list
-// CreateGame(name, password, player, game, version, options, public);
-
 // event handler
-
-// interval update
-
 // option autoritative
 
+// TODO: i18n
 
 namespace PurpleNetwork
 {
@@ -45,6 +38,7 @@ namespace PurpleNetwork
 			// START UP /////////////////////////
 			protected PurpleServer ()
 			{
+				// TODO: server config
 				stdServerConfig = new ServerConfig ();
 				stdServerdelay = 10;
 				stdNotificationIntervalList = new List<int> (new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
@@ -251,11 +245,48 @@ namespace PurpleNetwork
 
 			
 			// HELPER ////////////////////
-			private string combine_notification_message(string message, int time)
+
+			private const int totalSecondsDay = 86400;
+			private const int totalSecondsHour = 3600;
+			private const int totalSecondsMinute = 60;
+
+			// TODO: I18N not hardcoded time names
+			private string combine_notification_message(string message, int timeLeft)
 			{
-				// TODO... all seconds... 600 seconds... 15 seconds... 1 seconds 
-				message.Replace(notificationPlaceholder, time.ToString());
+				int[] convertedTimeLeft = calculate_time_from_seconds (timeLeft);
+				string timeLeftString = "";
+				if(convertedTimeLeft[0] != 0)
+					timeLeftString += convertedTimeLeft[0] + " Days ";
+				
+				if(convertedTimeLeft[1] != 0)
+					timeLeftString += convertedTimeLeft[1] + " Hours ";
+
+				if(convertedTimeLeft[2] != 0)
+					timeLeftString += convertedTimeLeft[2] + " Minutes ";
+
+				if(convertedTimeLeft[3] != 0)
+					timeLeftString += convertedTimeLeft[3] + " Seconds ";
+
+				message.Replace(notificationPlaceholder, timeLeftString.Trim());
 				return message;
+			}
+
+			private static int[] calculate_time_from_seconds(int timeLeft)
+			{
+				int seconds = 0;
+				int minutes = 0;
+				int hours = 0;
+				int days = 0;
+				
+				days = timeLeft / totalSecondsDay;
+				timeLeft -= days * totalSecondsDay;
+				hours = timeLeft / totalSecondsHour;
+				timeLeft -= hours * totalSecondsHour;
+				minutes = timeLeft / totalSecondsMinute;
+				timeLeft -= minutes * totalSecondsMinute;
+				seconds = timeLeft;
+				
+				return new int[] { days, hours, minutes, seconds };
 			}
 		}
 	}
