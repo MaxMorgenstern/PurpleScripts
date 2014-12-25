@@ -43,11 +43,6 @@ namespace PurpleNetwork
 			private static string _language_second;
 			private static string _language_seconds;
 
-			// HELPER Variables
-			private const int totalSecondsDay = 86400;
-			private const int totalSecondsHour = 3600;
-			private const int totalSecondsMinute = 60;
-
 
 			// START UP /////////////////////////
 			protected PurpleServer ()
@@ -267,8 +262,6 @@ namespace PurpleNetwork
 		
 			
 			// HELPER ////////////////////
-
-			// TODO: I18N not hardcoded time names
 			private string combine_notification_message(string message, int timeLeft)
 			{
 				int[] convertedTimeLeft = calculate_time_from_seconds (timeLeft);
@@ -276,15 +269,14 @@ namespace PurpleNetwork
 				if(convertedTimeLeft[0] != 0)
 					timeLeftString += convertedTimeLeft[0] + " " + ((convertedTimeLeft[0] == 1) ? _language_day : _language_days) + " ";
 
-
 				if(convertedTimeLeft[1] != 0)
-					timeLeftString += convertedTimeLeft[1] + " " + _language_hours + " ";
+					timeLeftString += convertedTimeLeft[1] + " " + ((convertedTimeLeft[1] == 1) ? _language_hour : _language_hours) + " ";
 
 				if(convertedTimeLeft[2] != 0)
-					timeLeftString += convertedTimeLeft[2] + " " + _language_minutes + " ";
+					timeLeftString += convertedTimeLeft[2] + " " + ((convertedTimeLeft[2] == 1) ? _language_minute : _language_minutes) + " ";
 
 				if(convertedTimeLeft[3] != 0)
-					timeLeftString += convertedTimeLeft[3] + " " + _language_seconds + " ";
+					timeLeftString += convertedTimeLeft[3] + " " + ((convertedTimeLeft[3] == 1) ? _language_second : _language_seconds) + " ";
 
 				message.Replace(notificationPlaceholder, timeLeftString.Trim());
 				return message;
@@ -292,20 +284,8 @@ namespace PurpleNetwork
 
 			private static int[] calculate_time_from_seconds(int timeLeft)
 			{
-				int seconds = 0;
-				int minutes = 0;
-				int hours = 0;
-				int days = 0;
-				
-				days = timeLeft / totalSecondsDay;
-				timeLeft -= days * totalSecondsDay;
-				hours = timeLeft / totalSecondsHour;
-				timeLeft -= hours * totalSecondsHour;
-				minutes = timeLeft / totalSecondsMinute;
-				timeLeft -= minutes * totalSecondsMinute;
-				seconds = timeLeft;
-				
-				return new int[] { days, hours, minutes, seconds };
+				TimeSpan time = TimeSpan.FromSeconds( timeLeft );
+				return new int[] { time.Days, time.Hours, time.Minutes, time.Seconds };
 			}
 		}
 	}
