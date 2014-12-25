@@ -118,13 +118,13 @@ namespace PurpleStorage
 		public static bool SaveBinaryFile(string filename, string data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			return Instance.save_binary_file (filename, data);
+			return Instance.save_binary_file (filename, fileData);
 		}
 
 		public static bool SaveBinaryFile(string filename, object data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
-			return Instance.save_binary_file (filename, data);
+			return Instance.save_binary_file (filename, fileData);
 		}
 
 		public static bool Save(string filename, string data)
