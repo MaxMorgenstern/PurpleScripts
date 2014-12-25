@@ -33,6 +33,20 @@ namespace PurpleNetwork
 			private static string notificationMessage;
 			private static List <int> NotificationIntervalList;
 			private static string notificationPlaceholder;
+			
+			private static string _language_day;
+			private static string _language_days;
+			private static string _language_hour;
+			private static string _language_hours;
+			private static string _language_minute;
+			private static string _language_minutes;
+			private static string _language_second;
+			private static string _language_seconds;
+
+			// HELPER Variables
+			private const int totalSecondsDay = 86400;
+			private const int totalSecondsHour = 3600;
+			private const int totalSecondsMinute = 60;
 
 
 			// START UP /////////////////////////
@@ -43,6 +57,15 @@ namespace PurpleNetwork
 				stdServerdelay = 10;
 				stdNotificationIntervalList = new List<int> (new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
 				notificationPlaceholder = "<time>";
+				
+				_language_day = "day";
+				_language_days = "days";
+				_language_hour = "hour";
+				_language_hours = "hours";
+				_language_minute = "minute";
+				_language_minutes = "minutes";
+				_language_second = "second";
+				_language_seconds = "seconds";
 			}
 
 			
@@ -219,9 +242,9 @@ namespace PurpleNetwork
 				return notificationMessage;
 			}
 
-			private string set_notification_keyword(string keyword)
+			private void set_notification_keyword(string keyword)
 			{
-				notificationPlaceholder = keyword
+				notificationPlaceholder = keyword;
 			}
 
 			
@@ -242,13 +265,8 @@ namespace PurpleNetwork
 				return NotificationIntervalList;
 			}
 		
-
 			
 			// HELPER ////////////////////
-
-			private const int totalSecondsDay = 86400;
-			private const int totalSecondsHour = 3600;
-			private const int totalSecondsMinute = 60;
 
 			// TODO: I18N not hardcoded time names
 			private string combine_notification_message(string message, int timeLeft)
@@ -256,16 +274,17 @@ namespace PurpleNetwork
 				int[] convertedTimeLeft = calculate_time_from_seconds (timeLeft);
 				string timeLeftString = "";
 				if(convertedTimeLeft[0] != 0)
-					timeLeftString += convertedTimeLeft[0] + " Days ";
-				
+					timeLeftString += convertedTimeLeft[0] + " " + ((convertedTimeLeft[0] == 1) ? _language_day : _language_days) + " ";
+
+
 				if(convertedTimeLeft[1] != 0)
-					timeLeftString += convertedTimeLeft[1] + " Hours ";
+					timeLeftString += convertedTimeLeft[1] + " " + _language_hours + " ";
 
 				if(convertedTimeLeft[2] != 0)
-					timeLeftString += convertedTimeLeft[2] + " Minutes ";
+					timeLeftString += convertedTimeLeft[2] + " " + _language_minutes + " ";
 
 				if(convertedTimeLeft[3] != 0)
-					timeLeftString += convertedTimeLeft[3] + " Seconds ";
+					timeLeftString += convertedTimeLeft[3] + " " + _language_seconds + " ";
 
 				message.Replace(notificationPlaceholder, timeLeftString.Trim());
 				return message;
