@@ -10,11 +10,21 @@ namespace PurpleConfig
 		public static string Password { get { return ItemIds.getConfigString ("Network.Password"); } }
 		public static int Pause { get { return ItemIds.getConfigInt ("Network.Pause"); } }
 
-		public static class MasterServer {
-			public static string GameName { get { return ItemIds.getConfigString ("Network.MasterServer.GameName"); } }
-			public static string GameType { get { return ItemIds.getConfigString ("Network.MasterServer.GameType"); } }
-			public static string ServerURL { get { return ItemIds.getConfigString ("Network.MasterServer.URL"); } }
+		public static class Server {
+			public static string Name { get { return ItemIds.getConfigString ("Network.Server.Name"); } }
+			public static string Type { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
+			public static string IPScript { get { return ItemIds.getConfigString ("Network.Server.IPScript"); } }
+			public static string Delay { get { return ItemIds.getConfigString ("Network.Server.ActionDelay"); } }
 		}
+
+		public static class Message {
+			public static string Placeholder { get { return ItemIds.getConfigString ("Network.Message.Placeholder"); } }
+		}
+	}
+	
+	// Globalization /////////////////////////
+	public static class Globalization {
+		public static string Culture { get { return ItemIds.getConfigString ("Globalization.Culture"); } }
 	}
 
 	// Storage /////////////////////////

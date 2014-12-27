@@ -4,7 +4,7 @@ namespace PurpleNetwork
 {
 	namespace Server
 	{
-		public enum ServerType { Account, Lobby, Game, Monitoring };
+		public enum ServerType { Account, Lobby, Game, Multi, Monitoring };
 		
 		public class ServerConfig
 		{
@@ -19,7 +19,7 @@ namespace PurpleNetwork
 			public ServerConfig ()
 			{
 				name = "GameServer";
-				type = ServerType.Game;
+				type = ServerType.Multi;
 				
 				password = "purple";
 				maxUser = 32;

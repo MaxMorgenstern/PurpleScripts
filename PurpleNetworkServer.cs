@@ -1,21 +1,16 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 // This is just an idea to provide a client and (autoritative) server class
 // This class is not optimized for games with a lot of server interaction but for
 // 		games that are turn based or need less network traffic
 
-/*
- * Server:
- * 	Start, Stop - Account Server - Game Server (with Lobby)
- * 	Listener
- * 	Login
- */
-
+// TODO
 // event handler
+// login
 // option autoritative
+// Servertype: Account, Lobby, Game, Multi (Account, Lobby, Game), Monitoring
 
 // TODO: i18n
 
@@ -41,12 +36,21 @@ namespace PurpleNetwork
 			// START UP /////////////////////////
 			protected PurpleServer ()
 			{
-				// TODO: server config
 				stdServerConfig = new ServerConfig ();
+				stdNotificationIntervalList = new List<int> (
+					new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
+
+				try{
+					// TODO
+				} catch(Exception e){
+					// TODO - fallback
+					Debug.LogError("Can not read Purple Config! " + e.ToString());
+				}
+
+				// TODO: server config
 				stdServerdelay = 10;
-				stdNotificationIntervalList = new List<int> (new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
-				notificationPlaceholder = "<time>";
-				notificationMessage = "Server Shutdown in <time>!";
+				notificationPlaceholder = "!!time!!";
+				notificationMessage = "Server Shutdown in !!time!!!";
 				notificationDoneMessage = "The Server will be restarted now!";
 
 				//TODO:  Load language externally
@@ -63,7 +67,7 @@ namespace PurpleNetwork
 
 
 			// SINGLETON /////////////////////////
-			public static PurpleServer Instance
+			private static PurpleServer Instance
 			{
 				get
 				{
