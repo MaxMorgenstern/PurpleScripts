@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageFile>
+	<!-- Time -->
+	<add key="DAY" value="day" />
+	<add key="DAYS" value="days" />
+	<add key="HOUR" value="hour" />
+	<add key="HOURS" value="hours" />
+	<add key="MINUTE" value="minute" />
+	<add key="MINUTES" value="minutes" />
+	<add key="SECOND" value="second" />
+	<add key="SECONDS" value="seconds" />
+
+	<add key="RESTART" value="Server restart in !!time!!!" />
+	<add key="RESTARTNOW" value="The Server will be restarted now!" />
+	<add key="SHUTDOWN" value="Server shutdown in !!time!!!" />
+	<add key="SHUTDOWNNOW" value="The Server will now be shut down!" />
+
+	<add key="x" value="y" />
+</LanguageFile>

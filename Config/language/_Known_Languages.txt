@@ -1,0 +1,161 @@
+Chinese (Simplified) | zh-CHS
+Arabic (Saudi Arabia) | ar-SA
+Bulgarian (Bulgaria) | bg-BG
+Catalan (Catalan) | ca-ES
+Chinese (Taiwan) | zh-TW
+Czech (Czech Republic) | cs-CZ
+Danish (Denmark) | da-DK
+German (Germany) | de-DE
+Greek (Greece) | el-GR
+English (United States) | en-US
+Finnish (Finland) | fi-FI
+French (France) | fr-FR
+Hebrew (Israel) | he-IL
+Hungarian (Hungary) | hu-HU
+Icelandic (Iceland) | is-IS
+Italian (Italy) | it-IT
+Japanese (Japan) | ja-JP
+Korean (Korea) | ko-KR
+Dutch (Netherlands) | nl-NL
+Norwegian, Bokm?l (Norway) | nb-NO
+Polish (Poland) | pl-PL
+Portuguese (Brazil) | pt-BR
+Romanian (Romania) | ro-RO
+Russian (Russia) | ru-RU
+Croatian (Croatia) | hr-HR
+Slovak (Slovakia) | sk-SK
+Albanian (Albania) | sq-AL
+Swedish (Sweden) | sv-SE
+Thai (Thailand) | th-TH
+Turkish (Turkey) | tr-TR
+Urdu (Islamic Republic of Pakistan) | ur-PK
+Indonesian (Indonesia) | id-ID
+Ukrainian (Ukraine) | uk-UA
+Belarusian (Belarus) | be-BY
+Slovenian (Slovenia) | sl-SI
+Estonian (Estonia) | et-EE
+Latvian (Latvia) | lv-LV
+Lithuanian (Lithuania) | lt-LT
+Persian (Iran) | fa-IR
+Vietnamese (Vietnam) | vi-VN
+Armenian (Armenia) | hy-AM
+Azeri (Latin, Azerbaijan) | az-AZ-Latn
+Basque (Basque) | eu-ES
+Macedonian (Former Yugoslav Republic of Macedonia) | mk-MK
+Afrikaans (South Africa) | af-ZA
+Georgian (Georgia) | ka-GE
+Faroese (Faroe Islands) | fo-FO
+Hindi (India) | hi-IN
+Malay (Malaysia) | ms-MY
+Kazakh (Kazakhstan) | kk-KZ
+Kyrgyz (Kyrgyzstan) | ky-KG
+Kiswahili (Kenya) | sw-KE
+Uzbek (Latin, Uzbekistan) | uz-UZ-Latn
+Tatar (Russia) | tt-RU
+Punjabi (India) | pa-IN
+Gujarati (India) | gu-IN
+Tamil (India) | ta-IN
+Telugu (India) | te-IN
+Kannada (India) | kn-IN
+Marathi (India) | mr-IN
+Sanskrit (India) | sa-IN
+Mongolian (Cyrillic, Mongolia) | mn-MN
+Galician (Galician) | gl-ES
+Konkani (India) | kok-IN
+Syriac (Syria) | syr-SY
+Divehi (Maldives) | div-MV
+Arabic (Iraq) | ar-IQ
+Chinese (People's Republic of China) | zh-CN
+German (Switzerland) | de-CH
+English (United Kingdom) | en-GB
+Spanish (Mexico) | es-MX
+French (Belgium) | fr-BE
+Italian (Switzerland) | it-CH
+Dutch (Belgium) | nl-BE
+Norwegian, Nynorsk (Norway) | nn-NO
+Portuguese (Portugal) | pt-PT
+Serbian (Latin, Serbia and Montenegro) | sr-SP-Latn
+Swedish (Finland) | sv-FI
+Azeri (Cyrillic, Azerbaijan) | az-AZ-Cyrl
+Malay (Brunei Darussalam) | ms-BN
+Uzbek (Cyrillic, Uzbekistan) | uz-UZ-Cyrl
+Arabic (Egypt) | ar-EG
+Chinese (Hong Kong S.A.R.) | zh-HK
+German (Austria) | de-AT
+English (Australia) | en-AU
+Spanish (Spain) | es-ES
+French (Canada) | fr-CA
+Serbian (Cyrillic, Serbia and Montenegro) | sr-SP-Cyrl
+Arabic (Libya) | ar-LY
+Chinese (Singapore) | zh-SG
+German (Luxembourg) | de-LU
+English (Canada) | en-CA
+Spanish (Guatemala) | es-GT
+French (Switzerland) | fr-CH
+Arabic (Algeria) | ar-DZ
+Chinese (Macao S.A.R.) | zh-MO
+German (Liechtenstein) | de-LI
+English (New Zealand) | en-NZ
+Spanish (Costa Rica) | es-CR
+French (Luxembourg) | fr-LU
+Arabic (Morocco) | ar-MA
+English (Ireland) | en-IE
+Spanish (Panama) | es-PA
+French (Principality of Monaco) | fr-MC
+Arabic (Tunisia) | ar-TN
+English (South Africa) | en-ZA
+Spanish (Dominican Republic) | es-DO
+Arabic (Oman) | ar-OM
+English (Jamaica) | en-JM
+Spanish (Venezuela) | es-VE
+Arabic (Yemen) | ar-YE
+English (Caribbean) | en-CB
+Spanish (Colombia) | es-CO
+Arabic (Syria) | ar-SY
+English (Belize) | en-BZ
+Spanish (Peru) | es-PE
+Arabic (Jordan) | ar-JO
+English (Trinidad and Tobago) | en-TT
+Spanish (Argentina) | es-AR
+Arabic (Lebanon) | ar-LB
+English (Zimbabwe) | en-ZW
+Spanish (Ecuador) | es-EC
+Arabic (Kuwait) | ar-KW
+English (Republic of the Philippines) | en-PH
+Spanish (Chile) | es-CL
+Arabic (U.A.E.) | ar-AE
+Spanish (Uruguay) | es-UY
+Arabic (Bahrain) | ar-BH
+Spanish (Paraguay) | es-PY
+Arabic (Qatar) | ar-QA
+Spanish (Bolivia) | es-BO
+Spanish (El Salvador) | es-SV
+Spanish (Honduras) | es-HN
+Spanish (Nicaragua) | es-NI
+Spanish (Puerto Rico) | es-PR
+Chinese (Traditional) | zh-CHT
+Sami (Southern) (Norway) | sma-NO
+Serbian (Cyrillic) (Bosnia and Herzegovina) | sr-BA-Cyrl
+Zulu (South Africa) | zu-ZA
+Xhosa (South Africa) | xh-ZA
+Tswana (South Africa) | tn-ZA
+Sami (Northern) (Sweden) | se-SE
+Sami (Southern) (Sweden) | sma-SE
+Croatian (Bosnia and Herzegovina) | hr-BA
+Sami (Inari) (Finland) | smn-FI
+Quechua (Peru) | quz-PE
+Sami (Northern) (Finland) | se-FI
+Sami (Skolt) (Finland) | sms-FI
+Welsh (United Kingdom) | cy-GB
+Bosnian (Bosnia and Herzegovina) | bs-BA-Latn
+Sami (Lule) (Norway) | smj-NO
+Maori (New Zealand) | mi-NZ
+Quechua (Ecuador) | quz-EC
+Serbian (Latin) (Bosnia and Herzegovina) | sr-BA-Latn
+Bengali (India) | bn-IN
+Sami (Lule) (Sweden) | smj-SE
+Malayalam (India) | ml-IN
+Northern Sotho (South Africa) | ns-ZA
+Quechua (Bolivia) | quz-BO
+Sami (Northern) (Norway) | se-NO
+Maltese (Malta) | mt-MT
