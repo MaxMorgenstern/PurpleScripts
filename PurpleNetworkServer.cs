@@ -24,13 +24,13 @@ namespace PurpleNetwork
 			private ServerConfig stdServerConfig;
 			private static int stdServerdelay;
 			private static List<int> stdNotificationIntervalList;
-
-			private static string notificationMessage;
-			private static string notificationDoneMessage;
+			
+			private static string restartNotificationMessage;
+			private static string restartNotificationDoneMessage;
+			private static string shutdownNotificationMessage;
+			private static string shutdownNotificationDoneMessage;
 			private static List <int> notificationIntervalList;
 			private static string notificationPlaceholder;
-
-			private static Dictionary<string, string> _language;
 
 
 			// START UP /////////////////////////
@@ -41,28 +41,24 @@ namespace PurpleNetwork
 					new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
 
 				try{
-					// TODO
+					notificationPlaceholder = PurpleConfig.Network.Message.Placeholder;
+					stdServerdelay = PurpleConfig.Network.Server.Delay;
+
+					shutdownNotificationMessage = PurpleI18n.Get("SHUTDOWN");
+					shutdownNotificationDoneMessage = PurpleI18n.Get("SHUTDOWNNOW");
+					restartNotificationMessage = PurpleI18n.Get("RESTART");
+					restartNotificationDoneMessage = PurpleI18n.Get("RESTARTNOW");
 				} catch(Exception e){
-					// TODO - fallback
+					notificationPlaceholder = "!!time!!";
+					stdServerdelay = 10;
+
+					shutdownNotificationMessage = "Server shutdown in !!time!!!";
+					shutdownNotificationDoneMessage = "The server will be shut down now!";
+					restartNotificationMessage = "Server restart in !!time!!!";
+					restartNotificationDoneMessage = "The server will be restarted now!";
+
 					Debug.LogError("Can not read Purple Config! " + e.ToString());
 				}
-
-				// TODO: server config
-				stdServerdelay = 10;
-				notificationPlaceholder = "!!time!!";
-				notificationMessage = "Server Shutdown in !!time!!!";
-				notificationDoneMessage = "The Server will be restarted now!";
-
-				//TODO:  Load language externally
-				_language = new Dictionary<string, string>();
-				_language.Add ("day", "day");
-				_language.Add ("days", "days");
-				_language.Add ("hour", "hour");
-				_language.Add ("hours", "hours");
-				_language.Add ("minute", "minute");
-				_language.Add ("minutes", "minutes");
-				_language.Add ("second", "second");
-				_language.Add ("seconds", "seconds");
 			}
 
 
@@ -98,20 +94,40 @@ namespace PurpleNetwork
 				Instance.stop_server ();
 			}
 
+			public static void StopServer(string message, string doneMessage)
+			{
+				Instance.stop_server (message, doneMessage);
+			}
+			
 			public static void StopServer(int seconds)
 			{
 				Instance.stop_server (seconds);
 			}
 
+			public static void StopServer(int seconds, string message, string doneMessage)
+			{
+				Instance.stop_server (seconds, message, doneMessage);
+			}
 
+			
 			public static void RestartServer()
 			{
 				Instance.restart_server ();
 			}
 
+			public static void RestartServer(string message, string doneMessage)
+			{
+				Instance.restart_server (message, doneMessage);
+			}
+			
 			public static void RestartServer(int seconds)
 			{
 				Instance.restart_server (seconds);
+			}
+
+			public static void RestartServer(int seconds, string message, string doneMessage)
+			{
+				Instance.restart_server (seconds, message, doneMessage);
 			}
 
 
@@ -120,16 +136,6 @@ namespace PurpleNetwork
 				List<int> intervalList = new List<int> ();
 				intervalList.Add (interval);
 				Instance.set_notification_interval (intervalList);
-			}
-
-			public static void SetNotificationMessage(string message)
-			{
-				Instance.set_notification_message (message);
-			}
-
-			public static string GetNotificationMessage()
-			{
-				return Instance.get_notification_message ();
 			}
 
 			public static void SetNotificationKeyword(string keyword)
@@ -176,8 +182,21 @@ namespace PurpleNetwork
 				stop_server (stdServerdelay);
 			}
 
+			private void stop_server(string message, string doneMessage)
+			{
+				stop_server (stdServerdelay, message, doneMessage);
+			}
+
 			private void stop_server(int seconds)
 			{
+				stop_server (seconds, shutdownNotificationMessage, shutdownNotificationDoneMessage);
+			}
+
+			private void stop_server(int seconds, string message, string doneMessage)
+			{
+				shutdownNotificationMessage = message;
+				shutdownNotificationDoneMessage = doneMessage;
+
 				PurpleCountdown.CountdownDoneEvent += stop_server_done;
 				PurpleCountdown.CountdownRunEvent += stop_server_run;
 				PurpleCountdown.Countdown (seconds);
@@ -190,7 +209,7 @@ namespace PurpleNetwork
 				if(notificationIntervalList.Contains((int)time_left))
 				{
 					PurpleNetwork.Broadcast ("server_broadcast",
-						combine_notification_message(notificationMessage, (int)time_left));
+						combine_notification_message(shutdownNotificationMessage, (int)time_left));
 				}
 			}
 
@@ -198,7 +217,7 @@ namespace PurpleNetwork
 			{
 				PurpleCountdown.CountdownDoneEvent -= stop_server_done;
 				PurpleCountdown.CountdownRunEvent -= stop_server_run;
-				PurpleNetwork.Broadcast ("server_broadcast", notificationDoneMessage);
+				PurpleNetwork.Broadcast ("server_broadcast", shutdownNotificationDoneMessage);
 				PurpleNetwork.StopLocalServer ();
 			}
 
@@ -209,8 +228,21 @@ namespace PurpleNetwork
 				restart_server (stdServerdelay);
 			}
 
+			private void restart_server(string message, string doneMessage)
+			{
+				restart_server (stdServerdelay, message, doneMessage);
+			}
+
 			private void restart_server(int seconds)
 			{
+				restart_server (seconds, restartNotificationMessage, restartNotificationDoneMessage);
+			}
+
+			private void restart_server(int seconds, string message, string doneMessage)
+			{
+				restartNotificationMessage = message;
+				restartNotificationDoneMessage = doneMessage;
+
 				PurpleCountdown.CountdownDoneEvent += restart_server_done;
 				PurpleCountdown.CountdownRunEvent += restart_server_run;
 				PurpleCountdown.Countdown (seconds);
@@ -223,7 +255,7 @@ namespace PurpleNetwork
 				if(notificationIntervalList.Contains((int)time_left))
 				{
 					PurpleNetwork.Broadcast ("server_broadcast",
-						combine_notification_message(notificationMessage, (int)time_left));
+						combine_notification_message(restartNotificationMessage, (int)time_left));
 				}
 			}
 
@@ -231,32 +263,11 @@ namespace PurpleNetwork
 			{
 				PurpleCountdown.CountdownDoneEvent -= restart_server_done;
 				PurpleCountdown.CountdownRunEvent -= restart_server_run;
-				PurpleNetwork.Broadcast ("server_broadcast", notificationDoneMessage);
+				PurpleNetwork.Broadcast ("server_broadcast", restartNotificationDoneMessage);
 				PurpleNetwork.RestartLocalServer ();
 			}
 
-
-			// SET NOTIFICATION MESSAGE
-			private void set_notification_message(string message)
-			{
-				notificationMessage = message;
-			}
-			
-			private string get_notification_message()
-			{
-				return notificationMessage;
-			}
-
-			private void set_notification_done_message(string message)
-			{
-				notificationDoneMessage = message;
-			}
-			
-			private string get_notification__done_message()
-			{
-				return notificationDoneMessage;
-			}
-
+			// NOTIFICATION MESSAGE
 			private void set_notification_keyword(string keyword)
 			{
 				notificationPlaceholder = keyword;
@@ -286,21 +297,19 @@ namespace PurpleNetwork
 			{
 				int[] convertedTimeLeft = calculate_time_from_seconds (timeLeft);
 				string timeLeftString = "";
+
 				if(convertedTimeLeft[0] != 0)
 					timeLeftString += convertedTimeLeft[0] + " " + 
-						((convertedTimeLeft[0] == 1) ? _language["day"] : _language["days"]) + " ";
-
+						((convertedTimeLeft[0] == 1) ? PurpleI18n.Get ("day") : PurpleI18n.Get ("days")) + " ";
 				if(convertedTimeLeft[1] != 0)
 					timeLeftString += convertedTimeLeft[1] + " " + 
-						((convertedTimeLeft[1] == 1) ? _language["hour"] : _language["hours"]) + " ";
-
+						((convertedTimeLeft[1] == 1) ? PurpleI18n.Get ("hour") : PurpleI18n.Get ("hours")) + " ";
 				if(convertedTimeLeft[2] != 0)
 					timeLeftString += convertedTimeLeft[2] + " " + 
-						((convertedTimeLeft[2] == 1) ? _language["minute"] : _language["minutes"]) + " ";
-
+						((convertedTimeLeft[2] == 1) ? PurpleI18n.Get ("minute") : PurpleI18n.Get ("minutes")) + " ";
 				if(convertedTimeLeft[3] != 0)
 					timeLeftString += convertedTimeLeft[3] + " " + 
-						((convertedTimeLeft[3] == 1) ? _language["second"] : _language["seconds"]) + " ";
+						((convertedTimeLeft[3] == 1) ? PurpleI18n.Get ("second") : PurpleI18n.Get ("seconds")) + " ";
 
 				message.Replace(notificationPlaceholder, timeLeftString.Trim());
 				return message;

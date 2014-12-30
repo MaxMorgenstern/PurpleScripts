@@ -14,7 +14,7 @@ namespace PurpleConfig
 			public static string Name { get { return ItemIds.getConfigString ("Network.Server.Name"); } }
 			public static string Type { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
 			public static string IPScript { get { return ItemIds.getConfigString ("Network.Server.IPScript"); } }
-			public static string Delay { get { return ItemIds.getConfigString ("Network.Server.ActionDelay"); } }
+			public static int Delay { get { return ItemIds.getConfigInt ("Network.Server.ActionDelay"); } }
 		}
 
 		public static class Message {
