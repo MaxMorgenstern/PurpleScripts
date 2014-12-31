@@ -97,13 +97,13 @@ public class PurpleCountdown : MonoBehaviour
 
 	private void invoke_trigger()
 	{
-		Debug.Log("Triggered after " + t_trigger + " seconds!");
+		//Debug.Log("Triggered after " + t_trigger + " seconds!");
 		instance.trigger_purple_event (TriggerEvent);
 	}
 
 	private void invoke_trigger_repeating()
 	{
-		Debug.Log("Repeating... First time triggered after " + t_trigger_repeating + " seconds!");
+		//Debug.Log("Repeating... First time triggered after " + t_trigger_repeating + " seconds!");
 		instance.trigger_purple_event (TriggerRepeatEvent);
 	}
 
@@ -133,13 +133,13 @@ public class PurpleCountdown : MonoBehaviour
 		{
 			yield return new WaitForSeconds(1);
 
-			Debug.Log ("Triggered after " + (t_countdown-t_time+1) + " seconds!");
+			//Debug.Log ("Triggered after " + (t_countdown-t_time+1) + " seconds!");
 			instance.trigger_purple_event (CountdownRunEvent);
 
 			t_time -= 1;
 		}
-
-		Debug.Log ("Finished after " + (t_countdown-t_time).ToString() + " seconds!");
+		yield return new WaitForSeconds(1);
+		//Debug.Log ("Finished after " + (t_countdown-t_time).ToString() + " seconds!");
 		instance.trigger_purple_event (CountdownDoneEvent);
 	}
 
