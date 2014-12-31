@@ -25,6 +25,8 @@ namespace PurpleNetwork
 			private static int stdServerdelay;
 			private static List<int> stdNotificationIntervalList;
 			
+			private ServerConfig currentServerConfig;
+			
 			private static string restartNotificationMessage;
 			private static string restartNotificationDoneMessage;
 			private static string shutdownNotificationMessage;
@@ -71,10 +73,17 @@ namespace PurpleNetwork
 					{
 						GameObject gameObject 	= new GameObject ("PurpleServerManager");
 						instance     			= gameObject.AddComponent<PurpleServer> ();
+						instance.set_notification_interval();
+
+						PurpleNetwork.AddListener<PurpleMessages.Server.Message>("server_broadcast", 
+									PurpleServerMessageHandler.server_broadcast_handler);
 					}
 					return instance;
 				}
 			}
+
+
+
 
 
 			// PUBLIC FUNCTIONS /////////////////////////
@@ -169,6 +178,7 @@ namespace PurpleNetwork
 
 			private void launch_server(ServerConfig config)
 			{
+				currentServerConfig = config;
 				int player = config.maxUser;
 				string password = config.password;
 				int port = config.port;
@@ -311,8 +321,7 @@ namespace PurpleNetwork
 					timeLeftString += convertedTimeLeft[3] + " " + 
 						((convertedTimeLeft[3] == 1) ? PurpleI18n.Get ("second") : PurpleI18n.Get ("seconds")) + " ";
 
-				message.Replace(notificationPlaceholder, timeLeftString.Trim());
-				return message;
+				return message.Replace(notificationPlaceholder, timeLeftString.Trim());
 			}
 
 			private static int[] calculate_time_from_seconds(int timeLeft)
@@ -321,5 +330,20 @@ namespace PurpleNetwork
 				return new int[] { time.Days, time.Hours, time.Minutes, time.Seconds };
 			}
 		}
+
+
+
+
+
+		public class PurpleServerMessageHandler
+		{
+			public static void server_broadcast_handler (string dummyObject, NetworkPlayer np){
+				Debug.Log ("############");
+				Debug.Log (dummyObject);
+				Debug.Log (np);
+				Debug.Log ("############");
+			}
+		}
+
 	}
 }
