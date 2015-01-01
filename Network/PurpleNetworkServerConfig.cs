@@ -23,7 +23,7 @@ namespace PurpleNetwork
 				
 				password = "purple";
 				maxUser = 32;
-				port = 1000;
+				port = 25001;
 			}
 			
 			public void SetType(string serverType)

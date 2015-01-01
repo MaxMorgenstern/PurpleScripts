@@ -1,6 +1,6 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 // This is just an idea to provide a client and (autoritative) server class
 // This class is not optimized for games with a lot of server interaction but for
@@ -12,8 +12,6 @@ using System.Collections.Generic;
 // option autoritative
 // Servertype: Account, Lobby, Game, Multi (Account, Lobby, Game), Monitoring
 
-// TODO: i18n
-
 namespace PurpleNetwork
 {
 	namespace Server
@@ -21,11 +19,11 @@ namespace PurpleNetwork
 		public class PurpleServer : MonoBehaviour
 		{
 			private static PurpleServer instance;
-			private ServerConfig stdServerConfig;
+			private static ServerConfig stdServerConfig;
 			private static int stdServerdelay;
 			private static List<int> stdNotificationIntervalList;
 			
-			private ServerConfig currentServerConfig;
+			private static ServerConfig currentServerConfig;
 			
 			private static string restartNotificationMessage;
 			private static string restartNotificationDoneMessage;
@@ -76,15 +74,11 @@ namespace PurpleNetwork
 						instance.set_notification_interval();
 
 						PurpleNetwork.AddListener<PurpleMessages.Server.Message>("server_broadcast", 
-									PurpleServerMessageHandler.server_broadcast_handler);
+									PurpleNetworkServerHandler.server_broadcast_handler);
 					}
 					return instance;
 				}
 			}
-
-
-
-
 
 			// PUBLIC FUNCTIONS /////////////////////////
 			public static void LaunchServer()
@@ -330,20 +324,5 @@ namespace PurpleNetwork
 				return new int[] { time.Days, time.Hours, time.Minutes, time.Seconds };
 			}
 		}
-
-
-
-
-
-		public class PurpleServerMessageHandler
-		{
-			public static void server_broadcast_handler (string dummyObject, NetworkPlayer np){
-				Debug.Log ("############");
-				Debug.Log (dummyObject);
-				Debug.Log (np);
-				Debug.Log ("############");
-			}
-		}
-
 	}
 }
