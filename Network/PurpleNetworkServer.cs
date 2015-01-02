@@ -38,7 +38,7 @@ namespace PurpleNetwork
 			{
 				stdServerConfig = new ServerConfig ();
 				stdNotificationIntervalList = new List<int> (
-					new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 300, 600, 900, 1800});
+					new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 30, 60, 300, 600, 900, 1800});
 
 				try{
 					notificationPlaceholder = PurpleConfig.Network.Message.Placeholder;

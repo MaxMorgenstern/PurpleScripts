@@ -8,11 +8,18 @@ namespace PurpleNetwork
 	{
 		public class PurpleNetworkServerHandler
 		{
-			public static void server_broadcast_handler (string dummyObject, NetworkPlayer np){
-				Debug.Log ("############");
-				Debug.Log (dummyObject);
-				Debug.Log (np);
-				Debug.Log ("############");
+			private const string SERVER_ID = "-1";
+
+			public static void server_broadcast_handler (string dataObject, NetworkPlayer np)
+			{
+				if(np.ToString() == SERVER_ID && Network.isServer) return;
+				Debug.Log ("Faked data send: " + np.ToString () + " -- " + dataObject);
+			}
+
+			public static void client_login_handler (string dataObject, NetworkPlayer np)
+			{
+				if(np.ToString() == SERVER_ID && Network.isServer) return;
+				// TODO: convert data object to login object - purple messages
 			}
 		}
 	}
