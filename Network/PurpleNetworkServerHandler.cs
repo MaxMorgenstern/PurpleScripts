@@ -16,6 +16,12 @@ namespace PurpleNetwork
 				Debug.Log ("Faked data send: " + np.ToString () + " -- " + dataObject);
 			}
 
+			public static void client_create_account_handler (string dataObject, NetworkPlayer np)
+			{
+				if(np.ToString() == SERVER_ID && Network.isServer) return;
+				// TODO: convert data object to account object - purple messages
+			}
+
 			public static void client_login_handler (string dataObject, NetworkPlayer np)
 			{
 				if(np.ToString() == SERVER_ID && Network.isServer) return;

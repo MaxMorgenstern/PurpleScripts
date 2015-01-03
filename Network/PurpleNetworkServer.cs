@@ -213,7 +213,7 @@ namespace PurpleNetwork
 				if(notificationIntervalList.Contains((int)time_left))
 				{
 					PurpleNetwork.Broadcast ("server_broadcast",
-						combine_notification_message(shutdownNotificationMessage, (int)time_left));
+						create_broadcast_message(combine_notification_message(shutdownNotificationMessage, (int)time_left)));
 				}
 			}
 
@@ -221,7 +221,7 @@ namespace PurpleNetwork
 			{
 				PurpleCountdown.CountdownDoneEvent -= stop_server_done;
 				PurpleCountdown.CountdownRunEvent -= stop_server_run;
-				PurpleNetwork.Broadcast ("server_broadcast", shutdownNotificationDoneMessage);
+				PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(shutdownNotificationDoneMessage));
 				PurpleNetwork.StopLocalServer ();
 			}
 
@@ -259,7 +259,7 @@ namespace PurpleNetwork
 				if(notificationIntervalList.Contains((int)time_left))
 				{
 					PurpleNetwork.Broadcast ("server_broadcast",
-						combine_notification_message(restartNotificationMessage, (int)time_left));
+						create_broadcast_message(combine_notification_message(restartNotificationMessage, (int)time_left)));
 				}
 			}
 
@@ -267,7 +267,7 @@ namespace PurpleNetwork
 			{
 				PurpleCountdown.CountdownDoneEvent -= restart_server_done;
 				PurpleCountdown.CountdownRunEvent -= restart_server_run;
-				PurpleNetwork.Broadcast ("server_broadcast", restartNotificationDoneMessage);
+				PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(restartNotificationDoneMessage));
 				PurpleNetwork.RestartLocalServer ();
 			}
 
@@ -318,10 +318,17 @@ namespace PurpleNetwork
 				return message.Replace(notificationPlaceholder, timeLeftString.Trim());
 			}
 
-			private static int[] calculate_time_from_seconds(int timeLeft)
+			private int[] calculate_time_from_seconds(int timeLeft)
 			{
 				TimeSpan time = TimeSpan.FromSeconds( timeLeft );
 				return new int[] { time.Days, time.Hours, time.Minutes, time.Seconds };
+			}
+
+			private PurpleMessages.Server.Message create_broadcast_message(string data)
+			{
+				PurpleMessages.Server.Message PSM = new PurpleMessages.Server.Message ();
+				PSM.message = data;
+				return PSM;
 			}
 		}
 	}

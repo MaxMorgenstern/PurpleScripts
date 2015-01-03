@@ -17,21 +17,21 @@ namespace PurpleMessages
 		}
 	}
 
-	// EMPTY MESSAGE ////////////////////////////
+	// EMPTY MESSAGE 
 	public class Empty : PurpleMessage
 	{
 	}
 
-	// EXAMPLE MESSAGE ////////////////////////////
+	// EXAMPLE MESSAGE 
 	public class Example : PurpleMessage
 	{
 		public string example;
 	}
 
-	// PLAYER MESSAGE ////////////////////////////
+	// PLAYER MESSAGES ////////////////////////////
 	namespace User
 	{
-		// BASIC USER DATA ////////////////////////////
+		// BASIC USER DATA 
 		public class Data : PurpleMessage
 		{
 			public NetworkPlayer player;
@@ -39,19 +39,37 @@ namespace PurpleMessages
 			public Guid playerGuid;
 		}
 
-		// USER ACTION ////////////////////////////
+		// USER ACTION 
 		public class Action : PurpleMessage
 		{
 			public NetworkPlayer player;
 			public string playerName;
 			public string actionName;
 		}
+
+		// USER LOGIN 
+		public class Login : PurpleMessage
+		{
+			public NetworkPlayer player;
+			public string playerName;
+			public string playerPassword;
+			public string playerToken;
+		}
+
+		// CREATE ACCOUNT 
+		public class CreateAccount : PurpleMessage
+		{
+			public NetworkPlayer player;
+			public string playerName;
+			public string playerPassword;
+			public string playerEmail;
+		}
 	}
 
 	// SERVER RELATED MESSAGES ////////////////////////////
 	namespace Server
 	{
-		// SERVER Credentials ////////////////////////////
+		// SERVER Credentials 
 		public class Credentials : PurpleMessage
 		{
 			public string name;
@@ -63,7 +81,7 @@ namespace PurpleMessages
 			public int maxPlayer;
 		}
 
-		// SERVER STATUS ////////////////////////////
+		// SERVER STATUS 
 		public class Status : PurpleMessage
 		{
 			public DateTime time;
@@ -79,7 +97,7 @@ namespace PurpleMessages
 			}
 		}
 
-		// PING MESSAGE ////////////////////////////
+		// PING MESSAGE 
 		public class Ping : PurpleMessage
 		{
 			public DateTime triggerTime;
@@ -92,7 +110,7 @@ namespace PurpleMessages
 			}
 		}
 
-		// SERVER MESSAGES ////////////////////////////
+		// SERVER MESSAGES 
 		public class Message : PurpleMessage
 		{
 			public string message;
