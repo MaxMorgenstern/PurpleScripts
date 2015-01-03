@@ -73,12 +73,13 @@ namespace PurpleNetwork
 						instance     			= gameObject.AddComponent<PurpleServer> ();
 						instance.set_notification_interval();
 
-						PurpleNetwork.AddListener<PurpleMessages.Server.Message>("server_broadcast", 
-									PurpleNetworkServerHandler.server_broadcast_handler);
+						// TODO... depending on config
+						Handler.RegisterAccountListener();
 					}
 					return instance;
 				}
 			}
+
 
 			// PUBLIC FUNCTIONS /////////////////////////
 			public static void LaunchServer()
