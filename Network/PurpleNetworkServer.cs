@@ -72,9 +72,6 @@ namespace PurpleNetwork
 						GameObject gameObject 	= new GameObject ("PurpleServerManager");
 						instance     			= gameObject.AddComponent<PurpleServer> ();
 						instance.set_notification_interval();
-
-						// TODO... depending on config
-						Handler.RegisterAccountListener();
 					}
 					return instance;
 				}
@@ -178,6 +175,29 @@ namespace PurpleNetwork
 				string password = config.password;
 				int port = config.port;
 				PurpleNetwork.LaunchLocalServer(player, password, port);
+
+				switch (config.type)
+				{
+					case ServerType.Account:
+						Handler.RegisterAccountListener();
+						break;
+					
+					case ServerType.Game:
+						Handler.RegisterGameListener();
+						break;
+						
+					case ServerType.Lobby:
+						Handler.RegisterLobbyListener();
+						break;
+						
+					case ServerType.Monitoring:
+						Handler.RegisterLMonitoringListener();
+						break;
+						
+					case ServerType.Multi:
+						Handler.RegisterMultiListener();
+						break;
+				}
 			}
 
 

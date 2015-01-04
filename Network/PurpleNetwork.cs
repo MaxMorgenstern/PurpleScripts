@@ -184,6 +184,10 @@ namespace PurpleNetwork
 			Instance.add_listener<T> (event_name, listener);
 		}
 
+		public static bool RemoveListener(string event_name)
+		{
+			return Instance.remove_listener (event_name);
+		}
 
 
 		public static void Broadcast (string event_name, object message)
@@ -370,6 +374,15 @@ namespace PurpleNetwork
 				eventListeners.Add(event_name, null);
 			}
 			eventListeners[event_name] += listener;
+		}
+
+		private bool remove_listener(string event_name)
+		{
+			if (eventListeners.ContainsKey (event_name))
+			{
+				return eventListeners.Remove(event_name);
+			}
+			return false;
 		}
 
 
