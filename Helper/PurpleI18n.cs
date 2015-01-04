@@ -55,7 +55,12 @@ public class PurpleI18n : MonoBehaviour
 
 	public static string Get(string key)
 	{
-		return Instance.get_entry (key.ToUpper());
+		try{
+			return Instance.get_entry (key.ToUpper());
+		} catch(Exception e){
+			Debug.LogError("Please call 'PurpleI18n.Setup()' initially! " + e.ToString());
+		}
+		return "I18n has not been setup for: '"+key+"'";
 	}
 
 	public static CultureInfo GetCulture()
