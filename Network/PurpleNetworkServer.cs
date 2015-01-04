@@ -37,6 +37,7 @@ namespace PurpleNetwork
 			protected PurpleServer ()
 			{
 				stdServerConfig = new ServerConfig ();
+				currentServerConfig = stdServerConfig;
 				stdNotificationIntervalList = new List<int> (
 					new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 30, 60, 300, 600, 900, 1800});
 
@@ -165,7 +166,7 @@ namespace PurpleNetwork
 			// START
 			private void launch_server()
 			{
-				launch_server (stdServerConfig);
+				launch_server (currentServerConfig);
 			}
 
 			private void launch_server(ServerConfig config)

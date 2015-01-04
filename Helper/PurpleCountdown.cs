@@ -5,11 +5,9 @@ using System.Collections;
 
 public class PurpleCountdown : MonoBehaviour
 {
-	private static float t_countdown;
 	private static float t_time;
 
 	private static float t_trigger;
-	private static float t_trigger_repeating;
 
 	private static PurpleCountdown instance;
 
@@ -91,19 +89,16 @@ public class PurpleCountdown : MonoBehaviour
 
 	private void trigger(float offset, float repeat)
 	{
-		t_trigger_repeating = offset;
 		InvokeRepeating("invoke_trigger_repeating", offset, repeat);
 	}
 
 	private void invoke_trigger()
 	{
-		//Debug.Log("Triggered after " + t_trigger + " seconds!");
 		instance.trigger_purple_event (TriggerEvent);
 	}
 
 	private void invoke_trigger_repeating()
 	{
-		//Debug.Log("Repeating... First time triggered after " + t_trigger_repeating + " seconds!");
 		instance.trigger_purple_event (TriggerRepeatEvent);
 	}
 
@@ -122,7 +117,6 @@ public class PurpleCountdown : MonoBehaviour
 
 	private void count_down(int seconds)
 	{
-		t_countdown = (float)seconds;
 		t_time = (float)seconds;
 		StartCoroutine (countdown_trigger ());
 	}
@@ -133,13 +127,11 @@ public class PurpleCountdown : MonoBehaviour
 		{
 			yield return new WaitForSeconds(1);
 
-			//Debug.Log ("Triggered after " + (t_countdown-t_time+1) + " seconds!");
 			instance.trigger_purple_event (CountdownRunEvent);
 
 			t_time -= 1;
 		}
 		yield return new WaitForSeconds(1);
-		//Debug.Log ("Finished after " + (t_countdown-t_time).ToString() + " seconds!");
 		instance.trigger_purple_event (CountdownDoneEvent);
 	}
 
