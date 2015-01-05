@@ -188,6 +188,10 @@ namespace PurpleNetwork
 		{
 			return Instance.remove_listener (event_name);
 		}
+		public static bool RemoveListener(string event_name, PurpleNetCallback listener)
+		{
+			return Instance.remove_listener (event_name, listener);
+		}
 
 
 		public static void Broadcast (string event_name, object message)
@@ -373,6 +377,18 @@ namespace PurpleNetwork
 			{
 				eventListeners.Add(event_name, null);
 			}
+
+			// prevent chaining the same delegate listener multiple times
+			if(eventListeners[event_name] != null)
+			{
+				Delegate [] callbackList = eventListeners[event_name].GetInvocationList();
+				foreach(PurpleNetCallback singleCallback in callbackList)
+				{
+					if(listener.Method.Name == singleCallback.Method.Name)
+						return;
+				}
+			}
+			// delegates can be chained using addition
 			eventListeners[event_name] += listener;
 		}
 
@@ -381,6 +397,16 @@ namespace PurpleNetwork
 			if (eventListeners.ContainsKey (event_name))
 			{
 				return eventListeners.Remove(event_name);
+			}
+			return false;
+		}
+
+		private bool remove_listener(string event_name, PurpleNetCallback listener)
+		{
+			if (eventListeners.ContainsKey (event_name))
+			{
+				eventListeners[event_name] -= listener;
+				return true;
 			}
 			return false;
 		}
