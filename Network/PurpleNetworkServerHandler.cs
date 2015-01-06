@@ -20,12 +20,14 @@ namespace PurpleNetwork
 
 			public static void RegisterLobbyListener()
 			{
-				// TODO
+				register_base_handler ();
+				register_lobby_handler ();
 			}
 
 			public static void RegisterGameListener()
 			{
-				// TODO
+				register_base_handler ();
+				register_game_handler ();
 			}
 
 			public static void RegisterMultiListener()
@@ -37,7 +39,8 @@ namespace PurpleNetwork
 
 			public static void RegisterLMonitoringListener()
 			{
-				// TODO
+				register_base_handler ();
+				register_monitoring_handler ();
 			}
 
 
@@ -46,20 +49,32 @@ namespace PurpleNetwork
 
 			private static void register_base_handler()
 			{
-				// SERVER
 				PurpleNetwork.AddListener<PurpleMessages.Server.Message>("server_broadcast", 
 						Handler.server_broadcast_handler);
 			}
 
 			private static void register_account_handler()
 			{
-				// CLIENT - Account
-				PurpleNetwork.AddListener<PurpleMessages.User.CreateAccount>("client_create_account", 
-				        Handler.client_create_account_handler);
-				PurpleNetwork.AddListener<PurpleMessages.User.Login>("client_login", 
-				        Handler.client_login_handler);
+				PurpleNetwork.AddListener<PurpleMessages.User.CreateAccount>("server_create_account", 
+				        Handler.server_create_account_handler);
+				PurpleNetwork.AddListener<PurpleMessages.User.Login>("server_login", 
+				        Handler.server_login_handler);
 			}
 
+			private static void register_lobby_handler()
+			{
+				// TODO
+			}
+
+			private static void register_game_handler()
+			{
+				// TODO
+			}
+
+			private static void register_monitoring_handler()
+			{
+				// TODO
+			}
 
 
 
@@ -67,18 +82,20 @@ namespace PurpleNetwork
 
 			public static void server_broadcast_handler (string dataObject, NetworkPlayer np)
 			{
-				Debug.Log ("Broadcast sent: " + np.ToString () + " | " + dataObject);
+				Debug.Log ("Broadcast received: " + np.ToString () + " | " + dataObject);
 				if(np.ToString() == SERVER_ID && Network.isServer) return;
 			}
 
-			public static void client_create_account_handler (string dataObject, NetworkPlayer np)
+			public static void server_create_account_handler (string dataObject, NetworkPlayer np)
 			{
+				Debug.Log ("Create Account received: " + np.ToString () + " | " + dataObject);
 				if(np.ToString() == SERVER_ID && Network.isServer) return;
 				// TODO: convert data object to account object - purple messages
 			}
 
-			public static void client_login_handler (string dataObject, NetworkPlayer np)
+			public static void server_login_handler (string dataObject, NetworkPlayer np)
 			{
+				Debug.Log ("Login received: " + np.ToString () + " | " + dataObject);
 				if(np.ToString() == SERVER_ID && Network.isServer) return;
 				// TODO: convert data object to login object - purple messages
 			}
