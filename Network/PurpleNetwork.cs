@@ -183,6 +183,10 @@ namespace PurpleNetwork
 		{
 			Instance.add_listener<T> (event_name, listener);
 		}
+		public static void AddListener<T> (string event_name, PurpleNetCallback listener, bool add_multiple)
+		{
+			Instance.add_listener<T> (event_name, listener, add_multiple);
+		}
 
 		public static bool RemoveListener(string event_name)
 		{
@@ -373,13 +377,18 @@ namespace PurpleNetwork
 		// EVENT DISPATCH ////////////////////
 		private void add_listener <T> (string event_name, PurpleNetCallback listener)
 		{
+			add_listener <T> (event_name, listener, false);
+		}
+
+		private void add_listener <T> (string event_name, PurpleNetCallback listener, bool add_multiple)
+		{
 			if (!eventListeners.ContainsKey (event_name))
 			{
 				eventListeners.Add(event_name, null);
 			}
 
 			// prevent chaining the same delegate listener multiple times
-			if(eventListeners[event_name] != null)
+			if(eventListeners[event_name] != null && !add_multiple)
 			{
 				Delegate [] callbackList = eventListeners[event_name].GetInvocationList();
 				foreach(PurpleNetCallback singleCallback in callbackList)
