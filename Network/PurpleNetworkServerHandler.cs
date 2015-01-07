@@ -80,12 +80,14 @@ namespace PurpleNetwork
 
 			// HANDLER /////////////////////////
 
+			// BASE /////////////////////////
 			public static void server_broadcast_handler (string dataObject, NetworkPlayer np)
 			{
 				Debug.Log ("Broadcast received: " + np.ToString () + " | " + dataObject);
 				if(np.ToString() == SERVER_ID && Network.isServer) return;
 			}
 
+			// ACCOUNT /////////////////////////
 			public static void server_create_account_handler (string dataObject, NetworkPlayer np)
 			{
 				Debug.Log ("Create Account received: " + np.ToString () + " | " + dataObject);
@@ -99,6 +101,13 @@ namespace PurpleNetwork
 				if(np.ToString() == SERVER_ID && Network.isServer) return;
 				// TODO: convert data object to login object - purple messages
 			}
+
+			// LOBBY /////////////////////////
+
+			// GAME /////////////////////////
+
+			// MONITOR /////////////////////////
+			
 		}
 	}
 }
