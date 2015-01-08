@@ -55,6 +55,7 @@ namespace PurpleNetwork
 
 			private static void register_account_handler()
 			{
+				// Account
 				PurpleNetwork.AddListener<PurpleMessages.User.CreateAccount>("server_create_account", 
 				        Handler.server_create_account_handler);
 				PurpleNetwork.AddListener<PurpleMessages.User.Login>("server_login", 
@@ -63,7 +64,10 @@ namespace PurpleNetwork
 
 			private static void register_lobby_handler()
 			{
-				// TODO
+				PurpleNetwork.AddListener<PurpleMessages.User.CreateCharacter>("lobby_create_character", 
+				       Handler.lobby_create_character_handler);
+				PurpleNetwork.AddListener<PurpleMessages.User.CreateGame>("lobby_create_game", 
+				       Handler.lobby_create_game_handler);
 			}
 
 			private static void register_game_handler()
@@ -77,7 +81,7 @@ namespace PurpleNetwork
 			}
 
 
-
+			// TODO: perhaps we should move them out... or split handler and register handler part
 			// HANDLER /////////////////////////
 
 			// BASE /////////////////////////
@@ -103,6 +107,8 @@ namespace PurpleNetwork
 			}
 
 			// LOBBY /////////////////////////
+			public static void lobby_create_game_handler (string dataObject, NetworkPlayer np){ /* TODO */ }
+			public static void lobby_create_character_handler (string dataObject, NetworkPlayer np){ /* TODO */ }
 
 			// GAME /////////////////////////
 

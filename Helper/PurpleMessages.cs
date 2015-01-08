@@ -64,6 +64,22 @@ namespace PurpleMessages
 			public string playerPassword;
 			public string playerEmail;
 		}
+
+		// CREATE CHARACTER 
+		public class CreateCharacter : PurpleMessage
+		{
+			public NetworkPlayer player;
+			public string characterName;
+			/// TODO
+		}
+
+		// CREATE Game 
+		public class CreateGame : PurpleMessage
+		{
+			public NetworkPlayer player;
+			public string gameName;
+			// TODO
+		}
 	}
 
 	// SERVER RELATED MESSAGES ////////////////////////////
