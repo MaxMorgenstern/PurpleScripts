@@ -178,7 +178,6 @@ namespace PurpleNetwork
 		}
 
 
-
 		public static void AddListener<T> (string event_name, PurpleNetCallback listener)
 		{
 			Instance.add_listener<T> (event_name, listener);
