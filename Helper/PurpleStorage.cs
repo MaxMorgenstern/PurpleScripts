@@ -100,7 +100,7 @@ namespace PurpleStorage
 				return false;
 			}
 		}
-
+		
 		public static bool SavePlayerPref(string filename, object data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
@@ -115,6 +115,21 @@ namespace PurpleStorage
 			}
 		}
 
+		public static bool SavePlayerPref<t>(string filename, t data)
+		{
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			try
+			{
+				return Instance.save_player_pref(filename, fileData);
+			}
+			catch (Exception ex) 
+			{
+				Debug.LogWarning(ex);
+				return false;
+			}
+		}
+
+
 		public static bool SaveBinaryFile(string filename, string data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
@@ -127,6 +142,13 @@ namespace PurpleStorage
 			return Instance.save_binary_file (filename, fileData);
 		}
 
+		public static bool SaveBinaryFile<t>(string filename, t data)
+		{
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Instance.save_binary_file (filename, fileData);
+		}
+
+
 		public static bool Save(string filename, string data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
@@ -134,6 +156,12 @@ namespace PurpleStorage
 		}
 
 		public static bool Save(string filename, object data)
+		{
+			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
+			return Save (filename, fileData);
+		}
+
+		public static bool Save<t>(string filename, t data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
 			return Save (filename, fileData);
@@ -151,6 +179,12 @@ namespace PurpleStorage
 			return Instance.load_pfo_helper (filename);
 		}
 
+		public static t Load<t>(string filename)
+		{
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
+			return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+		}
+
 		public static string LoadString(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
@@ -161,6 +195,11 @@ namespace PurpleStorage
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
 			return pfo.dataObject;
+		}
+
+		public static t LoadObject<t>(string filename)
+		{
+			return Load<t>(filename);
 		}
 
 		public static PurpleFileObject LoadPlayerPref(string filename)
@@ -378,6 +417,11 @@ namespace PurpleStorage
 		private PurpleFileObject create_purple_file_object(string filename, object dataObject)
 		{
 			return create_purple_file_object (filename, String.Empty, dataObject);
+		}
+
+		private PurpleFileObject create_purple_file_object<t>(string filename, t dataObject)
+		{
+			return create_purple_file_object (filename, _PurpleSerializer.ObjectToStringConverter (dataObject), null);
 		}
 
 		private PurpleFileObject create_purple_file_object(string filename, string dataString, object dataObject)
