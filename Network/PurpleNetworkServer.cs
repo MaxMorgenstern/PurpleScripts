@@ -7,10 +7,9 @@ using UnityEngine;
 // 		games that are turn based or need less network traffic
 
 // TODO
-// event handler
 // login
+// options in general
 // option autoritative
-// Servertype: Account, Lobby, Game, Multi (Account, Lobby, Game), Monitoring
 
 namespace PurpleNetwork
 {
