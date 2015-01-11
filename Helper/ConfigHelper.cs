@@ -17,17 +17,20 @@ namespace PurpleConfig {
 			_configDictionary = new Dictionary<string,string>();
 			XmlDocument xmlDoc = new XmlDocument(); // xmlDoc is the new xml document.
 
-			string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*PurpleSettings*.config", SearchOption.AllDirectories);
+			string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.config", SearchOption.AllDirectories);
 			if(files.Length > 0)
 			{
 				foreach (string filePath in files) 
 				{
-					xmlDoc.LoadXml (System.IO.File.ReadAllText(filePath)); // load the file.
-					XmlNodeList nodesList = xmlDoc.GetElementsByTagName("add"); // array of the level nodes.
-					foreach (XmlNode levelInfo in nodesList) 
+					if(filePath.Contains("/Config/"))
 					{
-						_configDictionary.Add(levelInfo.Attributes["key"].Value,levelInfo.Attributes["value"].Value);
-					}	
+						xmlDoc.LoadXml (System.IO.File.ReadAllText(filePath)); // load the file.
+						XmlNodeList nodesList = xmlDoc.GetElementsByTagName("add"); // array of the level nodes.
+						foreach (XmlNode levelInfo in nodesList) 
+						{
+							_configDictionary.Add(levelInfo.Attributes["key"].Value,levelInfo.Attributes["value"].Value);
+						}	
+					}
 				}
 			} else {
 				Debug.LogError("Can not find config files.");

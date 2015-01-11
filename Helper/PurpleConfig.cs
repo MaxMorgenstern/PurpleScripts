@@ -82,4 +82,11 @@ namespace PurpleConfig
 			public static string Public { get { return ItemIds.getConfigString ("License.XMLKey.Public"); } }
 		}
 	}
+
+	// Mail /////////////////////////
+	public static class Mail {
+		public static string User { get { return ItemIds.getConfigString ("Mail.User"); } }
+		public static string Password { get { return ItemIds.getConfigString ("Mail.Password"); } }
+		public static string Host { get { return ItemIds.getConfigString ("Mail.Host"); } }
+	}
 }
