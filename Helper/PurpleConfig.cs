@@ -85,8 +85,17 @@ namespace PurpleConfig
 
 	// Mail /////////////////////////
 	public static class Mail {
-		public static string User { get { return ItemIds.getConfigString ("Mail.User"); } }
-		public static string Password { get { return ItemIds.getConfigString ("Mail.Password"); } }
-		public static string Host { get { return ItemIds.getConfigString ("Mail.Host"); } }
+		public static class Server {
+			public static string User { get { return ItemIds.getConfigString ("Mail.Server.User"); } }
+			public static string Password { get { return ItemIds.getConfigString ("Mail.Server.Password"); } }
+			public static string Host { get { return ItemIds.getConfigString ("Mail.Server.Host"); } }
+			public static int Port { get { return ItemIds.getConfigInt ("Mail.Server.Port"); } }
+			public static bool SSL { get { return ItemIds.getConfigBoolean ("Mail.Server.SSL"); } }
+		}
+
+		public static class Sender {
+			public static string Address { get { return ItemIds.getConfigString ("Mail.Sender.Address"); } }
+			public static string Name { get { return ItemIds.getConfigString ("Mail.Sender.Name"); } }
+		}
 	}
 }
