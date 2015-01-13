@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Net.Mail;
-using System.Net;
-using UnityEngine;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 public class PurpleMail : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class PurpleMail : MonoBehaviour
 	private static string senderAddress;
 	private static string senderDisplayName;
 	private static MailAddress senderMail;
+
+	private static Dictionary<string,string> placeholderDictionary;
 
 	private static string mailHost;
 	private static string mailUser;
@@ -24,6 +27,8 @@ public class PurpleMail : MonoBehaviour
 	// START UP /////////////////////////
 	protected PurpleMail ()
 	{
+		placeholderDictionary = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+
 		try {
 			senderAddress = PurpleConfig.Mail.Sender.Address;
 			senderDisplayName = PurpleConfig.Mail.Sender.Name;
@@ -87,7 +92,39 @@ public class PurpleMail : MonoBehaviour
 	// TODO ...
 	private void enable_smime()
 	{
-
+		/*
+		X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine);
+		store.Open(OpenFlags.ReadOnly);
+		X509Certificate2Collection certs = store.Certificates;
+		X509Certificate2 certificate = null;
+		foreach (X509Certificate2 cert in certs)
+		{
+			Debug.Log(cert.Subject);
+			if (cert.Subject.IndexOf("maximilian@porzelt.net") >= 0)
+			{
+				Debug.Log("found....");
+				certificate = cert;
+				break;
+			}
+		}
+		*/
+	
+		/*
+		try
+		{
+			// Find certificate by email adddress in My Personal Store.
+			// Once the certificate is loaded to From, the email content
+			// will be signed automatically                 
+			mail.From.Certificate.FindSubject(mail.From.Address,
+			                                   Certificate.CertificateStoreLocation.CERT_SYSTEM_STORE_CURRENT_USER,
+			                                   "My");
+		}
+		catch (Exception exp)
+		{
+			Debug.Log("No sign certificate found for <" + 
+			                  mail.From.Address + ">:" + exp.Message);
+		}
+		*/
 	}
 
 	
@@ -148,12 +185,39 @@ public class PurpleMail : MonoBehaviour
 	// TODO ...
 	private string replace_placeholder(string source)
 	{
+		Regex re = new Regex(@"\{(\w+)\}", RegexOptions.Compiled);
+		return re.Replace(source, match => placeholderDictionary[match.Groups[1].Value]);
+	}
 
-		string ret = source;
 
-		// TODO... replace
+	private void reset_dictionary()
+	{
+		placeholderDictionary = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+	}
 
-		return ret;
+	private void add_dictionary_entry(string key, string value)
+	{
+		placeholderDictionary.Add (key, value);
+	}
+
+	private void update_dictionary_entry(string key, string value)
+	{
+		placeholderDictionary.Remove (key);
+		placeholderDictionary.Add (key, value);
+	}
+
+	private string get_placeholder_entry(string entry)
+	{
+		string returnData = String.Empty;
+		try
+		{
+			placeholderDictionary.TryGetValue(entry,out returnData);
+		}
+		catch (Exception e)
+		{
+			Debug.LogWarning(e.ToString());
+		}
+		return (String.IsNullOrEmpty(returnData)) ? entry : returnData;
 	}
 
 }
