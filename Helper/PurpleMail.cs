@@ -51,7 +51,6 @@ public class PurpleMail : MonoBehaviour
 
 			Debug.LogError("Can not read Purple Config! " + e.ToString());
 		}
-
 		senderMail = new MailAddress(senderAddress, senderDisplayName);
 	}
 
@@ -76,7 +75,8 @@ public class PurpleMail : MonoBehaviour
 		// TODO: default values
 		string recipient = "1@porzelt.net";
 		string title = "Hallo, World!";
-		string body = "This email is just a HTML test...<br /><b>This is a bold part!</b>";
+		string body = "Hello, {DUMMY}!<br />This email is just a HTML test...<br /><b>This is a bold part!</b><br />";
+		Instance.add_dictionary_entry("DUMMY", "Max Mustermann");
 
 		return Instance.send_mail(recipient, title, body);
 	}
@@ -94,6 +94,17 @@ public class PurpleMail : MonoBehaviour
 	public static bool Send(string recipient, string title, string body, string senderAddress, string senderName)
 	{
 		return Instance.send_mail (recipient, title, body, senderAddress, senderName);
+	}
+
+
+	public static void ResetDictionary()
+	{
+		Instance.reset_dictionary ();
+	}
+	
+	public static void AddDictionaryEntry(string key, string value)
+	{
+		Instance.add_dictionary_entry (key, value);
 	}
 
 	
@@ -202,7 +213,6 @@ public class PurpleMail : MonoBehaviour
 
 
 	// PRIVATE DICTIONARY HELPER /////////////////////////
-	// TODO: Public
 
 	private void reset_dictionary()
 	{
@@ -210,11 +220,6 @@ public class PurpleMail : MonoBehaviour
 	}
 
 	private void add_dictionary_entry(string key, string value)
-	{
-		placeholderDictionary.Add (key, value);
-	}
-
-	private void update_dictionary_entry(string key, string value)
 	{
 		placeholderDictionary.Remove (key);
 		placeholderDictionary.Add (key, value);
@@ -235,4 +240,3 @@ public class PurpleMail : MonoBehaviour
 	}
 
 }
-
