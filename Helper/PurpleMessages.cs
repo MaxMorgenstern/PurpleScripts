@@ -26,7 +26,13 @@ namespace PurpleMessages
 	public class Example : PurpleMessage
 	{
 		public string example;
+
+		public Example()
+		{
+			example = "Hello, World!";
+		}
 	}
+
 
 	// PLAYER MESSAGES ////////////////////////////
 	namespace User
@@ -81,6 +87,7 @@ namespace PurpleMessages
 			// TODO
 		}
 	}
+
 
 	// SERVER RELATED MESSAGES ////////////////////////////
 	namespace Server

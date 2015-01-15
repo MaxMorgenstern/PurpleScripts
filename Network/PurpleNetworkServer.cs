@@ -171,12 +171,12 @@ namespace PurpleNetwork
 			private void launch_server(ServerConfig config)
 			{
 				currentServerConfig = config;
-				int player = config.maxUser;
-				string password = config.password;
-				int port = config.port;
+				int player = config.ServerMaxClients;
+				string password = config.ServerPassword;
+				int port = config.ServerPort;
 				PurpleNetwork.LaunchLocalServer(player, password, port);
 
-				switch (config.type)
+				switch (config.ServerType)
 				{
 					case ServerType.Account:
 						Handler.RegisterAccountListener();

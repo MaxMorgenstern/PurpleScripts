@@ -13,22 +13,39 @@ namespace PurpleNetwork
 		
 		public class ServerConfig
 		{
-			public string name;
-			public ServerType type;
+			public ServerType 	ServerType;
+			public Guid			ServerID;
 			
-			public string password;
-			public int maxUser;
-			public int port;
+			public string 		ServerHost;
+			public string 		ServerName;
+			public string 		ServerPassword;
+			public int 			ServerMaxClients;
+			public int 			ServerPort;
 			
+			public string 		DatabaseHost;
+			public string 		DatabaseName;
+			public string 		DatabaseUser;
+			public string 		DatabasePassword;
+			//public int 		DatabasePort;
+
+
 			// CONSTRUCTOR
 			public ServerConfig ()
 			{
-				name = "GameServer";
-				type = ServerType.Multi;
+				ServerID = System.Guid.NewGuid ();
+
+				ServerHost 		= "localhost";
+				ServerName 		= "GameServer";
+				ServerType 		= ServerType.Multi;
 				
-				password = "purple";
-				maxUser = 32;
-				port = 25001;
+				ServerPassword 	= "";
+				ServerMaxClients= 32;
+				ServerPort 		= 25001;
+
+				DatabaseHost 	= "localhost";
+				DatabaseName 	= "PurpleDatabase";
+				DatabaseUser 	= "root";
+				DatabasePassword= "";
 			}
 			
 			public void SetType(string serverType)
@@ -38,7 +55,7 @@ namespace PurpleNetwork
 			
 			public void SetType(ServerType serverType)
 			{
-				type = serverType;
+				ServerType = serverType;
 			}
 			
 			// PRIVATE HELPER /////////////////////////
