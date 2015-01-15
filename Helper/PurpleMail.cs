@@ -29,22 +29,30 @@ public class PurpleMail : MonoBehaviour
 	{
 		placeholderDictionary = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
 
+		// TODO
+		//mailPort = PurpleConfig.Mail.Server.Port;
+		//mailSSL = PurpleConfig.Mail.Server.SSL;
+
 		try {
 			senderAddress = PurpleConfig.Mail.Sender.Address;
 			senderDisplayName = PurpleConfig.Mail.Sender.Name;
-			senderMail = new MailAddress(senderAddress, senderDisplayName);
 
 			mailHost = PurpleConfig.Mail.Server.Host;
 			mailUser = PurpleConfig.Mail.Server.User;
 			mailPassword = PurpleConfig.Mail.Server.Password;
 
-			// TODO
-			//mailPort = PurpleConfig.Mail.Server.Port;
-			//mailSSL = PurpleConfig.Mail.Server.SSL;
-
 		} catch(Exception e){
+			senderAddress = "no-reply@example.com";
+			senderDisplayName = "No Reply";
+
+			mailHost = "localhost";
+			mailUser = String.Empty;
+			mailPassword = String.Empty;
+
 			Debug.LogError("Can not read Purple Config! " + e.ToString());
 		}
+
+		senderMail = new MailAddress(senderAddress, senderDisplayName);
 	}
 
 	// SINGLETON /////////////////////////
@@ -67,8 +75,8 @@ public class PurpleMail : MonoBehaviour
 	{
 		// TODO: default values
 		string recipient = "1@porzelt.net";
-		string title = "Hallo, Welt!";
-		string body = "This email is just a test...<br /><b>this is bold text!</b>";
+		string title = "Hallo, World!";
+		string body = "This email is just a HTML test...<br /><b>This is a bold part!</b>";
 
 		return Instance.send_mail(recipient, title, body);
 	}
@@ -151,8 +159,8 @@ public class PurpleMail : MonoBehaviour
 			mail.From = senderMail;
 			mail.To.Add(recipient);
 			
-			mail.Subject = title;
-			mail.Body = body;
+			mail.Subject = replace_placeholder(title);
+			mail.Body = replace_placeholder(body);
 
 			mail.IsBodyHtml = is_html(body);
 			
@@ -181,14 +189,20 @@ public class PurpleMail : MonoBehaviour
 		Regex tagRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>|<br *\/>");
 		return tagRegex.IsMatch(probe);
 	}
-
-	// TODO ...
+	
 	private string replace_placeholder(string source)
 	{
 		Regex re = new Regex(@"\{(\w+)\}", RegexOptions.Compiled);
-		return re.Replace(source, match => placeholderDictionary[match.Groups[1].Value]);
+		if(placeholderDictionary.Count > 0)
+		{
+			return re.Replace(source, match => placeholderDictionary[match.Groups[1].Value]);
+		}
+		return source;
 	}
 
+
+	// PRIVATE DICTIONARY HELPER /////////////////////////
+	// TODO: Public
 
 	private void reset_dictionary()
 	{
