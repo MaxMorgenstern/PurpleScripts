@@ -4,7 +4,7 @@ namespace PurpleNetwork
 {
 	namespace Server
 	{
-		public enum ServerType { Account, Lobby, Game, Multi, Monitoring };
+		public enum ServerTypes { Account, Lobby, Game, Multi, Monitoring };
 		// Account: Pure account data, handles login and sends the player to a lobby server
 		// Lobby: List with games, Account Managements
 		// Game: The actual Game server that runs the game instance
@@ -13,7 +13,7 @@ namespace PurpleNetwork
 		
 		public class ServerConfig
 		{
-			public ServerType 	ServerType;
+			public ServerTypes 	ServerType;
 			public Guid			ServerID;
 			
 			public string 		ServerHost;
@@ -28,7 +28,6 @@ namespace PurpleNetwork
 			public string 		DatabasePassword;
 			//public int 		DatabasePort;
 
-
 			// CONSTRUCTOR
 			public ServerConfig ()
 			{
@@ -36,7 +35,7 @@ namespace PurpleNetwork
 
 				ServerHost 		= "localhost";
 				ServerName 		= "GameServer";
-				ServerType 		= ServerType.Multi;
+				ServerType 		= ServerTypes.Multi;
 				
 				ServerPassword 	= "";
 				ServerMaxClients= 32;
@@ -53,15 +52,35 @@ namespace PurpleNetwork
 				SetType(parse_server_type (serverType));
 			}
 			
-			public void SetType(ServerType serverType)
+			public void SetType(ServerTypes serverType)
 			{
 				ServerType = serverType;
 			}
 			
 			// PRIVATE HELPER /////////////////////////
-			private ServerType parse_server_type(string serverType)
+			private ServerTypes parse_server_type(string serverType)
 			{
-				return (ServerType) Enum.Parse(typeof(ServerType), serverType, true);
+				return (ServerTypes) Enum.Parse(typeof(ServerTypes), serverType, true);
+			}
+		}
+
+		// Class Extension /////////////////////////
+		public enum ServerStates { Online, Offline, Unknown };
+
+		public class ServerReference : ServerConfig
+		{
+			public DateTime 	ReferenceLastSeen;
+			public DateTime 	ReferenceFirstSeen;
+			public int 			ReferencePing;
+
+			public int 			ServerConnectedClients;
+			public int 			ServerPriority;
+			public ServerStates	ServerState;
+
+			public ServerReference()
+			{
+				ServerPriority = 5;
+				ServerConnectedClients = 0;
 			}
 		}
 	}

@@ -178,23 +178,23 @@ namespace PurpleNetwork
 
 				switch (config.ServerType)
 				{
-					case ServerType.Account:
+					case ServerTypes.Account:
 						Handler.RegisterAccountListener();
 						break;
 					
-					case ServerType.Game:
+					case ServerTypes.Game:
 						Handler.RegisterGameListener();
 						break;
 						
-					case ServerType.Lobby:
+					case ServerTypes.Lobby:
 						Handler.RegisterLobbyListener();
 						break;
 						
-					case ServerType.Monitoring:
+					case ServerTypes.Monitoring:
 						Handler.RegisterLMonitoringListener();
 						break;
 						
-					case ServerType.Multi:
+					case ServerTypes.Multi:
 						Handler.RegisterMultiListener();
 						break;
 				}
