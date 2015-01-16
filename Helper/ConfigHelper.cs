@@ -22,7 +22,7 @@ namespace PurpleConfig {
 			{
 				foreach (string filePath in files) 
 				{
-					if(filePath.Contains("/Config/"))
+					if(filePath.Contains("/Config/") || filePath.Contains("\\Config\\"))
 					{
 						xmlDoc.LoadXml (System.IO.File.ReadAllText(filePath)); // load the file.
 						XmlNodeList nodesList = xmlDoc.GetElementsByTagName("add"); // array of the level nodes.
