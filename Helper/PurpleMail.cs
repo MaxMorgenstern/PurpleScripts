@@ -20,6 +20,9 @@ public class PurpleMail : MonoBehaviour
 
 	private static int 			mailPort;
 	private static bool 		mailUseSSL;
+
+	private static string		storedTitle;
+	private static string		storedBody;
 	
 	private static Dictionary<string,string> placeholderDictionary;
 	
@@ -27,8 +30,6 @@ public class PurpleMail : MonoBehaviour
 	// START UP /////////////////////////
 	protected PurpleMail ()
 	{
-		placeholderDictionary = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
-
 		try {
 			senderAddress = PurpleConfig.Mail.Sender.Address;
 			senderDisplayName = PurpleConfig.Mail.Sender.Name;
@@ -53,7 +54,12 @@ public class PurpleMail : MonoBehaviour
 
 			Debug.LogError("Can not read Purple Config! " + e.ToString());
 		}
+
 		senderMail = new MailAddress(senderAddress, senderDisplayName);
+		placeholderDictionary = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+		
+		storedTitle = String.Empty;
+		storedBody = String.Empty;
 	}
 
 	// SINGLETON /////////////////////////
@@ -71,6 +77,11 @@ public class PurpleMail : MonoBehaviour
 	}
 
 	// PUBLIC FUNCTIONS /////////////////////////
+	public static bool Send(string recipient)
+	{
+		return Instance.send_mail (recipient);
+	}
+
 	public static bool Send(string recipient, string title, string body)
 	{
 		return Instance.send_mail (recipient, title, body);
@@ -86,6 +97,10 @@ public class PurpleMail : MonoBehaviour
 		return Instance.send_mail (recipient, title, body, senderAddress, senderName);
 	}
 
+	public static void SetMail(string title, string body)
+	{
+		Instance.set_mail (title, body);
+	}
 
 	public static void ResetDictionary()
 	{
@@ -135,8 +150,20 @@ public class PurpleMail : MonoBehaviour
 		return result;
 	}
 
+	private bool send_mail(string recipient)
+	{
+		if(!String.IsNullOrEmpty(storedTitle) && !String.IsNullOrEmpty(storedBody))
+		{
+			return send_mail(recipient, storedTitle, storedBody);
+		}
+		return false;
+	}
+
 	private bool send_mail(string recipient, string title, string body)
 	{
+		storedTitle = title;
+		storedBody = body;
+
 		try 
 		{
 			MailMessage mail = new MailMessage();
@@ -168,7 +195,13 @@ public class PurpleMail : MonoBehaviour
 		return false;
 	}
 
-	
+	private void set_mail(string title, string body)
+	{
+		storedTitle = title;
+		storedBody = body;
+	}
+
+
 	// PRIVATE HELPER /////////////////////////
 	
 	private bool is_html(string probe)
