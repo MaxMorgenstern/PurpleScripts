@@ -22,6 +22,9 @@ namespace PurpleNetwork
 			public int 			ServerMaxClients;
 			public int 			ServerPort;
 			
+			public bool 		SpamPrevention;
+			public bool 		SpamResponse;
+			
 			public string 		DatabaseHost;
 			public string 		DatabaseName;
 			public string 		DatabaseUser;
@@ -40,6 +43,9 @@ namespace PurpleNetwork
 				ServerPassword 	= "";
 				ServerMaxClients= 32;
 				ServerPort 		= 25001;
+
+				SpamPrevention 	= true;
+				SpamResponse 	= false;
 
 				DatabaseHost 	= "localhost";
 				DatabaseName 	= "PurpleDatabase";

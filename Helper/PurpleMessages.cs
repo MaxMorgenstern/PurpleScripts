@@ -138,6 +138,12 @@ namespace PurpleMessages
 		{
 			public string message;
 		}
+
+		// SPAM PREVENTION
+		public class SpamPrevention : PurpleMessage
+		{
+			public float tryAgainIn;
+		}
 	}
 
 }

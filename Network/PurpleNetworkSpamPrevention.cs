@@ -1,0 +1,128 @@
+using System;
+using System.Collections.Generic;
+
+namespace PurpleNetwork
+{
+	namespace Spam
+	{
+		public class Prevention
+		{
+			private static List<RequestQueue> requestQueue  = new List<RequestQueue>(); 
+			private const int SERVER_ID = -1;
+
+			public static bool AddClient(int clientID)
+			{
+				if(clientID == SERVER_ID) return true;
+				if(find_client(clientID) != null)
+				{
+					return false;
+				}
+				requestQueue.Add (new RequestQueue (clientID));
+				return true;
+			}
+
+			public static bool AddClient(int clientID, int maxRequests, TimeSpan timeSpan)
+			{
+				if(clientID == SERVER_ID) return true;
+				if(find_client(clientID) != null)
+				{
+					return false;
+				}
+				requestQueue.Add (new RequestQueue (clientID, maxRequests, timeSpan));
+				return true;
+			}
+
+
+			public static void UpdateLimit(int clientID, int maxRequests, TimeSpan timeSpan)
+			{
+				RequestQueue clientObject = find_client(clientID);
+				if(clientObject != null)
+				{
+					clientObject.UpdateLimit (maxRequests, timeSpan);
+				}
+			}
+
+
+			public static bool CanClientRequestNow(int clientID)
+			{
+				return CanClientRequestNow (clientID, true);
+			}
+
+			public static bool CanClientRequestNow(int clientID, bool activeRequest)
+			{
+				if(clientID == SERVER_ID) return true;
+				RequestQueue clientObject = find_client(clientID);
+				if(clientObject == null)
+				{
+					return AddClient(clientID);
+				}
+				return clientObject.CanClientRequestNow (activeRequest);
+			}
+
+			
+			// PRIVATE /////////////////////////
+			private static RequestQueue find_client(int clientID)
+			{
+				return requestQueue.Find(item => item.requestClientID == clientID);
+			}
+
+			
+			// INTERNAL CLASS /////////////////////////
+			private class RequestQueue
+			{
+				private int 			requestMaxInTimeSpan;
+				private TimeSpan 		requestTimeSpan;
+				private Queue<DateTime>	requestQueue;
+				
+				public int 				requestClientID;
+
+				public void UpdateLimit(int maxRequests, TimeSpan timeSpan)
+				{
+					requestMaxInTimeSpan = maxRequests;
+					requestTimeSpan = timeSpan;
+				}
+
+				public bool CanClientRequestNow()
+				{
+					return CanClientRequestNow (true);
+				}
+
+				public bool CanClientRequestNow(bool activeRequest)
+				{
+					UpdateQueue();
+					if(activeRequest)
+					{
+						requestQueue.Enqueue(DateTime.Now);
+					}
+					return requestQueue.Count <= requestMaxInTimeSpan;
+				}
+
+				
+				// PRIVATE /////////////////////////
+				private void UpdateQueue()
+				{
+					while ((requestQueue.Count > 0) && (requestQueue.Peek().Add(requestTimeSpan) < DateTime.Now))
+						requestQueue.Dequeue();
+				}
+
+
+				// CONSTRUCTOR /////////////////////////
+				public RequestQueue(int clientID)
+				{
+					requestClientID = clientID;
+					requestMaxInTimeSpan = 20;	// 20 Requests	
+					requestTimeSpan = new TimeSpan (0, 1, 0);	// 1 Minute
+					requestQueue = new Queue<DateTime>(requestMaxInTimeSpan);
+				}
+
+				public RequestQueue(int clientID, int maxRequests, TimeSpan timeSpan)
+				{
+					requestClientID = clientID;
+					requestMaxInTimeSpan = maxRequests;
+					requestTimeSpan = timeSpan;
+					requestQueue = new Queue<DateTime>(requestMaxInTimeSpan);
+				}
+			}
+		}
+	}
+}

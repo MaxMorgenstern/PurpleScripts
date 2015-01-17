@@ -171,10 +171,9 @@ namespace PurpleNetwork
 			private void launch_server(ServerConfig config)
 			{
 				currentServerConfig = config;
-				int player = config.ServerMaxClients;
-				string password = config.ServerPassword;
-				int port = config.ServerPort;
-				PurpleNetwork.LaunchLocalServer(player, password, port);
+				PurpleNetwork.LaunchLocalServer(config.ServerMaxClients, config.ServerPassword, config.ServerPort);
+				PurpleNetwork.SetSpamProtection (config.SpamPrevention);
+				PurpleNetwork.SetSpamResponse (config.SpamResponse);
 
 				switch (config.ServerType)
 				{
