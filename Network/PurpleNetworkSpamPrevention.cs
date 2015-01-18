@@ -59,6 +59,31 @@ namespace PurpleNetwork
 				return clientObject.CanClientRequestNow (activeRequest);
 			}
 
+
+			public static void GetRequestsInTimespan(int clientID, out int request, out TimeSpan time)
+			{
+				request = 20;
+				time = new TimeSpan (0, 1, 0);
+
+				RequestQueue clientObject = find_client(clientID);
+				if(clientObject == null)
+				{
+					clientObject.GetRequestsInTimespan(out request, out time);
+				}
+			}
+
+			public static bool SendSpamResponse(int clientID)
+			{
+				RequestQueue clientObject = find_client(clientID);
+				if(clientObject != null)
+				{
+					bool returnValue = clientObject.serverSpamResponseSend;
+					clientObject.serverSpamResponseSend = false;
+					return returnValue;
+				}
+				return false;
+			}
+
 			
 			// PRIVATE /////////////////////////
 			private static RequestQueue find_client(int clientID)
@@ -75,11 +100,18 @@ namespace PurpleNetwork
 				private Queue<DateTime>	requestQueue;
 				
 				public int 				requestClientID;
+				public bool				serverSpamResponseSend;
 
 				public void UpdateLimit(int maxRequests, TimeSpan timeSpan)
 				{
 					requestMaxInTimeSpan = maxRequests;
 					requestTimeSpan = timeSpan;
+				}
+
+				public void GetRequestsInTimespan(out int request, out TimeSpan time)
+				{
+					request = requestMaxInTimeSpan;
+					time = requestTimeSpan;
 				}
 
 				public bool CanClientRequestNow()
@@ -113,6 +145,7 @@ namespace PurpleNetwork
 					requestMaxInTimeSpan = 20;	// 20 Requests	
 					requestTimeSpan = new TimeSpan (0, 1, 0);	// 1 Minute
 					requestQueue = new Queue<DateTime>(requestMaxInTimeSpan);
+					serverSpamResponseSend = false;
 				}
 
 				public RequestQueue(int clientID, int maxRequests, TimeSpan timeSpan)
@@ -121,6 +154,7 @@ namespace PurpleNetwork
 					requestMaxInTimeSpan = maxRequests;
 					requestTimeSpan = timeSpan;
 					requestQueue = new Queue<DateTime>(requestMaxInTimeSpan);
+					serverSpamResponseSend = false;
 				}
 			}
 		}

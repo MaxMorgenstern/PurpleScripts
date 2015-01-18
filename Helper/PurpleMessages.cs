@@ -142,7 +142,8 @@ namespace PurpleMessages
 		// SPAM PREVENTION
 		public class SpamPrevention : PurpleMessage
 		{
-			public float tryAgainIn;
+			public int requestsInTime;
+			public TimeSpan requestTimeSpan;
 		}
 	}
 

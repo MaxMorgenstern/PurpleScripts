@@ -543,12 +543,19 @@ namespace PurpleNetwork
 		void receive_purple_network_message(string event_name, string string_message, NetworkMessageInfo info)
 		{
 			try{
-				if(serverSpamPrevention && !Spam.Prevention.CanClientRequestNow(Convert.ToInt32(info.sender.ToString())))
+				int clientID = Convert.ToInt32(info.sender.ToString());
+				if(serverSpamPrevention && !Spam.Prevention.CanClientRequestNow(clientID))
 				{
 					Debug.LogWarning ("SpamPrevention triggered for client: " + info.sender.ToString());
-					if(serverSpamResponse)
+
+					if(serverSpamResponse && Spam.Prevention.SendSpamResponse(clientID))
 					{
-						purpleNetworkView.RPC("receive_purple_network_spam_warning", info.sender, event_name, string_message);
+						PurpleMessages.Server.SpamPrevention spamPreventionMessage = new PurpleMessages.Server.SpamPrevention();
+						Spam.Prevention.GetRequestsInTimespan(clientID, 
+											out spamPreventionMessage.requestsInTime, 
+						                	out spamPreventionMessage.requestTimeSpan);
+						purpleNetworkView.RPC("receive_purple_network_spam_warning", info.sender, event_name, 
+						 					_PurpleSerializer.ObjectToStringConverter(spamPreventionMessage));
 					}
 					return;
 				}
@@ -570,8 +577,8 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_spam_warning(string event_name, string string_message, NetworkMessageInfo info)
 		{
-			Debug.LogWarning ("receive_purple_network_spam_warning: too much requests from: " + info.sender.ToString() + " - last event: " + event_name);
-			instance.trigger_purple_event(PurpleNetworkSpamWarning, info.sender, String.Empty);
+			Debug.LogWarning ("receive_purple_network_spam_warning: too much requests from: " + info.sender.ToString() + " - last called event: " + event_name);
+			instance.trigger_purple_event(PurpleNetworkSpamWarning, info.sender, string_message);
 		}
 	}
 }
