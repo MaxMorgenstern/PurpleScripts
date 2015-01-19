@@ -17,7 +17,7 @@ public class PurpleVersion
 	}
 
 	// VERSION /////////////////////////
-	public static string Version 
+	public string Version 
 	{
 		get
 		{
@@ -31,5 +31,13 @@ public class PurpleVersion
 		_Minor = minor;
 		_Status = status;
 		_Revision = revision;
+	}
+
+	public string GetCurrent()
+	{
+		// Return the current PurpleScripts version
+		PurpleVersion pv = new PurpleVersion ();
+		pv.SetVersion (0, 3, 0, 1);	// 2015-01-19
+		return pv.Version;
 	}
 }
