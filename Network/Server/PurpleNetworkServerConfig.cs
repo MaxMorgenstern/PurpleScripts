@@ -29,7 +29,7 @@ namespace PurpleNetwork
 			public string 		DatabaseName;
 			public string 		DatabaseUser;
 			public string 		DatabasePassword;
-			//public int 		DatabasePort;
+			public int 			DatabasePort;
 
 			// CONSTRUCTOR
 			public ServerConfig ()
@@ -37,10 +37,10 @@ namespace PurpleNetwork
 				ServerID = System.Guid.NewGuid ();
 
 				ServerHost 		= "localhost";
-				ServerName 		= "GameServer";
+				ServerName 		= "PurpleServer";
 				ServerType 		= ServerTypes.Multi;
 				
-				ServerPassword 	= "";
+				ServerPassword 	= String.Empty;
 				ServerMaxClients= 32;
 				ServerPort 		= 25001;
 
@@ -50,7 +50,8 @@ namespace PurpleNetwork
 				DatabaseHost 	= "localhost";
 				DatabaseName 	= "PurpleDatabase";
 				DatabaseUser 	= "root";
-				DatabasePassword= "";
+				DatabasePassword= String.Empty;
+				DatabasePort 	= 3306;
 			}
 			
 			public void SetType(string serverType)
@@ -85,8 +86,13 @@ namespace PurpleNetwork
 
 			public ServerReference()
 			{
-				ServerPriority = 5;
+				ReferenceLastSeen = DateTime.MinValue;
+				ReferenceFirstSeen = DateTime.MinValue;
+				ReferencePing = -1;
+
 				ServerConnectedClients = 0;
+				ServerPriority = 5;
+				ServerState = ServerStates.Unknown;
 			}
 		}
 	}

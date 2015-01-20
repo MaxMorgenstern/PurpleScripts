@@ -298,7 +298,10 @@ namespace PurpleNetwork
 			serverPort = localPort;
 
 			Network.InitializeSecurity ();
-			Network.incomingPassword = localPassword;
+			if(!String.IsNullOrEmpty(localPassword))
+			{
+				Network.incomingPassword = localPassword;
+			}
 
 			bool use_nat = !Network.HavePublicAddress();
 

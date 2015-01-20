@@ -24,6 +24,7 @@ namespace PurpleDatabase
 		private static string serverDatabase;
 		private static string serverUser;
 		private static string serverPassword;
+		private static int serverPort;
 
 		private static string connectionString;
 		private static MySqlConnection connection;
@@ -37,6 +38,7 @@ namespace PurpleDatabase
 				serverDatabase = PurpleConfig.Database.Name;
 				serverUser = PurpleConfig.Database.User;
 				serverPassword = PurpleConfig.Database.Password;
+				serverPort = PurpleConfig.Database.Port;
 			}
 			catch(Exception e)
 			{
@@ -65,6 +67,11 @@ namespace PurpleDatabase
 		public static void Setup (string host, string database, string user, string password)
 		{
 			Instance.purple_setup (host, database, user, password);
+		}
+
+		public static void Setup (string host, string database, string user, string password, int port)
+		{
+			Instance.purple_setup (host, database, user, password, port);
 		}
 
 		public static void Initialize()
@@ -130,6 +137,12 @@ namespace PurpleDatabase
 		// PRIVATE ////////////////////////////
 
 		// SETUP ////////////////////////////
+		private void purple_setup(string host, string database, string user, string password, int port)
+		{
+			serverPort = port;
+			purple_setup(host, database, user, password);
+		}
+
 		private void purple_setup(string host, string database, string user, string password)
 		{
 			serverIP = host;
@@ -295,7 +308,8 @@ namespace PurpleDatabase
 						"Database="+serverDatabase+";" +
 						"User ID="+serverUser+";" +
 						"Pooling=false;" +
-						"Password="+serverPassword+";";
+						"Password="+serverPassword+";" +
+						"Port="+serverPort+";";
 					connection = new MySqlConnection (connectionString);
 				}
 				catch (Exception ex)
