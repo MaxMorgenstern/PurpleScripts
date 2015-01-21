@@ -109,14 +109,14 @@ namespace PurpleMessages
 		{
 			public DateTime time;
 			public DateTime uptime;
-			public PurpleVersion version;
+			public string version;
 
 			// CONSTRUCTOR
 			public Status()
 			{
 				time = DateTime.Now;
-				version = new PurpleVersion();
-				version.SetVersion (0, 0, 1, 0);
+				PurpleVersion pv = new PurpleVersion();
+				version = pv.GetCurrent ();
 			}
 		}
 
