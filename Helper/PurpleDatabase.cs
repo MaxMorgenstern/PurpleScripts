@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using MySql.Data;
 using MySql.Data.MySqlClient;
@@ -81,7 +82,7 @@ namespace PurpleDatabase
 		}
 
 
-		// ExecuteQuery - CREATE, INSERT, UPDATE, and DELETE
+		// ExecuteQuery - INSERT, UPDATE, and DELETE
 		public static int ExecuteQuery(string query)
 		{
 			return Instance.sql_write_statement (query);
@@ -190,20 +191,32 @@ namespace PurpleDatabase
 
 		private bool is_sql_valid(string query, bool isWrite)
 		{
-			//string[] invalidForRead = { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
-			//	"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
-			//	"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
-			//	"table", "update" };
-			
+			bool isSQLValid = true;
+			string[] invalidWords = {};
+
 			if(isWrite)
 			{
-				// TODO
+				// WRITE
+				invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
+					"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "drop",
+					"end", "exec", "execute", "fetch", "kill", "sys", "sysobjects", "syscolumns",
+					"table", "''" };
 			} 
 			else
 			{
-				// TODO
+				// READ
+				invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
+					"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
+					"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
+					"table", "update", "''" };
 			}
-			return true;
+
+			if (invalidWords.Any(query.ToLowerInvariant().Contains))
+			{
+				return false;
+			}
+
+			return isSQLValid;
 		}
 
 
