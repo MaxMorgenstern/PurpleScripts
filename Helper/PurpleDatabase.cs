@@ -95,11 +95,13 @@ namespace PurpleDatabase
 			int rowCount = 0, colCount = 0;
 			return Instance.sql_read_statement (query, out rowCount, out colCount);
 		}
+
 		public static DataTable SelectQuery(string query, out int rowCount)
 		{
 			int colCount = 0;
 			return Instance.sql_read_statement (query, out rowCount, out colCount);
 		}
+
 		public static DataTable SelectQuery(string query, out int rowCount, out int colCount)
 		{
 			return Instance.sql_read_statement (query, out rowCount, out colCount);
@@ -113,16 +115,19 @@ namespace PurpleDatabase
 			DataColumnCollection colums;
 			return SelectQuerySingle (query, out colCount, out colums);
 		}
+
 		public static DataRow SelectQuerySingle(string query, out DataColumnCollection colums)
 		{
 			int colCount;
 			return SelectQuerySingle (query, out colCount, out colums);
 		}
+
 		public static DataRow SelectQuerySingle(string query, out int colCount)
 		{
 			DataColumnCollection colums;
 			return SelectQuerySingle (query, out colCount, out colums);
 		}
+
 		public static DataRow SelectQuerySingle(string query, out int colCount, out DataColumnCollection colums)
 		{
 			int rowCount;
@@ -134,9 +139,18 @@ namespace PurpleDatabase
 			return null;
 		}
 
+		public static string MySQLEscapeString(string str)
+		{
+			return Instance.my_sql_escape (str);
+		}
+
+		public static bool IsSQLValid(string query, bool writeStatement)
+		{
+			return Instance.is_sql_valid (query, writeStatement);
+		}
+
 
 		// PRIVATE ////////////////////////////
-
 		// SETUP ////////////////////////////
 		private void purple_setup(string host, string database, string user, string password, int port)
 		{
@@ -154,35 +168,116 @@ namespace PurpleDatabase
 		}
 
 
+		// SQL FUNCTIONS ////////////////////////////
+		// CREATE, INSERT, UPDATE, and DELETE
+		private int sql_write_statement(string query)
+		{
+			if (!is_sql_valid (query, true))
+				return 0;
+			
+			int affectedRows = 0;
+			if (open_connection () == true) 
+			{
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand (query, connection);
+					affectedRows = cmd.ExecuteNonQuery ();
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError("Can not execute query. " + ex.ToString());
+				}
+				close_connection ();
+			}
+			return affectedRows;
+		}
+		
+		// SELECT
+		private DataTable sql_read_statement(string query, out int rowCount, out int colCount)
+		{
+			colCount = 0;
+			rowCount = 0;
+			DataTable dt = new DataTable();
+			dt.Clear();
+			
+			if (!is_sql_valid (query, false))
+				return dt;
+			
+			if (open_connection () == true) 
+			{
+				MySqlDataReader reader = null;
+				try
+				{
+					MySqlCommand cmd = new MySqlCommand (query, connection);
+					reader = cmd.ExecuteReader ();
+					
+					if(reader.HasRows)
+					{
+						colCount = reader.FieldCount;
+						bool first_run = true;
+						
+						while (reader.Read())
+						{
+							rowCount++;
+							DataRow dt_row = dt.NewRow();
+							
+							for(int i=0;i<reader.FieldCount;i++)
+							{
+								if(first_run)
+								{
+									dt.Columns.Add(reader.GetName(i));
+								}
+								dt_row[i] = reader[i];
+							}
+							
+							dt.Rows.Add(dt_row);
+							first_run = false;
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError("Can not execute query. " + ex.ToString());
+				}
+				finally
+				{
+					if (reader != null)
+					{
+						reader.Close();
+					}
+				}
+				close_connection ();
+			}
+			return dt;
+		}
+
+
 		// HELPER ////////////////////////////
-		/*
-		public static string my_SQL_escape(string str)
+		private string my_sql_escape(string str)
 		{
 			return Regex.Replace(str, @"[\x00'""\b\n\r\t\cZ\\%_]",
-			                     delegate(Match match)
-			                     {
-				string v = match.Value;
-				switch (v)
+				delegate(Match match)
 				{
-				case "\x00":	 	// ASCII NUL (0x00) character
-					return "\\0";
-				case "\b":		 	// BACKSPACE character
-					return "\\b";
-				case "\n":		 	// NEWLINE (linefeed) character
-					return "\\n";
-				case "\r":		 	// CARRIAGE RETURN character
-					return "\\r";
-				case "\t":			// TAB
-					return "\\t";
-				case "\u001A":	 	// Ctrl-Z
-					return "\\Z";
-				default:
+					string v = match.Value;
+					switch (v)
+					{
+					case "\x00":	 	// ASCII NUL (0x00) character
+						return "\\0";
+					case "\b":		 	// BACKSPACE character
+						return "\\b";
+					case "\n":		 	// NEWLINE (linefeed) character
+						return "\\n";
+					case "\r":		 	// CARRIAGE RETURN character
+						return "\\r";
+					case "\t":			// TAB
+						return "\\t";
+					case "\u001A":	 	// Ctrl-Z
+						return "\\Z";
+					}
 					return "\\" + v;
 				}
-			});
+			);
 		}
-		*/
-
 
 		private bool is_sql_valid(string query)
 		{
@@ -220,91 +315,7 @@ namespace PurpleDatabase
 		}
 
 
-		// CREATE, INSERT, UPDATE, and DELETE
-		private int sql_write_statement(string query)
-		{
-			if (!is_sql_valid (query, true))
-				return 0;
-
-			int affectedRows = 0;
-			if (open_connection () == true) 
-			{
-				try
-				{
-					MySqlCommand cmd = new MySqlCommand (query, connection);
-					affectedRows = cmd.ExecuteNonQuery ();
-				}
-				catch (Exception ex)
-				{
-					Debug.LogError("Can not execute query. " + ex.ToString());
-				}
-				close_connection ();
-			}
-			return affectedRows;
-		}
-
-		// SELECT
-		private DataTable sql_read_statement(string query, out int rowCount, out int colCount)
-		{
-			colCount = 0;
-			rowCount = 0;
-			DataTable dt = new DataTable();
-			dt.Clear();
-
-			if (!is_sql_valid (query, false))
-				return dt;
-
-			if (open_connection () == true) 
-			{
-				MySqlDataReader reader = null;
-				try
-				{
-					MySqlCommand cmd = new MySqlCommand (query, connection);
-					reader = cmd.ExecuteReader ();
-
-					if(reader.HasRows)
-					{
-						colCount = reader.FieldCount;
-						bool first_run = true;
-
-						while (reader.Read())
-						{
-							rowCount++;
-							DataRow dt_row = dt.NewRow();
-
-							for(int i=0;i<reader.FieldCount;i++)
-							{
-								if(first_run)
-								{
-									dt.Columns.Add(reader.GetName(i));
-								}
-								dt_row[i] = reader[i];
-							}
-
-							dt.Rows.Add(dt_row);
-							first_run = false;
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Debug.LogError("Can not execute query. " + ex.ToString());
-				}
-				finally
-				{
-					if (reader != null)
-					{
-						reader.Close();
-					}
-				}
-				close_connection ();
-			}
-			return dt;
-		}
-
-
-		// BASICS /////////////////////////
-
+		// DATABASE BASICS /////////////////////////
 		// initialize database
 		private void initialize()
 		{
