@@ -1,10 +1,9 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace PurpleDatabase
 {
-	public class PurpleDatabaseWrapper : MonoBehaviour
+	public class Query
 	{
 		private static List<string> SQLHistory;
 		private static string SQLQuery;
@@ -76,7 +75,7 @@ namespace PurpleDatabase
 
 
 
-		protected PurpleDatabaseWrapper ()
+		protected Query ()
 		{
 			PurpleDatabase.Initialize ();
 		}
@@ -88,83 +87,83 @@ namespace PurpleDatabase
 
 
 		// new query
-		public void New()
+		public static void New()
 		{
 			
 		}
 
 		// execute query
-		public void Execute()
+		public static void Execute()
 		{
 			
 		}
 
 		// sql query
-		public void SQL()
+		public static void SQL()
 		{
 			
 		}
 		
 		
-		public void Select()
+		public static void Select()
 		{
 			
 		}
 		
-		public void From()
+		public static void From()
 		{
 			
 		}
 		
-		public void Where()
+		public static void Where()
 		{
 			
 		}
 
-		public void Like()
+		public static void Like()
 		{
 			
 		}
 		
-		public void Limit()
+		public static void Limit()
 		{
 			
 		}
 		
-		public void Offset()
+		public static void Offset()
 		{
 			
 		}
 
-		public void OrderBy()
+		public static void OrderBy()
 		{
 			
 		}
 
-		public void ASC()
+		public static void ASC()
 		{
 			
 		}
 
-		public void DESC()
+		public static void DESC()
 		{
 			
 		}
 		
 
 
-		public void Update()
+		public static void Update()
 		{
 			
 		}
 		
-		public void Set()
+		public static void Set()
 		{
 			
 		}
 		
 		
-		public void Delete()
+		public static void Delete()
 		{
 			
 		}
