@@ -2,13 +2,6 @@ using System;
 
 namespace PurpleNetwork.Server
 {
-	public enum ServerTypes { Account, Lobby, Game, Multi, Monitoring };
-	// Account: Pure account data, handles login and sends the player to a lobby server
-	// Lobby: List with games, Account Managements
-	// Game: The actual Game server that runs the game instance
-	// Multi: All above
-	// Monitoring: A Monitoring Server that checks all of the above
-	
 	public class ServerConfig
 	{
 		public ServerTypes 	ServerType;
@@ -66,31 +59,6 @@ namespace PurpleNetwork.Server
 		private ServerTypes parse_server_type(string serverType)
 		{
 			return (ServerTypes) Enum.Parse(typeof(ServerTypes), serverType, true);
-		}
-	}
-
-	// Class Extension /////////////////////////
-	public enum ServerStates { Online, Offline, Unknown };
-
-	public class ServerReference : ServerConfig
-	{
-		public DateTime 	ReferenceLastSeen;
-		public DateTime 	ReferenceFirstSeen;
-		public int 			ReferencePing;
-
-		public int 			ServerConnectedClients;
-		public int 			ServerPriority;
-		public ServerStates	ServerState;
-
-		public ServerReference()
-		{
-			ReferenceLastSeen = DateTime.MinValue;
-			ReferenceFirstSeen = DateTime.MinValue;
-			ReferencePing = -1;
-
-			ServerConnectedClients = 0;
-			ServerPriority = 5;
-			ServerState = ServerStates.Unknown;
 		}
 	}
 }

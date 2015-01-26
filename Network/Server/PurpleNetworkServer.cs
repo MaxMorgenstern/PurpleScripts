@@ -13,6 +13,15 @@ using UnityEngine;
 
 namespace PurpleNetwork.Server
 {
+	public enum ServerStates { Online, Offline, Unknown };
+	public enum ServerTypes { Account, Lobby, Game, Multi, Monitoring };
+	// Account: Pure account data, handles login and sends the player to a lobby server
+	// Lobby: List with games, Account Managements
+	// Game: The actual Game server that runs the game instance
+	// Multi: All above
+	// Monitoring: A Monitoring Server that checks all of the above
+
+
 	public class PurpleServer : MonoBehaviour
 	{
 		private static PurpleServer instance;
