@@ -10,6 +10,11 @@ namespace PurpleNetwork.Server
 	{
 		private List <ServerReference> serverList;
 
+		public void Reset()
+		{
+			serverList = new List<ServerReference> ();
+		}
+
 		public bool Add(ServerReference reference)
 		{
 			serverList.Add (reference);
@@ -18,14 +23,23 @@ namespace PurpleNetwork.Server
 
 		public bool Test(ServerReference reference)
 		{
-			// check server availability
+			// TODO: check server availability
 			return true;
 		}
 
 		public bool Test()
 		{
 			// check all server availabilities
-			return true;
+			bool returnValue = true;
+			foreach(ServerReference sr in serverList)
+			{
+				bool tmpReturn = Test(sr);
+				if(returnValue)
+				{
+					returnValue = tmpReturn;
+				}
+			}
+			return returnValue;
 		}
 
 		public bool Remove(ServerReference reference)
@@ -40,14 +54,12 @@ namespace PurpleNetwork.Server
 
 		public bool Load()
 		{
-			// TODO: Test - Load from disk
 			serverList = PurpleStorage.PurpleStorage.Load<List <ServerReference>> ("dummy_filename");
 			return true;
 		}
 
 		public bool Save()
 		{
-			// TODO: Test - Save from disk...
 			return PurpleStorage.PurpleStorage.SaveBinaryFile ("dummy_filename", serverList);
 		}
 
