@@ -30,8 +30,8 @@ namespace PurpleNetwork
 {
 	public class Constants
 	{
-		public const string 	SERVER_ID_STRING = "-1";
-		public const int 		SERVER_ID_INT = -1;
+		public const string 	SERVER_ID_STRING 	= "-1";
+		public const int 		SERVER_ID_INT 		= -1;
 	}
 
 	// Purple Network
