@@ -207,11 +207,22 @@ namespace PurpleStorage
 			return Instance.load_pfo_helper (filename, true);
 		}
 
+		public static t LoadPlayerPref<t>(string filename)
+		{
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename, true);
+			return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+		}
+
 		public static PurpleFileObject LoadBinaryFile(string filename)
 		{
 			return Instance.load_pfo_helper (filename, false);
 		}
 
+		public static t LoadBinaryFile<t>(string filename)
+		{
+			PurpleFileObject pfo = Instance.load_pfo_helper (filename, false);
+			return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+		}
 		
 		// DELETE /////////////////////////
 		public static bool DeleteFile(string filename)

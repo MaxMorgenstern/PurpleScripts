@@ -49,7 +49,6 @@ public class PurpleVersion
 		System.Version sv = Assembly.GetExecutingAssembly ().GetName ().Version;
 		int firstDevelopmentDay = 5500;
 
-		// Return the current PurpleScripts version	
 		// Major, Minor, Days of Development, Build minute of current day
 		PurpleVersion pv = new PurpleVersion (0, 3, (sv.Build-firstDevelopmentDay), (sv.Revision*2/60));
 		return pv.Version;

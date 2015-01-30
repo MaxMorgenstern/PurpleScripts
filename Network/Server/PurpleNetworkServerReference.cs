@@ -10,6 +10,8 @@ namespace PurpleNetwork.Server
 		public int 			ReferencePing;
 		public string		ReferencePingNote;
 
+		public string 		ServerNote;
+
 		public int 			ServerConnectedClients;
 		public int 			ServerPriority;
 		public ServerStates	ServerState;
@@ -20,6 +22,8 @@ namespace PurpleNetwork.Server
 			ReferenceFirstSeen = DateTime.MinValue;
 			ReferencePing = -1;
 			ReferencePingNote = String.Empty;
+
+			ServerNote = String.Empty;
 
 			ServerConnectedClients = 0;
 			ServerPriority = 5;
