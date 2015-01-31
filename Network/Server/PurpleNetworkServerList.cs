@@ -5,13 +5,18 @@ using System.Net;
 using System.Net.NetworkInformation;
 using PurpleStorage;
 
-// TODO
+// TODO	 - Test server from list
 
 namespace PurpleNetwork.Server
 {
 	public class ReferenceList
 	{
 		private List <ServerReference> serverList;
+		public List <ServerReference> ServerReferenceList
+		{
+			get { return serverList; }
+			set { serverList = value; }
+		}
 
 		public void Reset()
 		{
@@ -24,6 +29,35 @@ namespace PurpleNetwork.Server
 			return true;
 		}
 
+		public bool Remove(ServerReference reference)
+		{
+			return serverList.Remove (reference);
+		}
+
+		public bool Load()
+		{
+			return Load ("PNServerReferenceList");
+		}
+
+		public bool Load(string filename)
+		{
+			serverList = PurpleStorage.PurpleStorage.LoadBinaryFile<List <ServerReference>> (filename);
+			return true;
+		}
+
+		public bool Save()
+		{
+			return Save ("PNServerReferenceList");
+		}
+
+		public bool Save(string filename)
+		{
+			return PurpleStorage.PurpleStorage.SaveBinaryFile (filename, serverList);
+		}
+
+
+		// TESTER FUNCTIONS /////////////////////////
+		
 		public bool Test()
 		{
 			// check all server availabilities
@@ -35,7 +69,7 @@ namespace PurpleNetwork.Server
 				sr.ReferencePingNote = newSR.ReferencePingNote;
 				sr.ServerState = newSR.ServerState;
 				sr.ReferenceLastSeen = newSR.ReferenceLastSeen;
-
+				
 				if(returnValue)
 					returnValue = pingReturn;
 			}
@@ -44,14 +78,14 @@ namespace PurpleNetwork.Server
 		
 		public bool Test(ServerReference reference)
 		{
-			return PurplePing (reference.ServerHost);
+			return Ping (reference.ServerHost);
 		}
-
+		
 		public bool Test(ServerReference reference, out ServerReference newRefernece)
 		{
 			string pingMessage = String.Empty;
 			newRefernece = reference;
-			bool pingReturn = PurplePing(reference.ServerHost, out pingMessage);
+			bool pingReturn = Ping(reference.ServerHost, out pingMessage);
 			
 			newRefernece.ReferencePingNote = pingMessage;
 			if(pingReturn)
@@ -65,20 +99,19 @@ namespace PurpleNetwork.Server
 			}
 			return pingReturn;
 		}
-
+		
 		public bool Test(ServerReference reference, out string pingMessage)
 		{
-			return PurplePing (reference.ServerHost, out pingMessage);
+			return Ping (reference.ServerHost, out pingMessage);
 		}
 
-
-		public bool PurplePing(string host)
+		public bool Ping(string host)
 		{
 			string pingMessage = String.Empty;
-			return PurplePing (host, out pingMessage);
+			return Ping (host, out pingMessage);
 		}
 
-		public bool PurplePing(string host, out string pingMessage)
+		public bool Ping(string host, out string pingMessage)
 		{
 			bool returnValue = true;
 			pingMessage = String.Empty;
@@ -131,36 +164,26 @@ namespace PurpleNetwork.Server
 					returnValue = false;
 				}
 			}
-
 			return returnValue;
 		}
 
-		public bool Remove(ServerReference reference)
-		{
-			return serverList.Remove (reference);
-		}
 
-		public List <ServerReference> Get()
-		{
-			return serverList;
-		}
-
-		public bool Load()
-		{
-			serverList = PurpleStorage.PurpleStorage.Load<List <ServerReference>> ("dummy_filename");
-			return true;
-		}
-
-		public bool Save()
-		{
-			return PurpleStorage.PurpleStorage.SaveBinaryFile ("dummy_filename", serverList);
-		}
-
-		// CONSTRUCTOR
+		// CONSTRUCTOR /////////////////////////
 		public ReferenceList()
 		{
 			serverList = new List<ServerReference> ();
 		}
 
+		public ReferenceList(bool load)
+		{
+			if(load)
+			{
+				Load ();
+			}
+			else 
+			{
+				serverList = new List<ServerReference> ();
+			}
+		}
 	}
 }

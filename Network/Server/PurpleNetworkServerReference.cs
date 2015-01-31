@@ -10,8 +10,10 @@ namespace PurpleNetwork.Server
 		public int 			ReferencePing;
 		public string		ReferencePingNote;
 
-		public string 		ServerNote;
+		public int			TesterTimeout;
+		public string		TesterState;
 
+		public string 		ServerNote;
 		public int 			ServerConnectedClients;
 		public int 			ServerPriority;
 		public ServerStates	ServerState;
@@ -23,6 +25,8 @@ namespace PurpleNetwork.Server
 			ReferencePing = -1;
 			ReferencePingNote = String.Empty;
 
+			TesterTimeout = 20;
+			TesterState = String.Empty;
 			ServerNote = String.Empty;
 
 			ServerConnectedClients = 0;
