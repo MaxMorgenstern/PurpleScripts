@@ -9,40 +9,43 @@ namespace PurpleNetwork.Server
 		
 		public string 		ServerHost;
 		public string 		ServerName;
+		public int 			ServerPort;
+
 		public string 		ServerPassword;
 		public int 			ServerMaxClients;
-		public int 			ServerPort;
+		public bool 		ServerAllowMonitoring;
 		
 		public bool 		SpamPrevention;
 		public bool 		SpamResponse;
 		
 		public string 		DatabaseHost;
 		public string 		DatabaseName;
+		public int 			DatabasePort;
 		public string 		DatabaseUser;
 		public string 		DatabasePassword;
-		public int 			DatabasePort;
 
 		// CONSTRUCTOR
 		public ServerConfig ()
 		{
-			ServerID = System.Guid.NewGuid ();
+			ServerType 		= ServerTypes.Multi;
+			ServerID 		= System.Guid.NewGuid ();
 
 			ServerHost 		= "localhost";
 			ServerName 		= "PurpleServer";
-			ServerType 		= ServerTypes.Multi;
+			ServerPort 		= 25001;
 			
 			ServerPassword 	= String.Empty;
 			ServerMaxClients= 32;
-			ServerPort 		= 25001;
+			ServerAllowMonitoring = true;
 
 			SpamPrevention 	= true;
 			SpamResponse 	= false;
 
 			DatabaseHost 	= "localhost";
 			DatabaseName 	= "PurpleDatabase";
+			DatabasePort 	= 3306;
 			DatabaseUser 	= "root";
 			DatabasePassword= String.Empty;
-			DatabasePort 	= 3306;
 		}
 		
 		public void SetType(string serverType)
