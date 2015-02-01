@@ -1,6 +1,11 @@
-using UnityEngine;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using UnityEngine;
 using PurpleNetwork.Server;
+
 
 namespace PurpleNetwork
 {
@@ -13,6 +18,9 @@ namespace PurpleNetwork
 
 		private static bool testDone;
 		private static ConnectionTesterStatus testResult;
+
+		private static Ping testPing;
+		private static IPAddress testIPAddress;
 
 		private static ServerReference currentServerReference;
 		private static string currentIP;
@@ -27,6 +35,8 @@ namespace PurpleNetwork
 
 			testDone = true;
 			testResult = ConnectionTesterStatus.Undetermined;
+			testPing = null;
+			testIPAddress = null;
 
 			currentServerReference = null;
 		}
@@ -143,5 +153,132 @@ namespace PurpleNetwork
 			Network.connectionTesterIP = currentIP = formerIP;
 			Network.connectionTesterPort = currentPort = formerPort;
 		}
+
+
+
+
+
+
+		private bool test_client_server_connecion(ConnectionTesterStatus type1, ConnectionTesterStatus type2)
+		{
+			if (type1 == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted &&
+			    type2 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
+				return false;
+			else if (type1 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric &&
+			         type2 == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted)
+				return false;
+			else if (type1 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric &&
+			         type2 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
+				return false;
+			return true;
+		}
+
+
+
+
+		// TESTER FUNCTIONS /////////////////////////
+		// TODO: MOVE
+		/*
+		public bool Test(List <ServerReference> serverList)
+		{
+			// check all server availabilities
+			bool returnValue = true;
+			foreach(ServerReference sr in serverList)
+			{
+				ServerReference newSR = new ServerReference();
+				bool pingReturn = Test(sr, out newSR);
+				sr.ReferencePingNote = newSR.ReferencePingNote;
+				sr.ServerState = newSR.ServerState;
+				sr.ReferenceLastSeen = newSR.ReferenceLastSeen;
+				
+				if(returnValue)
+					returnValue = pingReturn;
+			}
+			return returnValue;
+		}
+		*/
+		/*
+		public static ServerReference Test(ServerReference reference)
+		{
+			return Ping (reference.ServerHost);
+		}
+		
+		public static ServerReference Test(ServerReference reference)
+		{
+			string pingMessage = String.Empty;
+			ServerReference newRefernece = reference;
+			bool pingReturn = Ping(reference.ServerHost, out pingMessage);
+			
+			newRefernece.ReferencePingNote = pingMessage;
+			if(pingReturn)
+			{
+				newRefernece.ServerState = ServerStates.Online;
+				newRefernece.ReferenceLastSeen = DateTime.Now;
+			} 
+			else 
+			{
+				newRefernece.ServerState = ServerStates.Offline;
+			}
+			return newRefernece;
+		}
+		
+		public bool Test(ServerReference reference, out string pingMessage)
+		{
+			return Ping (reference.ServerHost, out pingMessage);
+		}
+		*/
+
+		/*
+		private string ping(string host)
+		{
+			string pingMessage = String.Empty;			
+			IPAddress address = Dns.GetHostEntry(host).AddressList.First();
+			System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping ();
+			
+			PingOptions pingOptions = new PingOptions ();
+			pingOptions.DontFragment = true;
+			
+			byte[] buffer = new byte[32];
+			
+			for (int i = 0; i < 4; i++)
+			{
+				try
+				{
+					PingReply pingReply = ping.Send(address, 1000, buffer, pingOptions);
+					if (!(pingReply == null))
+					{
+						switch (pingReply.Status)
+						{
+						case IPStatus.Success:
+							pingMessage = string.Format("Reply from {0}: bytes={1} time={2}ms TTL={3}", pingReply.Address, pingReply.Buffer.Length, pingReply.RoundtripTime, pingReply.Options.Ttl);
+							break;
+						case IPStatus.TimedOut:
+							pingMessage = "Connection has timed out...";
+							break;
+						default:
+							pingMessage = string.Format("Ping failed: {0}", pingReply.Status.ToString());
+							break;
+						}
+					}
+					else
+					{
+						pingMessage = "Connection failed for an unknown reason...";
+					}
+				}
+				catch (PingException ex)
+				{
+					pingMessage = string.Format("Connection Error: {0}", ex.Message);
+				}
+				catch (Exception ex)
+				{
+					pingMessage = string.Format("Connection Error: {0}", ex.Message);
+				}
+			}
+			return pingMessage;
+		}
+		*/
+
+
+
 	}
 }
