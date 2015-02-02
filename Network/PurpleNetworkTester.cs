@@ -19,13 +19,30 @@ namespace PurpleNetwork
 		private static bool testDone;
 		private static ConnectionTesterStatus testResult;
 
-		private static Ping testPing;
-		private static IPAddress testIPAddress;
+		private static pingData pingObject;
 
 		private static ServerReference currentServerReference;
 		private static string currentIP;
 		private static int currentPort;
 
+
+		private class pingData
+		{
+			public Ping ping;
+			public int lastPing;
+			public IPAddress IP;
+			public string host;
+			public bool done;
+
+			public pingData()
+			{
+				ping = null;
+				lastPing = -1;
+				IP = null;
+				host = String.Empty;
+				done = true;
+			}
+		}
 
 		// START UP /////////////////////////
 		protected PurpleNetworkTester ()
@@ -35,8 +52,6 @@ namespace PurpleNetwork
 
 			testDone = true;
 			testResult = ConnectionTesterStatus.Undetermined;
-			testPing = null;
-			testIPAddress = null;
 
 			currentServerReference = null;
 		}
@@ -51,6 +66,7 @@ namespace PurpleNetwork
 				{
 					GameObject gameObject 	= new GameObject ("PurpleNetworkTester");
 					instance     			= gameObject.AddComponent<PurpleNetworkTester> ();
+					instance.init();
 				}
 				return instance;
 			}
@@ -172,6 +188,51 @@ namespace PurpleNetwork
 				return false;
 			return true;
 		}
+
+		private void init()
+		{
+			pingObject = new pingData ();
+		}	
+
+
+
+		public static int Ping(string host)
+		{
+			return Instance.ping(host);
+		}
+
+
+		private int ping(IPAddress host)
+		{
+			if(pingObject.IP != host)
+			{
+				pingObject.IP = host;
+			}
+			return ping ();
+		}
+
+		private int ping(string host)
+		{
+			if(pingObject.host != host)
+			{
+				pingObject.host = host;
+				pingObject.IP = Dns.GetHostEntry(host).AddressList.First();
+			}
+			return ping ();
+		}
+
+		private int ping()
+		{
+			if(pingObject.ping != null && pingObject.ping.isDone)
+				pingObject.lastPing = pingObject.ping.time;
+			
+			if(pingObject.ping == null || pingObject.ping.isDone)
+				pingObject.ping = new Ping (pingObject.IP.ToString());
+
+			return pingObject.lastPing;
+		}
+
+
 
 
 
