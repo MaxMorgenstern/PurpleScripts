@@ -54,6 +54,7 @@ namespace PurpleNetwork
 			testResult = ConnectionTesterStatus.Undetermined;
 
 			currentServerReference = null;
+			pingObject = new pingData ();
 		}
 
 
@@ -66,7 +67,6 @@ namespace PurpleNetwork
 				{
 					GameObject gameObject 	= new GameObject ("PurpleNetworkTester");
 					instance     			= gameObject.AddComponent<PurpleNetworkTester> ();
-					instance.init();
 				}
 				return instance;
 			}
@@ -74,6 +74,19 @@ namespace PurpleNetwork
 
 
 		// PUBLIC FUNCTIONS /////////////////////////
+		// SIMPLE PING /////////////////////////
+		public static int Ping(IPAddress host)
+		{
+			return Instance.ping(host);
+		}
+		
+		public static int Ping(string host)
+		{
+			return Instance.ping(host);
+		}
+
+
+		// ADVANCED FUNCTIONS /////////////////////////
 		public static string Run(string ip, int port)
 		{
 			return Instance.run_test (ip, port, 30).ToString();
@@ -106,7 +119,40 @@ namespace PurpleNetwork
 		}
 
 
+
 		// PRIVATE FUNCTIONS /////////////////////////
+		private int ping(IPAddress host)
+		{
+			if(pingObject.IP != host)
+			{
+				pingObject.IP = host;
+			}
+			return ping ();
+		}
+		
+		private int ping(string host)
+		{
+			if(pingObject.host != host)
+			{
+				pingObject.host = host;
+				pingObject.IP = Dns.GetHostEntry(host).AddressList.First();
+			}
+			return ping ();
+		}
+		
+		private int ping()
+		{
+			if(pingObject.ping != null && pingObject.ping.isDone)
+				pingObject.lastPing = pingObject.ping.time;
+			
+			if(pingObject.ping == null || pingObject.ping.isDone)
+				pingObject.ping = new Ping (pingObject.IP.ToString());
+			
+			return pingObject.lastPing;
+		}
+
+
+		// ADVANCED FUNCTIONS /////////////////////////
 		private ConnectionTesterStatus run_test(ServerReference reference)
 		{
 			if(testDone)
@@ -172,9 +218,7 @@ namespace PurpleNetwork
 
 
 
-
-
-
+		// UNTESTED FUNCTIONS /////////////////////////
 		private bool test_client_server_connecion(ConnectionTesterStatus type1, ConnectionTesterStatus type2)
 		{
 			if (type1 == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted &&
@@ -188,53 +232,6 @@ namespace PurpleNetwork
 				return false;
 			return true;
 		}
-
-		private void init()
-		{
-			pingObject = new pingData ();
-		}	
-
-
-
-		public static int Ping(string host)
-		{
-			return Instance.ping(host);
-		}
-
-
-		private int ping(IPAddress host)
-		{
-			if(pingObject.IP != host)
-			{
-				pingObject.IP = host;
-			}
-			return ping ();
-		}
-
-		private int ping(string host)
-		{
-			if(pingObject.host != host)
-			{
-				pingObject.host = host;
-				pingObject.IP = Dns.GetHostEntry(host).AddressList.First();
-			}
-			return ping ();
-		}
-
-		private int ping()
-		{
-			if(pingObject.ping != null && pingObject.ping.isDone)
-				pingObject.lastPing = pingObject.ping.time;
-			
-			if(pingObject.ping == null || pingObject.ping.isDone)
-				pingObject.ping = new Ping (pingObject.IP.ToString());
-
-			return pingObject.lastPing;
-		}
-
-
-
-
 
 
 		// TESTER FUNCTIONS /////////////////////////
@@ -338,7 +335,6 @@ namespace PurpleNetwork
 			return pingMessage;
 		}
 		*/
-
 
 
 	}
