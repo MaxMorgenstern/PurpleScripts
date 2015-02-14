@@ -58,7 +58,7 @@ Class to store/load data locally.
 Version
 ----
 
-0.3.0.1
+0.3.23.1392 (at the time this readme was updated)
 
 
 
@@ -70,6 +70,7 @@ This Repository has been tested with:
 Unity 4.3.4 - Mac OS
 
 Unity 4.6.0 - Windows 8.1
+Unity 5.0 - Windows 8.1
 
 API Compatibility: .net 2.0
 
