@@ -75,9 +75,9 @@ namespace PurpleNetwork
 
 		// PUBLIC FUNCTIONS /////////////////////////
 		// SIMPLE PING /////////////////////////
-		public static int Ping(IPAddress host)
+		public static int Ping(IPAddress ipAddress)
 		{
-			return Instance.ping(host);
+			return Instance.ping(ipAddress);
 		}
 		
 		public static int Ping(string host)
@@ -87,9 +87,9 @@ namespace PurpleNetwork
 
 
 		// ADVANCED FUNCTIONS /////////////////////////
-		public static string Run(string ip, int port)
+		public static string Run(string ipAddress, int port)
 		{
-			return Instance.run_test (ip, port, 30).ToString();
+			return Instance.run_test (ipAddress, port, 30).ToString();
 		}
 
 		public static string Run(ServerReference reference)
@@ -97,9 +97,9 @@ namespace PurpleNetwork
 			return Instance.run_test (reference).ToString();
 		}
 
-		public static string Run(string ip, int port, int timeout)
+		public static string Run(string ipAddress, int port, int timeout)
 		{
-			return Instance.run_test (ip, port, timeout).ToString();
+			return Instance.run_test (ipAddress, port, timeout).ToString();
 		}
 
 		public static bool IsTestDone
@@ -121,11 +121,11 @@ namespace PurpleNetwork
 
 
 		// PRIVATE FUNCTIONS /////////////////////////
-		private int ping(IPAddress host)
+		private int ping(IPAddress ipAddress)
 		{
-			if(pingObject.IP != host)
+			if(pingObject.IP != ipAddress)
 			{
-				pingObject.IP = host;
+				pingObject.IP = ipAddress;
 			}
 			return ping ();
 		}
@@ -162,12 +162,12 @@ namespace PurpleNetwork
 			return run_test (currentServerReference.ServerHost, currentServerReference.ServerPort, currentServerReference.TesterTimeout);
 		}
 
-		private ConnectionTesterStatus run_test(string ip, int port, int timeout)
+		private ConnectionTesterStatus run_test(string ipAddress, int port, int timeout)
 		{
 			if(testDone)
 			{
 				testDone = false;
-				init_connection (ip, port);
+				init_connection (ipAddress, port);
 				PurpleCountdown.CountdownRunEvent += test_connection;
 				PurpleCountdown.CountdownDoneEvent += reset_connection;
 				PurpleCountdown.Countdown (timeout);
@@ -186,10 +186,10 @@ namespace PurpleNetwork
 		}
 		
 		// PRIVATE HELPER /////////////////////////
-		private void init_connection(string ip, int port)
+		private void init_connection(string ipAddress, int port)
 		{
 			formerIP = Network.connectionTesterIP;
-			Network.connectionTesterIP = currentIP = ip;
+			Network.connectionTesterIP = currentIP = ipAddress;
 			
 			formerPort = Network.connectionTesterPort;
 			Network.connectionTesterPort = currentPort = port;
@@ -285,57 +285,6 @@ namespace PurpleNetwork
 			return Ping (reference.ServerHost, out pingMessage);
 		}
 		*/
-
-		/*
-		private string ping(string host)
-		{
-			string pingMessage = String.Empty;			
-			IPAddress address = Dns.GetHostEntry(host).AddressList.First();
-			System.Net.NetworkInformation.Ping ping = new System.Net.NetworkInformation.Ping ();
-			
-			PingOptions pingOptions = new PingOptions ();
-			pingOptions.DontFragment = true;
-			
-			byte[] buffer = new byte[32];
-			
-			for (int i = 0; i < 4; i++)
-			{
-				try
-				{
-					PingReply pingReply = ping.Send(address, 1000, buffer, pingOptions);
-					if (!(pingReply == null))
-					{
-						switch (pingReply.Status)
-						{
-						case IPStatus.Success:
-							pingMessage = string.Format("Reply from {0}: bytes={1} time={2}ms TTL={3}", pingReply.Address, pingReply.Buffer.Length, pingReply.RoundtripTime, pingReply.Options.Ttl);
-							break;
-						case IPStatus.TimedOut:
-							pingMessage = "Connection has timed out...";
-							break;
-						default:
-							pingMessage = string.Format("Ping failed: {0}", pingReply.Status.ToString());
-							break;
-						}
-					}
-					else
-					{
-						pingMessage = "Connection failed for an unknown reason...";
-					}
-				}
-				catch (PingException ex)
-				{
-					pingMessage = string.Format("Connection Error: {0}", ex.Message);
-				}
-				catch (Exception ex)
-				{
-					pingMessage = string.Format("Connection Error: {0}", ex.Message);
-				}
-			}
-			return pingMessage;
-		}
-		*/
-
 
 	}
 }
