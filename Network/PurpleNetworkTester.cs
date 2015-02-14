@@ -22,8 +22,6 @@ namespace PurpleNetwork
 		private static pingData pingObject;
 
 		private static ServerReference currentServerReference;
-		private static string currentIP;
-		private static int currentPort;
 
 
 		private class pingData
@@ -47,8 +45,8 @@ namespace PurpleNetwork
 		// START UP /////////////////////////
 		protected PurpleNetworkTester ()
 		{
-			formerIP = currentIP = Network.connectionTesterIP;
-			formerPort = currentPort = Network.connectionTesterPort;
+			formerIP = Network.connectionTesterIP;
+			formerPort = Network.connectionTesterPort;
 
 			testDone = true;
 			testResult = ConnectionTesterStatus.Undetermined;
@@ -189,10 +187,10 @@ namespace PurpleNetwork
 		private void init_connection(string ipAddress, int port)
 		{
 			formerIP = Network.connectionTesterIP;
-			Network.connectionTesterIP = currentIP = ipAddress;
+			Network.connectionTesterIP = ipAddress;
 			
 			formerPort = Network.connectionTesterPort;
-			Network.connectionTesterPort = currentPort = port;
+			Network.connectionTesterPort = port;
 		}
 
 		private void test_connection()
@@ -212,8 +210,8 @@ namespace PurpleNetwork
 
 			testDone = true;
 
-			Network.connectionTesterIP = currentIP = formerIP;
-			Network.connectionTesterPort = currentPort = formerPort;
+			Network.connectionTesterIP = formerIP;
+			Network.connectionTesterPort = formerPort;
 		}
 
 
