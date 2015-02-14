@@ -46,6 +46,7 @@ public class PurpleLog : MonoBehaviour
 
 	private static string toggleKey1;
 	private static string toggleKey2;
+	private static string toggleKey3;
 
 	private static bool consoleActive;
 
@@ -56,6 +57,7 @@ public class PurpleLog : MonoBehaviour
 	void OnGUI() {
 		if(consoleActive)
 		{
+			Event e = Event.current;
 			if (consoleDisplay)
 			{
 				GUIStyle windowStyle = new GUIStyle (GUI.skin.GetStyle ("window"));
@@ -64,7 +66,7 @@ public class PurpleLog : MonoBehaviour
 
 				GUILayout.Window (WINDOW_ID, consoleRect, Instance.render_window, "Debug Console", windowStyle);
 			}
-			else if(key_down(toggleKey1) || key_down(toggleKey2))
+			else if(e.isKey && (key_down(e, toggleKey1) || key_down(e, toggleKey2) || key_down(e, toggleKey3)))
 			{
 				open_console();
 			}
@@ -81,6 +83,7 @@ public class PurpleLog : MonoBehaviour
 		consoleInput = "";
 		toggleKey1 = "Caret";
 		toggleKey2 = "`";
+		toggleKey3 = "Backslash";
 		consoleHistoryCurrent = 0;
 		colorTag = "##colorTag##";
 		htmlTag = "<color=##colorType##>##logText##</color>";
@@ -107,12 +110,22 @@ public class PurpleLog : MonoBehaviour
 
 	// LOG CALLBACK /////////////////////////
 	public static void Enable () {
+		#if UNITY_5_0
+		Application.logMessageReceived += Log;
+		#else
 		Application.RegisterLogCallback(Log);
+		#endif
+
 		consoleActive = true;
 	}
 
 	public static void Disable () {
+		#if UNITY_5_0
+		Application.logMessageReceived -= Log;
+		#else
 		Application.RegisterLogCallback(null);
+		#endif
+
 		consoleActive = false;
 	}
 
@@ -230,7 +243,8 @@ public class PurpleLog : MonoBehaviour
 	}
 
 	private void handle_submit() {
-		if (key_down("[enter]") || key_down("return")) {
+		Event e = Event.current;
+		if (key_down(e, "[enter]") || key_down(e, "return")) {
 			if(!String.IsNullOrEmpty(consoleInput))
 			{
 				log_func (consoleInput, "", "User");
@@ -248,7 +262,8 @@ public class PurpleLog : MonoBehaviour
 	}
 
 	private void handle_escape() {
-		if (key_down("escape") /*|| key_down(toggleKey1) || key_down(toggleKey2)*/) {
+		Event e = Event.current;
+		if (key_down(e, "escape") /*|| key_down(e, toggleKey1) || key_down(e, toggleKey2)|| key_down(e, toggleKey3)*/) {
 			close_console();
 		}
 	}
@@ -321,8 +336,8 @@ public class PurpleLog : MonoBehaviour
 		return eventListeners.ContainsKey(event_name);
 	}
 
-	private bool key_down(string key) {
-		return Event.current.Equals(Event.KeyboardEvent(key));
+	private bool key_down(Event e, string key) {
+		return e.Equals(Event.KeyboardEvent(key));
 	}
 
 
