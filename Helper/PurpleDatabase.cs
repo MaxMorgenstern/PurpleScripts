@@ -75,6 +75,11 @@ namespace PurpleDatabase
 			Instance.purple_setup (host, database, user, password, port);
 		}
 
+		public static void SwitchDatabase(string database)
+		{
+			Instance.switch_database (database);
+		}
+
 		public static void Initialize()
 		{
 			Instance.open_connection ();
@@ -164,7 +169,13 @@ namespace PurpleDatabase
 			serverDatabase = database;
 			serverUser = user;
 			serverPassword = password;
-			Instance.initialize (true);
+			initialize (true);
+		}
+
+		private void switch_database(string database)
+		{
+			serverDatabase = database;
+			initialize (true);
 		}
 
 
