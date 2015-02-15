@@ -7,8 +7,8 @@ namespace PurpleDatabase
 {
 	public static class SQLGenerator
 	{
-		private static List<string> SQLHistory;
-		private static string SQLQuery;
+		private static List<string> _SQLHistory = new List<string>();
+		private static SQLQueryItem _SQLQuery;
 
 		private class SQLQueryItem
 		{
@@ -22,11 +22,12 @@ namespace PurpleDatabase
 			public string 			Table		= string.Empty;
 
 			public List <string> 	Filter		= null;
+			
+			public Dictionary<string, SortEnum> SortList 
+				= new Dictionary<string, SortEnum> ();
 
 			public int 				Limit		= 0;
 			public int 				Offset		= 0;
-
-			public SortEnum			Sorting 	= SortEnum.NONE;
 
 
 			// PRIVATE ////////////////////////////
@@ -34,13 +35,13 @@ namespace PurpleDatabase
 			
 			private static string keyFrom 		= "FROM";
 			private static string keyWhere 		= "WHERE";
-			private static string keyLike 		= "LIKE";
-			private static string keySet 		= "SET";
+			// private static string keyLike 		= "LIKE";
+			// private static string keySet 		= "SET";
 			private static string keyLimit 		= "LIMIT";
 			private static string keyOffset 	= "OFFSET";
 			private static string keyOrderBy 	= "ORDER BY";
 			private static string keyStar 		= "*";
-			private static string keyLikeSymbol	= "%";
+			// private static string keyLikeSymbol	= "%";
 			private static string keyEnd 		= ";";
 			private static string keySpace 		= " ";
 
@@ -48,49 +49,117 @@ namespace PurpleDatabase
 			// MAIN ////////////////////////////
 			public string build()
 			{
-				// TODO: smarter
+				// TYPE
+				Add (Type.ToString ());
+				Fields.RemoveAll(x => x == keyStar);
+				if(Fields.Count > 0)
+				{
+					Add (string.Join(", ", Fields.ToArray()));
+				}
+				else
+				{
+					Add (keyStar);
+				}
 
-				query += Type.ToString () + keySpace + string.Join(", ", Fields.ToArray());
-				query += keySpace + keyFrom + keySpace + Table;
-				query += keyEnd;
+				// TABLE
+				Add (keyFrom);
+				Add (Table);
 
-				return query.Trim();
+				// FILTER
+				if(Filter != null)
+				{
+					Add (keyWhere);
+					// TODO
+				}
+
+				// SORTING
+				if(SortList.Count > 0)
+				{
+					Add (keyOrderBy);
+
+					foreach (KeyValuePair<string, SortEnum> SortElement in SortList)
+					{
+						if(SortElement.Value != SortEnum.NONE)
+						{
+							Add (SortElement.Key);
+							Add (SortElement.Value.ToString());
+						}
+					}
+				}
+
+				// LIMITATION
+				if(Limit != 0)
+				{
+					Add (keyLimit);
+					Add (Limit.ToString());
+				}
+				
+				if(Offset != 0)
+				{
+					Add (keyOffset);
+					Add (Offset.ToString());
+				}
+
+				return query.Trim () + keyEnd;
 			}
 
 
-			// SETUP - HELPER ////////////////////////////
-			public void SetSorting(string LoadOption)
+			// HELPER ////////////////////////////
+			public void SetSorting(string SortOption)
 			{
-				Sorting = (SortEnum) Enum.Parse(typeof(SortEnum), LoadOption, true);
-			}
-			public void SetSorting(SortEnum LoadOption)
-			{
-				Sorting = LoadOption;
+				string [] split = SortOption.Split(new Char [] {' ', ',' });
+				for(int i=0; i<split.Length; i+=2)
+				{
+					SortList.Add(split[i], (SortEnum) Enum.Parse(typeof(SortEnum), split[i+1], true));
+				}
 			}
 
+			public void SetSorting(string SortField, string SortOrder)
+			{
+				SortList.Add(SortField, (SortEnum) Enum.Parse(typeof(SortEnum), SortOrder, true));
+			}
+
+
+			// PRIVATE ////////////////////////////
+			private string Add(string part)
+			{
+				query += (keySpace + part).TrimEnd ();
+				return query;
+			}
 		}
 		
 
 		public static string Select(string select = "*", string from = "", 
 					string where = "", int limit = 0, int offset = 0, string sorting = "") {
 
-			SQLQueryItem sqi = new SQLQueryItem ();
-			sqi.Fields.Add (select);
-			sqi.Table = from;
+			_SQLQuery = new SQLQueryItem ();
+			_SQLQuery.Fields.Add (select);
+			_SQLQuery.Table = from;
 
 			//TODO: where
 
-			sqi.Limit = limit;
-			sqi.Offset = offset;
+			_SQLQuery.Limit = limit;
+			_SQLQuery.Offset = offset;
 
 			if (!String.IsNullOrEmpty (sorting))
-				sqi.SetSorting (sorting); 
+				_SQLQuery.SetSorting (sorting); 
 
-			return sqi.build ();
+			return _SQLQuery.build ();
+		}
+		
+		public static void Sort(string SortOption)
+		{
+			_SQLQuery.SetSorting (SortOption);
+		}
+
+		public static void Sort(string SortField, string SortOrder)
+		{
+			_SQLQuery.SetSorting (SortField, SortOrder);	
 		}
 
 		public static DataTable Fetch(this string query)
 		{
+			_SQLHistory.Add (query);
 			return PurpleDatabase.SelectQuery (query);
 		}
 
