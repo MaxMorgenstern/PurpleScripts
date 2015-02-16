@@ -2,61 +2,69 @@ using UnityEngine;
 using PurpleDatabase;
 using System.Data;
 
-namespace Testing
+
+public class TestDatabase : MonoBehaviour
 {
-	public class TestDatabase : MonoBehaviour
+	char[] trimChars = { ' ', '-'}; 
+
+	void Start ()
 	{
-		char[] trimChars = { ' ', '-'}; 
+		PurpleI18n.Setup ("de-DE");
+		PurpleDatabase.PurpleDatabase.SwitchDatabase ("test");
 
-		void Start ()
+		// SELECT * FROM <table>
+		SimpleSelect ();
+
+
+	}
+
+
+	void SimpleSelect()
+	{
+		Debug.LogWarning("SimpleSelect()");
+
+
+		// SELECT * FROM <table>
+		string q = "SELECT * FROM ONE";
+		Debug.Log (q);
+
+		DataTable dt = PurpleDatabase.PurpleDatabase.SelectQuery (q);
+		foreach(DataRow dr in dt.Rows)
 		{
-			PurpleI18n.Setup ("de-DE");
-			PurpleDatabase.PurpleDatabase.SwitchDatabase ("test");
-
-			// SELECT * FROM <table>
-			SimpleSelect ();
-
-
-
+			string rowOutput = string.Empty;
+			foreach(DataColumn dc in dt.Columns)
+			{
+				rowOutput += dc+":"+dr[dc] + " - ";
+			}
+			Debug.Log(rowOutput.Trim(trimChars));
 		}
+		
+		Debug.LogWarning ("------------");
+		
 
+		// SELECT * FROM <table>
+		#if UNITY_5_0
+		q = PurpleDatabase.SQLGenerator.Select (from: "one");
+		Debug.Log (q);
 
-		void SimpleSelect()
+		dt = PurpleDatabase.SQLGenerator.Select (from: "one").Fetch ();
+		#else
+		PurpleDatabase.SQLGenerator.Reset();
+		PurpleDatabase.SQLGenerator.Select("*");
+		PurpleDatabase.SQLGenerator.From("one");
+		q = PurpleDatabase.SQLGenerator.Get();
+		Debug.Log(q);
+
+		dt = PurpleDatabase.SQLGenerator.Get().Fetch();
+		#endif
+		foreach(DataRow dr in dt.Rows)
 		{
-			Debug.LogWarning("SimpleSelect()");
-
-
-			// SELECT * FROM <table>
-			string q = "SELECT * FROM ONE";
-			Debug.Log (q);
-
-			DataTable dt = PurpleDatabase.PurpleDatabase.SelectQuery (q);
-			foreach(DataRow dr in dt.Rows)
+			string rowOutput = string.Empty;
+			foreach(DataColumn dc in dt.Columns)
 			{
-				string rowOutput = string.Empty;
-				foreach(DataColumn dc in dt.Columns)
-				{
-					rowOutput += dc+":"+dr[dc] + " - ";
-				}
-				Debug.Log(rowOutput.Trim(trimChars));
+				rowOutput += dc+":"+dr[dc] + " - ";
 			}
-			
-			Debug.LogWarning ("------------");
-			
-			// SELECT * FROM <table>
-			q = PurpleDatabase.SQLGenerator.Select (from: "one");
-			Debug.Log (q);
-
-			dt = PurpleDatabase.SQLGenerator.Select (from: "one").Fetch ();
-			foreach(DataRow dr in dt.Rows)
-			{
-				string rowOutput = string.Empty;
-				foreach(DataColumn dc in dt.Columns)
-				{
-					rowOutput += dc+":"+dr[dc] + " - ";
-				}
-				Debug.Log(rowOutput.Trim(trimChars));
-			}
+			Debug.Log(rowOutput.Trim(trimChars));
 		}
 	}
 }

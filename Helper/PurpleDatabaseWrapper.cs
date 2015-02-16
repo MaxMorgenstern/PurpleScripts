@@ -11,10 +11,16 @@ namespace PurpleDatabase
 		private static SQLQueryItem _SQLQuery;
 		
 		// SELECT - MASTER
+		#if !UNITY_5_0
+		// No named arguments with Unity versions below 5
 		public static string Select(string select = "*", string from = "",
 		                            string where = "", int limit = 0, int offset = 0, string sorting = "")
 		{
-			_SQLQuery = new SQLQueryItem();
+			// If more passed than select do a reset
+			if(!String.IsNullOrEmpty(from) || !String.IsNullOrEmpty(where) || 
+			   		limit != 0 || offset != 0 || !String.IsNullOrEmpty(sorting))
+				_SQLQuery = new SQLQueryItem();
+		
 			_SQLQuery.Fields.Add(select);
 			
 			if (!String.IsNullOrEmpty(from))
@@ -34,6 +40,12 @@ namespace PurpleDatabase
 			
 			return _SQLQuery.build();
 		}
+		#else
+		public static void Select(string select)
+		{
+			_SQLQuery.Fields.Add(select);
+		}
+		#endif
 		
 		// UPDATE - MASTER
 		public static string Update()
@@ -93,7 +105,12 @@ namespace PurpleDatabase
 		{
 			_SQLQuery.set_order_by(SortField, SortOrder);
 		}
-		
+
+		// BUILD QUERY
+		public static string Get()
+		{
+			return _SQLQuery.build();
+		}
 		
 		// EXECUTE QUERY
 		public static DataTable Execute(this string query)
