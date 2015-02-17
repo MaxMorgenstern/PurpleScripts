@@ -12,7 +12,7 @@ namespace PurpleDatabase
 		private static SQLQueryItem _SQLQuery;
 		
 		// SELECT - MASTER
-		#if !UNITY_5_0
+		// TODO: if !UNITY_5_0
 		// No named arguments with Unity versions below 5
 		public static string Select(string select = "*", string from = "",
 		                            string where = "", int limit = 0, int offset = 0, string sorting = "")
@@ -21,9 +21,11 @@ namespace PurpleDatabase
 			if (!String.IsNullOrEmpty(from) || !String.IsNullOrEmpty(where) ||
 			    limit != 0 || offset != 0 || !String.IsNullOrEmpty(sorting))
 				_SQLQuery = new SQLQueryItem();
-			
-			_SQLQuery.SelectFields.Add(select);
-			
+
+			_SQLQuery.Type = SQLQueryItem.TypeEnum.SELECT;
+
+			AddSelect (select);
+
 			if (!String.IsNullOrEmpty(from))
 				_SQLQuery.Table = from;
 			
@@ -41,16 +43,28 @@ namespace PurpleDatabase
 			
 			return _SQLQuery.build();
 		}
-		#else
-		public static void Select(string select)
+
+		public static void AddSelect(string select)
 		{
-			_SQLQuery.SelectFields.Add(select);
+			AddSelect(select.Split(new Char[] { ' ', ',' }));
+
 		}
-		#endif
+		public static void AddSelect(string[] select)
+		{
+			foreach(string singleSelect in select)
+			{
+				if(!String.IsNullOrEmpty(singleSelect))
+					_SQLQuery.SelectFields.Add(singleSelect);
+			}
+		}
+
 		
 		// UPDATE - MASTER
 		public static string Update(string update)
 		{
+			_SQLQuery = new SQLQueryItem();
+			_SQLQuery.Type = SQLQueryItem.TypeEnum.UPDATE;
+
 			// TODO
 			return String.Empty;
 		}
@@ -58,10 +72,23 @@ namespace PurpleDatabase
 		// DELETE - MASTER
 		public static string Delete(string delete)
 		{
+			_SQLQuery = new SQLQueryItem();
+			_SQLQuery.Type = SQLQueryItem.TypeEnum.DELETE;
+
 			// TODO
 			return String.Empty;
 		}
-		
+
+		// INSERT - MASTER
+		public static string Insert(string insert)
+		{
+			_SQLQuery = new SQLQueryItem();
+			_SQLQuery.Type = SQLQueryItem.TypeEnum.INSERT_INTO;
+
+			// TODO
+			return String.Empty;
+		}
+
 		
 		// SINGLE OPERATIONS /////////////
 		
@@ -174,6 +201,7 @@ namespace PurpleDatabase
 			private static string keyEnd            = ";";
 			private static string keySpace          = " ";
 			private static string keyPlaceholder    = "_";
+			private static string keyEscapeSymbol	= "`";
 			
 			
 			// MAIN ////////////////////////////
@@ -198,12 +226,12 @@ namespace PurpleDatabase
 				
 				if (Type == TypeEnum.SELECT)
 				{
-					build_select_fields(); // SELECT FIELDS
-					Add(keyFrom);       // FROM
+					build_select_fields();	// SELECT FIELDS
+					Add(keyFrom);       	// FROM
 				}
 				if (Type == TypeEnum.DELETE)
 				{
-					Add(keyFrom);       // FROM
+					Add(keyFrom);       	// FROM
 				}
 				
 				// TABLE
@@ -211,14 +239,14 @@ namespace PurpleDatabase
 				
 				if (Type == TypeEnum.INSERT_INTO)
 				{
-					build_select_fields(); // SELECT FIELDS
-					Add(keyValues);     // VALUES
+					build_select_fields();	// SELECT FIELDS
+					Add(keyValues);     	// VALUES
 					// TODO: VALUE PART
 				}
 				
 				if (Type == TypeEnum.UPDATE)
 				{
-					Add(keySet);        // SET
+					Add(keySet);			// SET
 					// TODO: UPDATE PART
 				}
 				
@@ -277,7 +305,8 @@ namespace PurpleDatabase
 				SelectFields.RemoveAll(x => x == keyStar);
 				if (SelectFields.Count > 0)
 				{
-					Add(string.Join(", ", SelectFields.ToArray()));
+					string select_string = string.Join(keyEscapeSymbol+", "+keyEscapeSymbol, SelectFields.ToArray());
+					Add(keyEscapeSymbol + select_string + keyEscapeSymbol);
 				}
 				else
 				{

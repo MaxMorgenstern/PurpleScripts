@@ -42,21 +42,35 @@ public class TestDatabase : MonoBehaviour
 		Debug.LogWarning ("------------");
 		
 
+		q = PurpleDatabase.SQLGenerator.Select (select: "test", from: "one");
+		Debug.Log (q);
+		
+		q = PurpleDatabase.SQLGenerator.Select (select: "test, field2", from: "one", limit:5, offset:10 );
+		Debug.Log (q);
+		
+		q = PurpleDatabase.SQLGenerator.Select (select: "test, field2", from: "one", sorting:"test ASC" );
+		Debug.Log (q);
+		
+		q = PurpleDatabase.SQLGenerator.Select (select: "test, field2", from: "one", where:"test='variable'" );
+		Debug.Log (q);
+
+
+		PurpleDatabase.SQLGenerator.Reset();
+		PurpleDatabase.SQLGenerator.Select("test");
+		PurpleDatabase.SQLGenerator.Select("dummy");
+		PurpleDatabase.SQLGenerator.From("one");
+		q = PurpleDatabase.SQLGenerator.Get();
+		Debug.Log(q);
+		
+
 		// SELECT * FROM <table>
-		#if UNITY_5_0
 		q = PurpleDatabase.SQLGenerator.Select (from: "one");
 		Debug.Log (q);
 
 		dt = PurpleDatabase.SQLGenerator.Select (from: "one").Fetch ();
-		#else
-		PurpleDatabase.SQLGenerator.Reset();
-		PurpleDatabase.SQLGenerator.Select("*");
-		PurpleDatabase.SQLGenerator.From("one");
-		q = PurpleDatabase.SQLGenerator.Get();
-		Debug.Log(q);
 
-		dt = PurpleDatabase.SQLGenerator.Get().Fetch();
-		#endif
+
+
 		foreach(DataRow dr in dt.Rows)
 		{
 			string rowOutput = string.Empty;
