@@ -10,37 +10,45 @@ namespace PurpleDatabase
 	{
 		private static List<string> _SQLHistory = new List<string>();
 		private static SQLQueryItem _SQLQuery;
-		
+
+		public static List<string> SQLHistory
+		{
+			get
+			{
+				return _SQLHistory;
+			}
+		}
+
 		// SELECT - MASTER
 		// TODO: if !UNITY_5_0
 		// No named arguments with Unity versions below 5
 		public static string Select(string select = "*", string from = "",
 		                            string where = "", int limit = 0, int offset = 0, string sorting = "")
 		{
-			// If more passed than select do a reset
+			// If more passed than select do a query reset
 			if (!String.IsNullOrEmpty(from) || !String.IsNullOrEmpty(where) ||
 			    limit != 0 || offset != 0 || !String.IsNullOrEmpty(sorting))
 				_SQLQuery = new SQLQueryItem();
 
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.SELECT;
 
-			AddSelect (select);
+			AddSelect(select);
 
 			if (!String.IsNullOrEmpty(from))
 				_SQLQuery.Table = from;
-			
+
 			if (!String.IsNullOrEmpty(where))
 				_SQLQuery.set_filter(where);
-			
+
 			if (limit != 0)
 				_SQLQuery.Limit = limit;
-			
+
 			if (offset != 0)
 				_SQLQuery.Offset = offset;
-			
+
 			if (!String.IsNullOrEmpty(sorting))
 				_SQLQuery.set_order_by(sorting);
-			
+
 			return _SQLQuery.build();
 		}
 
@@ -51,14 +59,26 @@ namespace PurpleDatabase
 		}
 		public static void AddSelect(string[] select)
 		{
-			foreach(string singleSelect in select)
+			foreach (string singleSelect in select)
 			{
-				if(!String.IsNullOrEmpty(singleSelect))
+				if (!String.IsNullOrEmpty(singleSelect))
 					_SQLQuery.SelectFields.Add(singleSelect);
 			}
 		}
 
-		
+
+		// INSERT - MASTER
+		public static string Insert(string into, string[] values)
+		{
+			_SQLQuery = new SQLQueryItem();
+			_SQLQuery.Type = SQLQueryItem.TypeEnum.INSERT_INTO;
+
+			_SQLQuery.Table = into;
+
+			// TODO
+			return String.Empty;
+		}
+
 		// UPDATE - MASTER
 		public static string Update(string update)
 		{
@@ -68,7 +88,7 @@ namespace PurpleDatabase
 			// TODO
 			return String.Empty;
 		}
-		
+
 		// DELETE - MASTER
 		public static string Delete(string delete)
 		{
@@ -79,143 +99,140 @@ namespace PurpleDatabase
 			return String.Empty;
 		}
 
-		// INSERT - MASTER
-		public static string Insert(string insert)
-		{
-			_SQLQuery = new SQLQueryItem();
-			_SQLQuery.Type = SQLQueryItem.TypeEnum.INSERT_INTO;
 
-			// TODO
-			return String.Empty;
-		}
 
-		
 		// SINGLE OPERATIONS /////////////
-		
+
 		// NEW QUERY
 		public static void New()
 		{
 			_SQLQuery = new SQLQueryItem();
 		}
-		
+
 		public static void Reset()
 		{
 			_SQLQuery = new SQLQueryItem();
 		}
-		
-		
+
+
 		// FROM
 		public static void From(string table)
 		{
 			_SQLQuery.Table = table;
 		}
-		
+
 		// WHERE
 		public static void Where(string logic)
 		{
 			_SQLQuery.set_filter(logic);
 		}
-		
+
 		// LIMIT - OFFSET
 		public static void Limit(int limit = 0, int offset = 0)
 		{
 			_SQLQuery.Limit = limit;
 			_SQLQuery.Offset = offset;
 		}
-		
+		public static void Single()
+		{
+			_SQLQuery.Limit = 1;
+		}
+
 		// ORDER BY
 		public static void OrderBy(string SortOption)
 		{
 			_SQLQuery.set_order_by(SortOption);
 		}
-		
+
 		public static void OrderBy(string SortField, string SortOrder)
 		{
 			_SQLQuery.set_order_by(SortField, SortOrder);
 		}
-		
+
 		// BUILD QUERY
 		public static string Get()
 		{
 			return _SQLQuery.build();
 		}
-		
+
 		// EXECUTE QUERY
 		public static DataTable Execute(this string query)
 		{
 			_SQLHistory.Add(query);
 			return PurpleDatabase.SelectQuery(query);
 		}
-		
+
 		public static DataTable Fetch(this string query)
 		{
 			_SQLHistory.Add(query);
 			return PurpleDatabase.SelectQuery(query);
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		/*
         public static void Like() {}
         public static void ASC() {}
         public static void DESC() {}
         public static void Set() {}
         */
-		
-		
+
+
 		private class SQLQueryItem
 		{
 			public enum TypeEnum { SELECT, INSERT_INTO, UPDATE, DELETE };
 			public enum SortEnum { NONE, ASC, DESC };
-			
+
 			// Variables
-			public TypeEnum Type                = TypeEnum.SELECT;
-			public List<string> SelectFields    = new List<string>();
-			
-			public string Table                 = string.Empty;
-			
-			public List<string> Filter          = new List<string>();
-			
+			public TypeEnum Type = TypeEnum.SELECT;
+			public List<string> SelectFields = new List<string>();
+
+			public string Table = string.Empty;
+
+			public List<string> Filter = new List<string>();
+
 			public Dictionary<string, SortEnum> SortList
 				= new Dictionary<string, SortEnum>();
-			
-			public int Limit                    = 0;
-			public int Offset                   = 0;
-			
-			
+
+			public int Limit = 0;
+			public int Offset = 0;
+
+
 			// PRIVATE ////////////////////////////
 			private string _query = String.Empty;
-			
-			private static string keyFrom           = "FROM";
-			private static string keyWhere          = "WHERE";
-			private static string keyValues         = "VALUES";
+
+			private static string keyFrom 			= "FROM";
+			private static string keyWhere 			= "WHERE";
+			private static string keyValues 		= "VALUES";
 			// private static string keyLike        = "LIKE";
-			private static string keySet            = "SET";
-			private static string keyLimit          = "LIMIT";
-			private static string keyOffset         = "OFFSET";
-			private static string keyOrderBy        = "ORDER BY";
-			private static string keyStar           = "*";
+			private static string keySet 			= "SET";
+			private static string keyLimit 			= "LIMIT";
+			private static string keyOffset 		= "OFFSET";
+			private static string keyOrderBy 		= "ORDER BY";
+			private static string keyStar 			= "*";
 			// private static string keyLikeSymbol  = "%";
-			private static string keyEnd            = ";";
-			private static string keySpace          = " ";
-			private static string keyPlaceholder    = "_";
-			private static string keyEscapeSymbol	= "`";
-			
-			
+			private static string keyEnd 			= ";";
+			private static string keySpace 			= " ";
+			private static string keyPlaceholder 	= "_";
+			private static string keyEscapeSymbol 	= "`";
+
+
 			// MAIN ////////////////////////////
 			// Cheatsheet:
 			/*
+            Type        SelectFields                Table                                                           Filter                          SortList    Limit   Offset
+             *
             SELECT      (field1, field2)   FROM     table_name                                                      WHERE some_column=some_value    ORDER BY X LIMIT Y OFFSET Z;
             INSERT INTO                             table_name                          VALUES (value1,value2);
             INSERT INTO                             table_name  (field1, field2)        VALUES (value1,value2);
             UPDATE                                  table_name          SET column1=value1,column2=value2           WHERE some_column=some_value;
             DELETE                         FROM     table_name                                                      WHERE some_column=some_value;
             */
-			
-			
-			
+
+
+
 			public string build()
 			{
 				// Reset query
@@ -223,7 +240,7 @@ namespace PurpleDatabase
 
 				// TYPE (SELECT / INSERT INTO...)
 				Add(Regex.Replace(Type.ToString(), keyPlaceholder, keySpace, RegexOptions.IgnoreCase));
-				
+
 				if (Type == TypeEnum.SELECT)
 				{
 					build_select_fields();	// SELECT FIELDS
@@ -233,25 +250,25 @@ namespace PurpleDatabase
 				{
 					Add(keyFrom);       	// FROM
 				}
-				
+
 				// TABLE
 				Add(Table);
-				
+
 				if (Type == TypeEnum.INSERT_INTO)
 				{
 					build_select_fields();	// SELECT FIELDS
 					Add(keyValues);     	// VALUES
 					// TODO: VALUE PART
 				}
-				
+
 				if (Type == TypeEnum.UPDATE)
 				{
 					Add(keySet);			// SET
 					// TODO: UPDATE PART
 				}
-				
-				
-				
+
+
+
 				if (Type != TypeEnum.INSERT_INTO)
 				{
 					// WHERE
@@ -262,31 +279,23 @@ namespace PurpleDatabase
 						Add(string.Join("AND ", Filter.ToArray()));
 					}
 				}
-				
+
 				if (Type == TypeEnum.SELECT)
 				{
 					// ORDER BY
 					if (SortList.Count > 0)
 					{
 						Add(keyOrderBy);
-						
-						foreach (KeyValuePair<string, SortEnum> SortElement in SortList)
-						{
-							if (SortElement.Value != SortEnum.NONE)
-							{
-								Add(SortElement.Key);
-								Add(SortElement.Value.ToString());
-							}
-						}
+						build_orderby_fields();
 					}
-					
+
 					// LIMIT
 					if (Limit != 0)
 					{
 						Add(keyLimit);
 						Add(Limit.ToString());
 					}
-					
+
 					// OFFSET
 					if (Offset != 0)
 					{
@@ -295,9 +304,12 @@ namespace PurpleDatabase
 					}
 				}
 
-				return _query.Trim() + keyEnd;
+				_query = _query.Trim() + keyEnd;
+
+				_SQLHistory.Add(_query);
+				return _query;
 			}
-			
+
 			// BUILD SELECT FIELDS
 			public void build_select_fields()
 			{
@@ -305,7 +317,7 @@ namespace PurpleDatabase
 				SelectFields.RemoveAll(x => x == keyStar);
 				if (SelectFields.Count > 0)
 				{
-					string select_string = string.Join(keyEscapeSymbol+", "+keyEscapeSymbol, SelectFields.ToArray());
+					string select_string = string.Join(keyEscapeSymbol + ", " + keyEscapeSymbol, SelectFields.ToArray());
 					Add(keyEscapeSymbol + select_string + keyEscapeSymbol);
 				}
 				else
@@ -313,24 +325,36 @@ namespace PurpleDatabase
 					Add(keyStar);
 				}
 			}
-			
+
 			public void build_insertvalue_fields()
 			{
-				
+
 			}
-			
+
 			public void build_updateset_fields()
 			{
-				
+
 			}
-			
+
+			public void build_orderby_fields()
+			{
+				foreach (KeyValuePair<string, SortEnum> SortElement in SortList)
+				{
+					if (SortElement.Value != SortEnum.NONE)
+					{
+						Add(keyEscapeSymbol + SortElement.Key + keyEscapeSymbol);
+						Add(SortElement.Value.ToString());
+					}
+				}
+			}
+
 			// HELPER ////////////////////////////
 			public void set_filter(string SortOption)
 			{
 				Filter.Add(SortOption);
 			}
-			
-			
+
+
 			public void set_order_by(string SortOption)
 			{
 				string[] split = SortOption.Split(new Char[] { ' ', ',' });
@@ -339,13 +363,13 @@ namespace PurpleDatabase
 					SortList.Add(split[i], (SortEnum)Enum.Parse(typeof(SortEnum), split[i + 1], true));
 				}
 			}
-			
+
 			public void set_order_by(string SortField, string SortOrder)
 			{
 				SortList.Add(SortField, (SortEnum)Enum.Parse(typeof(SortEnum), SortOrder, true));
 			}
-			
-			
+
+
 			// PRIVATE ////////////////////////////
 			private string Add(string part)
 			{
