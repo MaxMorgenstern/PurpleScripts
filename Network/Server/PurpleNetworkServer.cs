@@ -84,6 +84,14 @@ namespace PurpleNetwork.Server
 			}
 		}
 
+		public static ServerConfig CurrentConfig
+		{
+			get
+			{
+				return Instance.get_currnet_server_config();
+			}
+		}
+
 
 		// PUBLIC FUNCTIONS /////////////////////////
 		public static void LaunchServer()
@@ -320,6 +328,11 @@ namespace PurpleNetwork.Server
 		private List <int> get_notification_interval()
 		{
 			return notificationIntervalList;
+		}
+
+		private ServerConfig get_currnet_server_config()
+		{
+			return currentServerConfig;
 		}
 
 
