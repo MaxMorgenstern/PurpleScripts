@@ -14,6 +14,8 @@ namespace PurpleNetwork.Server
 		public string 		ServerPassword;
 		public int 			ServerMaxClients;
 		public bool 		ServerAllowMonitoring;
+
+		public int			ClientAuthentificationTimeout;
 		
 		public bool 		SpamPrevention;
 		public bool 		SpamResponse;
@@ -37,6 +39,8 @@ namespace PurpleNetwork.Server
 			ServerPassword 	= String.Empty;
 			ServerMaxClients= 32;
 			ServerAllowMonitoring = true;
+
+			ClientAuthentificationTimeout = 20;
 
 			SpamPrevention 	= true;
 			SpamResponse 	= false;
