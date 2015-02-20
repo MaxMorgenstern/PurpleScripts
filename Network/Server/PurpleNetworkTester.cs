@@ -6,6 +6,7 @@ using System.Net;
 using UnityEngine;
 using PurpleNetwork.Server;
 
+// TODO: Class for monitoring - split it out later on
 
 namespace PurpleNetwork
 {

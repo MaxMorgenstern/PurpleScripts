@@ -27,19 +27,20 @@ namespace PurpleNetwork.Server.Handler
 
 		public static void on_player_connected(object data, NetworkPlayer np)
 		{
-			int allowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
-			allowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 1 : 0;
+			// save up to 2 connections: 1 Monitor + 1 Moderator
+			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients -1;
+			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 1 : 0;
 
-			if(Network.connections.Length >= allowedConnections)
-			{
-				// TODO - send full notification
-				Network.CloseConnection(np, true);
-			}
+			PurpleNetworkUser newUser = new PurpleNetworkUser (np);
+			PurpleServer.UserList.Add (newUser);
+
+			// Trigger authentication... after timeout kick
+			// PurpleServer.CurrentConfig.ClientAuthentificationTimeout;
 		}
 
 		public static void on_player_disconnected(object data, NetworkPlayer np)
 		{
-			
+			PurpleServer.UserList.RemoveAll (x => x.UserReference == np);
 		}
 	}
 }

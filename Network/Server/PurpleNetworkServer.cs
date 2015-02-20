@@ -13,15 +13,6 @@ using UnityEngine;
 
 namespace PurpleNetwork.Server
 {
-	public enum ServerStates { Online, Offline, Unknown };
-	public enum ServerTypes { Account, Lobby, Game, Multi, Monitoring };
-	// Account: Pure account data, handles login and sends the player to a lobby server
-	// Lobby: List with games, Account Managements
-	// Game: The actual Game server that runs the game instance
-	// Multi: All above
-	// Monitoring: A Monitoring Server that checks all of the above
-
-
 	public class PurpleServer : MonoBehaviour
 	{
 		private static PurpleServer instance;
@@ -38,6 +29,8 @@ namespace PurpleNetwork.Server
 		private static List <int> notificationIntervalList;
 		private static string notificationPlaceholder;
 
+		private  List<PurpleNetworkUser> userList;
+
 
 		// START UP /////////////////////////
 		protected PurpleServer ()
@@ -46,6 +39,7 @@ namespace PurpleNetwork.Server
 			currentServerConfig = stdServerConfig;
 			stdNotificationIntervalList = new List<int> (
 				new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 30, 60, 300, 600, 900, 1800});
+			userList = new List<PurpleNetworkUser> ();
 
 			try{
 				notificationPlaceholder = PurpleConfig.Network.Message.Placeholder;
@@ -92,7 +86,19 @@ namespace PurpleNetwork.Server
 			}
 		}
 
-
+		public static List<PurpleNetworkUser> UserList
+		{
+			get
+			{
+				return Instance.userList;
+			}
+			set
+			{
+				Instance.userList = value;
+			}
+		}
+		
+		
 		// PUBLIC FUNCTIONS /////////////////////////
 		public static void LaunchServer()
 		{
