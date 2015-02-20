@@ -29,7 +29,9 @@ namespace PurpleNetwork.Server
 		private static List <int> notificationIntervalList;
 		private static string notificationPlaceholder;
 
-		private  List<PurpleNetworkUser> userList;
+		private static PurpleCountdown countdown;
+
+		private List<PurpleNetworkUser> userList;
 
 
 		// START UP /////////////////////////
@@ -242,26 +244,28 @@ namespace PurpleNetwork.Server
 			shutdownNotificationMessage = message;
 			shutdownNotificationDoneMessage = doneMessage;
 
-			PurpleCountdown.CountdownDoneEvent += stop_server_done;
-			PurpleCountdown.CountdownRunEvent += stop_server_run;
-			PurpleCountdown.Countdown (seconds);
+			countdown = PurpleCountdown.NewInstance ();
+			countdown.CountdownDoneEvent += stop_server_done;
+			countdown.CountdownRunEvent += stop_server_run;
+			countdown.CountDown (seconds);
 		}
 
 		private void stop_server_run()
 		{
-			float time_left = PurpleCountdown.CountdownTimeLeft ();
+			int time_left = countdown.CountDownLeft;
 
-			if(notificationIntervalList.Contains((int)time_left))
+			if(notificationIntervalList.Contains(time_left))
 			{
 				PurpleNetwork.Broadcast ("server_broadcast",
-					create_broadcast_message(combine_notification_message(shutdownNotificationMessage, (int)time_left)));
+					create_broadcast_message(combine_notification_message(shutdownNotificationMessage, time_left)));
 			}
 		}
 
 		private void stop_server_done()
 		{
-			PurpleCountdown.CountdownDoneEvent -= stop_server_done;
-			PurpleCountdown.CountdownRunEvent -= stop_server_run;
+			countdown.CountdownDoneEvent -= stop_server_done;
+			countdown.CountdownRunEvent -= stop_server_run;
+			countdown.DestroyInstance ();
 			PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(shutdownNotificationDoneMessage));
 			PurpleNetwork.StopLocalServer ();
 		}
@@ -288,26 +292,28 @@ namespace PurpleNetwork.Server
 			restartNotificationMessage = message;
 			restartNotificationDoneMessage = doneMessage;
 
-			PurpleCountdown.CountdownDoneEvent += restart_server_done;
-			PurpleCountdown.CountdownRunEvent += restart_server_run;
-			PurpleCountdown.Countdown (seconds);
+			countdown = PurpleCountdown.NewInstance ();
+			countdown.CountdownDoneEvent += restart_server_done;
+			countdown.CountdownRunEvent += restart_server_run;
+			countdown.CountDown (seconds);
 		}
 
 		private void restart_server_run()
 		{
-			float time_left = PurpleCountdown.CountdownTimeLeft ();
+			int time_left = countdown.CountDownLeft;
 
-			if(notificationIntervalList.Contains((int)time_left))
+			if(notificationIntervalList.Contains(time_left))
 			{
 				PurpleNetwork.Broadcast ("server_broadcast",
-					create_broadcast_message(combine_notification_message(restartNotificationMessage, (int)time_left)));
+					create_broadcast_message(combine_notification_message(restartNotificationMessage, time_left)));
 			}
 		}
 
 		private void restart_server_done()
 		{
-			PurpleCountdown.CountdownDoneEvent -= restart_server_done;
-			PurpleCountdown.CountdownRunEvent -= restart_server_run;
+			countdown.CountdownDoneEvent -= restart_server_done;
+			countdown.CountdownRunEvent -= restart_server_run;
+			countdown.DestroyInstance ();
 			PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(restartNotificationDoneMessage));
 			PurpleNetwork.RestartLocalServer ();
 		}

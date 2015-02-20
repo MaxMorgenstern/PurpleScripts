@@ -1,157 +1,128 @@
 using UnityEngine;
 using System.Collections;
 
-// TODO: create "instance" if invoke and countdown so we can destinguish between them
-
 public class PurpleCountdown : MonoBehaviour
 {
-	private static float t_time;
-
-	private static float t_trigger;
-
-	private static PurpleCountdown instance;
-
+	private int _ticks;
+	private float _countdown;
+	
+	private static GameObject _gameObject;
+	
 	public delegate void PurpleCountdownEvent(); // countdown event
-	public static event PurpleCountdownEvent CountdownRunEvent;
-	public static event PurpleCountdownEvent CountdownDoneEvent;
-	public static event PurpleCountdownEvent TriggerRepeatEvent;
-	public static event PurpleCountdownEvent TriggerEvent;
-
-
+	
+	public event PurpleCountdownEvent CountdownRunEvent;
+	public event PurpleCountdownEvent CountdownDoneEvent;
+	
+	public event PurpleCountdownEvent TriggerEvent;
+	
 	// SINGLETON /////////////////////////
 	private static PurpleCountdown Instance
 	{
 		get
 		{
-			if (instance == null)
-			{
-				GameObject gameObject 	= new GameObject ("PurpleCountdown");
-				instance     			= gameObject.AddComponent<PurpleCountdown> ();
-			}
-			return instance;
+			_gameObject = new GameObject ("PurpleCountdown_"+System.Guid.NewGuid().ToString());
+			return _gameObject.AddComponent<PurpleCountdown> ();
 		}
 	}
-
-
+	
+	public int CountDownLeft
+	{
+		get
+		{
+			return (int)Mathf.Floor(_countdown);
+		}
+	}
+	
+	
 	// PUBLIC ////////////////////////////
-
-	public static void Trigger(float offset)
+	public static PurpleCountdown NewInstance()
 	{
-		Instance.trigger (offset);
+		return Instance;
 	}
-
-	public static void Trigger(float offset, float repeat)
+	
+	public void DestroyInstance()
 	{
-		Instance.trigger (offset, repeat);
+		Destroy (_gameObject);
+		Destroy(this);
 	}
-
-	public static void CancelTrigger()
-	{
-		Instance.cancel_trigger ();
-	}
-
-	private static bool TestTrigger()
-	{
-		return Instance.test_trigger();
-	}
-
-
-	public static void Countdown(int seconds)
-	{
-		Instance.count_down (seconds);
-	}
-
-	public static void CancelCountdown()
-	{
-		Instance.cancel_count_down ();
-	}
-
-	public static void CancelAllCountdown()
-	{
-		Instance.cancel_all_count_down ();
-	}
-
-	public static float CountdownTimeLeft()
-	{
-		return Instance.count_down_time_left ();
-	}
-
-
-	// PRIVATE ////////////////////////////
-
+	
+	
 	// TRIGGER ////////////////////////////
-
-	private void trigger(float offset)
+	public void Trigger(float offset)
 	{
-		t_trigger = offset;
-		Invoke("invoke_trigger", t_trigger);
+		_ticks = -1;
+		Invoke("invoke_trigger", offset);
 	}
-
-	private void trigger(float offset, float repeat)
+	
+	public void Trigger(float offset, float repeatRate)
 	{
-		InvokeRepeating("invoke_trigger_repeating", offset, repeat);
+		_ticks = -1;
+		InvokeRepeating("invoke_trigger", offset, repeatRate);
 	}
-
-	private void invoke_trigger()
+	
+	public void Trigger(float offset, float repeatRate, int numberOfCalls)
 	{
-		instance.trigger_purple_event (TriggerEvent);
+		_ticks = numberOfCalls;
+		InvokeRepeating("invoke_trigger", offset, repeatRate);
 	}
-
-	private void invoke_trigger_repeating()
-	{
-		instance.trigger_purple_event (TriggerRepeatEvent);
-	}
-
-	private void cancel_trigger()
+	
+	public void CancelTrigger()
 	{
 		CancelInvoke();
 	}
-
-	private bool test_trigger()
+	
+	public bool IsTriggerRunning()
 	{
 		return IsInvoking ("invoke_trigger");
 	}
-
-
+	
 	// COUNTDOWN ////////////////////////////
-
-	private void count_down(int seconds)
+	public void CountDown(int seconds)
 	{
-		t_time = (float)seconds;
+		_countdown = (float)seconds;
 		StartCoroutine (countdown_trigger ());
 	}
-
+	
+	
+	
+	// PRIVATE ////////////////////////////
+	
+	// TRIGGER ////////////////////////////
+	private void invoke_trigger()
+	{
+		if(_ticks > 0)
+		{
+			if(_ticks <= 1)
+				CancelInvoke();
+			_ticks--;
+		}
+		trigger_purple_event (TriggerEvent);
+	}
+	
+	
+	// COUNTDOWN ////////////////////////////
+	
 	private IEnumerator countdown_trigger()
 	{
-		while (t_time > 0)
+		while (_countdown > 0)
 		{
 			yield return new WaitForSeconds(1);
-
-			instance.trigger_purple_event (CountdownRunEvent);
-
-			t_time -= 1;
+			
+			trigger_purple_event (CountdownRunEvent);
+			
+			_countdown -= 1;
 		}
 		yield return new WaitForSeconds(1);
-		instance.trigger_purple_event (CountdownDoneEvent);
+		trigger_purple_event (CountdownDoneEvent);
 	}
-
-	private void cancel_count_down()
+	
+	public void CancelCountDown()
 	{
 		StopCoroutine ("countdown_trigger");
 	}
-
-	private void cancel_all_count_down()
-	{
-		StopAllCoroutines ();
-	}
-
-	private float count_down_time_left()
-	{
-		return t_time;
-	}
-
+	
+	
 	// EVENT ////////////////////////////
-
 	private void trigger_purple_event(PurpleCountdownEvent eve)
 	{
 		if(eve != null)

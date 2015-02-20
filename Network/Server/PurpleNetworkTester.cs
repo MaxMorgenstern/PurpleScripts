@@ -22,6 +22,8 @@ namespace PurpleNetwork
 
 		private static pingData pingObject;
 
+		private static PurpleCountdown countdown;
+
 		private static ServerReference currentServerReference;
 
 
@@ -167,9 +169,10 @@ namespace PurpleNetwork
 			{
 				testDone = false;
 				init_connection (ipAddress, port);
-				PurpleCountdown.CountdownRunEvent += test_connection;
-				PurpleCountdown.CountdownDoneEvent += reset_connection;
-				PurpleCountdown.Countdown (timeout);
+				countdown = PurpleCountdown.NewInstance ();
+				countdown.CountdownRunEvent += test_connection;
+				countdown.CountdownDoneEvent += reset_connection;
+				countdown.CountDown (timeout);
 			}
 			return testResult;
 		}
@@ -199,15 +202,16 @@ namespace PurpleNetwork
 			testResult = Network.TestConnection();
 			if(testResult != ConnectionTesterStatus.Undetermined)
 			{
-				PurpleCountdown.CancelCountdown();
+				countdown.CancelCountDown();
 				reset_connection();
 			}
 		}
 
 		private void reset_connection()
 		{
-			PurpleCountdown.CountdownRunEvent -= test_connection;
-			PurpleCountdown.CountdownDoneEvent -= reset_connection;
+			countdown.CountdownRunEvent -= test_connection;
+			countdown.CountdownDoneEvent -= reset_connection;
+			countdown.DestroyInstance ();
 
 			testDone = true;
 
