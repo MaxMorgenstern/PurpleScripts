@@ -2,7 +2,6 @@ using UnityEngine;
 using PurpleDatabase;
 using System.Data;
 
-
 public class TestDatabase : MonoBehaviour
 {
 	char[] trimChars = { ' ', '-'}; 
@@ -82,4 +81,3 @@ public class TestDatabase : MonoBehaviour
 		}
 	}
 }
-
