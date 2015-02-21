@@ -14,17 +14,7 @@ public class PurpleCountdown : MonoBehaviour
 	public event PurpleCountdownEvent CountdownDoneEvent;
 	
 	public event PurpleCountdownEvent TriggerEvent;
-	
-	// SINGLETON /////////////////////////
-	private static PurpleCountdown Instance
-	{
-		get
-		{
-			_gameObject = new GameObject ("PurpleCountdown_"+System.Guid.NewGuid().ToString());
-			return _gameObject.AddComponent<PurpleCountdown> ();
-		}
-	}
-	
+
 	public int CountDownLeft
 	{
 		get
@@ -32,12 +22,17 @@ public class PurpleCountdown : MonoBehaviour
 			return (int)Mathf.Floor(_countdown);
 		}
 	}
-	
+
 	
 	// PUBLIC ////////////////////////////
 	public static PurpleCountdown NewInstance()
 	{
-		return Instance;
+		return CreateInstance("PurpleCountdown_"+System.Guid.NewGuid().ToString());
+	}
+
+	public static PurpleCountdown NewInstance(string name)
+	{
+		return CreateInstance(name);
 	}
 	
 	public void DestroyInstance()
@@ -86,7 +81,14 @@ public class PurpleCountdown : MonoBehaviour
 	
 	
 	// PRIVATE ////////////////////////////
-	
+	// INSTANCE /////////////////////////
+	private static PurpleCountdown CreateInstance(string name)
+	{
+		_gameObject = new GameObject (name);
+		return _gameObject.AddComponent<PurpleCountdown> ();
+	}
+
+
 	// TRIGGER ////////////////////////////
 	private void invoke_trigger()
 	{
