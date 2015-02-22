@@ -1,35 +1,31 @@
-/*
- * 
- * TODO : Unity Unit Tests
- * 
- */
-
-/*
 using System;
 using NUnit.Framework;
 using PurpleConfig;
+using UnityEngine;
 
 namespace PurpleTests
 {
-	[TestFixture()]
+	[TestFixture]
+	[Category("Purple Example Tests")]
 	public class BasicTest
 	{
-		[Test()]
+		[Test]
+		[Category("TestCategory")]
 		public void TestCase ()
 		{
 			Assert.AreEqual (20, 20);
 		}
 	}
 
-	[TestFixture()]
+	[TestFixture]
+	[Category("Purple Config Tests")]
 	public class PurpleConfigTest
 	{
-		[Test()]
+		[Test]
 		public void StringTest ()
 		{
-			bool b = PurpleConfig.ItemIds.getConfigBoolean ("test");
+			bool b = PurpleConfig.ItemIds.getConfigBoolean ("DoesNotExist");
 			Assert.IsFalse ( b );
 		}
 	}
 }
-*/
