@@ -68,11 +68,10 @@ public class PurpleHash
 	
 	// HELPER /////////////////////////
 
-	private const string _myGUID = "{C05ACA39-C810-4DD1-B138-41603713DD8A}";
 	private static string convert_string_to_MD5(string strword)
 	{
 		MD5 md5 = MD5.Create();
-		byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(_myGUID + strword);
+		byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(strword);
 		byte[] hash = md5.ComputeHash(inputBytes);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < hash.Length; i++)
@@ -85,7 +84,7 @@ public class PurpleHash
 	private static string convert_string_to_SHA(string strword)
 	{
 		HashAlgorithm sha = new SHA1CryptoServiceProvider();
-		byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(_myGUID + strword);
+		byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(strword);
 		byte[] hash = sha.ComputeHash(inputBytes);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < hash.Length; i++)
