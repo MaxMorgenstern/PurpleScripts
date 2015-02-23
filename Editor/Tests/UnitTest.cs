@@ -9,13 +9,8 @@ namespace PurpleTests
 	 * Countdown
 	 * 
 	 * I18n
-	 * License
-	 * Log
-	 * Mail
-	 * Password
 	 * Serializer
 	 * Storage
-	 * Version
 	 * 
 	 * Network
 	 * Server
@@ -139,7 +134,7 @@ namespace PurpleTests
 			string MD5Reference = "0cbc6611f5540bd0809a388dc95a615b";
 			Assert.AreEqual(MD5Reference, PurpleHash.CalculateMD5 ("Test"));
 		}
-
+		
 		[Test]
 		[Category("Test SHA")]
 		public void SHA ()
@@ -148,6 +143,32 @@ namespace PurpleTests
 			Assert.AreEqual(SHAReference, PurpleHash.CalculateSHA ("Test"));
 		}
 	}
-		
 
+
+	[TestFixture]
+	[Category("PurplePassword Tests")]
+	public class PurplePasswordTests
+	{
+		[Test]
+		[Category("Test Password")]
+		public void Password ()
+		{
+			string password = "TestPassword123!";
+			PurplePassword PurplePasswordInstance = new PurplePassword ();
+			string passwordHash = PurplePasswordInstance.CreateHash (password);
+			
+			Assert.IsTrue(PurplePasswordInstance.ValidatePassword (password, passwordHash));
+		}
+
+		[Test]
+		[Category("Test Password")]
+		public void Password_Fail ()
+		{
+			string password = "TestPassword123!";
+			PurplePassword PurplePasswordInstance = new PurplePassword ();
+			string passwordHash = PurplePasswordInstance.CreateHash (password);
+			
+			Assert.IsFalse(PurplePasswordInstance.ValidatePassword ("WrongPassword987?", passwordHash));
+		}
+	}
 }
