@@ -31,12 +31,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using UnityEngine;
 using System.Collections;
 using System.Security.Cryptography;
 using System;
 
-public class PurplePassword : MonoBehaviour {
+public class PurplePassword {
 
 	private int SALT_BYTE_SIZE = PurpleConfig.Password.SaltByteSize;
 	private int HASH_BYTE_SIZE = PurpleConfig.Password.HashByteSize;
