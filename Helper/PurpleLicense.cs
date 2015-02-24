@@ -287,7 +287,7 @@ namespace PurpleLicense
 	[Serializable]
 	public class License
 	{
-		private List<LicenseTerm> LicenseTermList = new List<LicenseTerm>();
+		public List<LicenseTerm> LicenseTermList = new List<LicenseTerm>();
 
 		public string Name;
 		public string Base64Hash;

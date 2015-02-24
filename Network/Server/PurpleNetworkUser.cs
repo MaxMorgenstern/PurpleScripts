@@ -13,6 +13,7 @@ namespace PurpleNetwork.Server
 		public bool				UserAuthenticated;
 		public DateTime			UserConnectedTime;
 
+		public string			UserName;
 		public string			UserToken;
 
 
@@ -23,7 +24,8 @@ namespace PurpleNetwork.Server
 			UserType 			= UserTypes.User;
 			UserAuthenticated 	= false;
 			UserConnectedTime 	= DateTime.Now;
-
+			
+			UserName			= String.Empty;
 			UserToken 			= String.Empty;
 		}
 
@@ -35,7 +37,8 @@ namespace PurpleNetwork.Server
 			UserType 			= UserTypes.User;
 			UserAuthenticated 	= false;
 			UserConnectedTime 	= DateTime.Now;
-			
+
+			UserName			= String.Empty;
 			UserToken 			= String.Empty;
 		}
 	}
