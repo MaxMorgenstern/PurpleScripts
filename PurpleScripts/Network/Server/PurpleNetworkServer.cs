@@ -28,12 +28,12 @@ namespace PurpleNetwork.Server
 		private static string shutdownNotificationDoneMessage;
 		private static List <int> notificationIntervalList;
 		private static string notificationPlaceholder;
-
+		
 		private static PurpleCountdown countdown;
-
+		
 		private List<PurpleNetworkUser> userList;
-
-
+		
+		
 		// START UP /////////////////////////
 		protected PurpleServer ()
 		{
@@ -42,11 +42,11 @@ namespace PurpleNetwork.Server
 			stdNotificationIntervalList = new List<int> (
 				new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 30, 60, 300, 600, 900, 1800});
 			userList = new List<PurpleNetworkUser> ();
-
+			
 			try{
 				notificationPlaceholder = PurpleConfig.Network.Message.Placeholder;
 				stdServerdelay = PurpleConfig.Network.Server.Delay;
-
+				
 				shutdownNotificationMessage = PurpleI18n.Get("SHUTDOWN");
 				shutdownNotificationDoneMessage = PurpleI18n.Get("SHUTDOWNNOW");
 				restartNotificationMessage = PurpleI18n.Get("RESTART");
@@ -54,17 +54,17 @@ namespace PurpleNetwork.Server
 			} catch(Exception e){
 				notificationPlaceholder = "!!time!!";
 				stdServerdelay = 10;
-
+				
 				shutdownNotificationMessage = "Server shutdown in !!time!!!";
 				shutdownNotificationDoneMessage = "The server will be shut down now!";
 				restartNotificationMessage = "Server restart in !!time!!!";
 				restartNotificationDoneMessage = "The server will be restarted now!";
-
+				
 				Debug.LogError("Can not read Purple Config! " + e.ToString());
 			}
 		}
-
-
+		
+		
 		// SINGLETON /////////////////////////
 		private static PurpleServer Instance
 		{
@@ -79,7 +79,7 @@ namespace PurpleNetwork.Server
 				return instance;
 			}
 		}
-
+		
 		public static ServerConfig CurrentConfig
 		{
 			get
@@ -87,7 +87,7 @@ namespace PurpleNetwork.Server
 				return Instance.get_currnet_server_config();
 			}
 		}
-
+		
 		public static List<PurpleNetworkUser> UserList
 		{
 			get
@@ -106,18 +106,18 @@ namespace PurpleNetwork.Server
 		{
 			Instance.launch_server ();
 		}
-
+		
 		public static void LaunchServer(ServerConfig config)
 		{
 			Instance.launch_server (config);
 		}
-
-
+		
+		
 		public static void StopServer()
 		{
 			Instance.stop_server ();
 		}
-
+		
 		public static void StopServer(string message, string doneMessage)
 		{
 			Instance.stop_server (message, doneMessage);
@@ -127,18 +127,18 @@ namespace PurpleNetwork.Server
 		{
 			Instance.stop_server (seconds);
 		}
-
+		
 		public static void StopServer(int seconds, string message, string doneMessage)
 		{
 			Instance.stop_server (seconds, message, doneMessage);
 		}
-
+		
 		
 		public static void RestartServer()
 		{
 			Instance.restart_server ();
 		}
-
+		
 		public static void RestartServer(string message, string doneMessage)
 		{
 			Instance.restart_server (message, doneMessage);
@@ -148,119 +148,119 @@ namespace PurpleNetwork.Server
 		{
 			Instance.restart_server (seconds);
 		}
-
+		
 		public static void RestartServer(int seconds, string message, string doneMessage)
 		{
 			Instance.restart_server (seconds, message, doneMessage);
 		}
-
-
+		
+		
 		public static void SetNotificationInterval(int interval)
 		{
 			List<int> intervalList = new List<int> ();
 			intervalList.Add (interval);
 			Instance.set_notification_interval (intervalList);
 		}
-
+		
 		public static void SetNotificationKeyword(string keyword)
 		{
 			Instance.set_notification_keyword (keyword);
 		}
-
+		
 		public static void SetNotificationInterval()
 		{
 			Instance.set_notification_interval ();
 		}
-
+		
 		public static void SetNotificationInterval(List <int> interval)
 		{
 			Instance.set_notification_interval (interval);
 		}
-
+		
 		public static List <int> GetNotificationInterval()
 		{
 			return Instance.get_notification_interval ();
 		}
-
-
-
+		
+		
+		
 		// PRIVATE FUNCTIONS /////////////////////////
 		// START
 		private void launch_server()
 		{
 			launch_server (currentServerConfig);
 		}
-
+		
 		private void launch_server(ServerConfig config)
 		{
 			currentServerConfig = config;
 			PurpleNetwork.LaunchLocalServer(config.ServerMaxClients, config.ServerPassword, config.ServerPort);
 			PurpleNetwork.SetSpamProtection (config.SpamPrevention);
 			PurpleNetwork.SetSpamResponse (config.SpamResponse);
-
+			
 			switch (config.ServerType)
 			{
-				case ServerTypes.Account:
-					Handler.Handler.RegisterAccountListener();
-					break;
+			case ServerTypes.Account:
+				Handler.Handler.RegisterAccountListener();
+				break;
 				
-				case ServerTypes.Game:
-					Handler.Handler.RegisterGameListener();
-					break;
-					
-				case ServerTypes.Lobby:
-					Handler.Handler.RegisterLobbyListener();
-					break;
-					
-				case ServerTypes.Monitoring:
-					Handler.Handler.RegisterLMonitoringListener();
-					break;
-					
-				case ServerTypes.Multi:
-					Handler.Handler.RegisterMultiListener();
-					break;
+			case ServerTypes.Game:
+				Handler.Handler.RegisterGameListener();
+				break;
+				
+			case ServerTypes.Lobby:
+				Handler.Handler.RegisterLobbyListener();
+				break;
+				
+			case ServerTypes.Monitoring:
+				Handler.Handler.RegisterLMonitoringListener();
+				break;
+				
+			case ServerTypes.Multi:
+				Handler.Handler.RegisterMultiListener();
+				break;
 			}
 		}
-
-
+		
+		
 		// STOP
 		private void stop_server()
 		{
 			stop_server (stdServerdelay);
 		}
-
+		
 		private void stop_server(string message, string doneMessage)
 		{
 			stop_server (stdServerdelay, message, doneMessage);
 		}
-
+		
 		private void stop_server(int seconds)
 		{
 			stop_server (seconds, shutdownNotificationMessage, shutdownNotificationDoneMessage);
 		}
-
+		
 		private void stop_server(int seconds, string message, string doneMessage)
 		{
 			shutdownNotificationMessage = message;
 			shutdownNotificationDoneMessage = doneMessage;
-
+			
 			countdown = PurpleCountdown.NewInstance ();
 			countdown.CountdownDoneEvent += stop_server_done;
 			countdown.CountdownRunEvent += stop_server_run;
 			countdown.CountDown (seconds);
 		}
-
+		
 		private void stop_server_run()
 		{
 			int time_left = countdown.CountDownLeft;
-
+			
 			if(notificationIntervalList.Contains(time_left))
 			{
 				PurpleNetwork.Broadcast ("server_broadcast",
-					create_broadcast_message(combine_notification_message(shutdownNotificationMessage, time_left)));
+				                         create_broadcast_message(combine_notification_message(shutdownNotificationMessage, time_left)));
 			}
 		}
-
+		
 		private void stop_server_done()
 		{
 			countdown.CountdownDoneEvent -= stop_server_done;
@@ -269,46 +269,46 @@ namespace PurpleNetwork.Server
 			PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(shutdownNotificationDoneMessage));
 			PurpleNetwork.StopLocalServer ();
 		}
-
-
+		
+		
 		// RESTART
 		private void restart_server()
 		{
 			restart_server (stdServerdelay);
 		}
-
+		
 		private void restart_server(string message, string doneMessage)
 		{
 			restart_server (stdServerdelay, message, doneMessage);
 		}
-
+		
 		private void restart_server(int seconds)
 		{
 			restart_server (seconds, restartNotificationMessage, restartNotificationDoneMessage);
 		}
-
+		
 		private void restart_server(int seconds, string message, string doneMessage)
 		{
 			restartNotificationMessage = message;
 			restartNotificationDoneMessage = doneMessage;
-
+			
 			countdown = PurpleCountdown.NewInstance ();
 			countdown.CountdownDoneEvent += restart_server_done;
 			countdown.CountdownRunEvent += restart_server_run;
 			countdown.CountDown (seconds);
 		}
-
+		
 		private void restart_server_run()
 		{
 			int time_left = countdown.CountDownLeft;
-
+			
 			if(notificationIntervalList.Contains(time_left))
 			{
 				PurpleNetwork.Broadcast ("server_broadcast",
-					create_broadcast_message(combine_notification_message(restartNotificationMessage, time_left)));
+				                         create_broadcast_message(combine_notification_message(restartNotificationMessage, time_left)));
 			}
 		}
-
+		
 		private void restart_server_done()
 		{
 			countdown.CountdownDoneEvent -= restart_server_done;
@@ -317,43 +317,43 @@ namespace PurpleNetwork.Server
 			PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(restartNotificationDoneMessage));
 			PurpleNetwork.RestartLocalServer ();
 		}
-
+		
 		// NOTIFICATION MESSAGE
 		private void set_notification_keyword(string keyword)
 		{
 			notificationPlaceholder = keyword;
 		}
-
-
+		
+		
 		// SET NOTIFICATION INTERVAL
 		private void set_notification_interval()
 		{
 			notificationIntervalList = stdNotificationIntervalList;
 		}
-
+		
 		private void set_notification_interval(List <int> interval)
 		{
 			notificationIntervalList = interval;
 		}
-
+		
 		// GET NOTIFICATION INTERVAL
 		private List <int> get_notification_interval()
 		{
 			return notificationIntervalList;
 		}
-
+		
 		private ServerConfig get_currnet_server_config()
 		{
 			return currentServerConfig;
 		}
-
-
+		
+		
 		// HELPER ////////////////////
 		private string combine_notification_message(string message, int timeLeft)
 		{
 			int[] convertedTimeLeft = calculate_time_from_seconds (timeLeft);
 			string timeLeftString = "";
-
+			
 			if(convertedTimeLeft[0] != 0)
 				timeLeftString += convertedTimeLeft[0] + " " + 
 					((convertedTimeLeft[0] == 1) ? PurpleI18n.Get ("day") : PurpleI18n.Get ("days")) + " ";
@@ -366,16 +366,16 @@ namespace PurpleNetwork.Server
 			if(convertedTimeLeft[3] != 0)
 				timeLeftString += convertedTimeLeft[3] + " " + 
 					((convertedTimeLeft[3] == 1) ? PurpleI18n.Get ("second") : PurpleI18n.Get ("seconds")) + " ";
-
+			
 			return message.Replace(notificationPlaceholder, timeLeftString.Trim());
 		}
-
+		
 		private int[] calculate_time_from_seconds(int timeLeft)
 		{
 			TimeSpan time = TimeSpan.FromSeconds( timeLeft );
 			return new int[] { time.Days, time.Hours, time.Minutes, time.Seconds };
 		}
-
+		
 		private PurpleMessages.Server.Message create_broadcast_message(string data)
 		{
 			PurpleMessages.Server.Message PSM = new PurpleMessages.Server.Message ();

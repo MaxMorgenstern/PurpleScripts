@@ -54,7 +54,7 @@ namespace PurpleMessages
 		}
 
 		// USER LOGIN 
-		public class Login : PurpleMessage
+		public class Authentication : PurpleMessage
 		{
 			public NetworkPlayer player;
 			public string playerName;
