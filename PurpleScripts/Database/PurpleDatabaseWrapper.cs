@@ -8,14 +8,24 @@ namespace PurpleDatabase
 {
 	public static class SQLGenerator
 	{
-		private static List<string> _SQLHistory = new List<string>();
 		private static SQLQueryItem _SQLQuery;
 
+		private static List<string> _SQLHistory = new List<string>();
 		public static List<string> SQLHistory
 		{
 			get
 			{
 				return _SQLHistory;
+			}
+		}
+
+		// TODO
+		private static List<string> _SQLQueryHistory = new List<string>();
+		public static List<string> SQLQueryHistory
+		{
+			get
+			{
+				return _SQLQueryHistory;
 			}
 		}
 
@@ -75,8 +85,7 @@ namespace PurpleDatabase
 
 			_SQLQuery.Table = into;
 
-			// TODO
-			return String.Empty;
+			return _SQLQuery.build();
 		}
 
 
@@ -121,8 +130,8 @@ namespace PurpleDatabase
 			_SQLQuery = new SQLQueryItem();
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.DELETE;
 
-			// TODO
-			return String.Empty;
+
+			return _SQLQuery.build();
 		}
 
 
@@ -206,6 +215,14 @@ namespace PurpleDatabase
         public static void Like() {}
         */
 
+		public static void EnableEscape() {
+			_SQLQuery.enable_escape_symbol ();
+		}
+
+		public static void DisableEscape() {
+			_SQLQuery.disable_escape_symbol ();
+		}
+
 
 		private class SQLQueryItem
 		{
@@ -221,7 +238,8 @@ namespace PurpleDatabase
 
 			public string Table = string.Empty;
 
-			public List<string> Filter = new List<string>();
+			public Dictionary<string, string> FilterList 
+				= new Dictionary<string, string>();
 
 			public Dictionary<string, SortEnum> SortList
 				= new Dictionary<string, SortEnum>();
@@ -250,6 +268,18 @@ namespace PurpleDatabase
 			private static string keyEscapeSymbol 	= "`";
 			private static string keyEqualsSymbol 	= "=";
 
+			
+			private static string activeEscapeSymbol= "`";
+
+			public void enable_escape_symbol()
+			{
+				activeEscapeSymbol = keyEscapeSymbol;
+			}
+
+			public void disable_escape_symbol()
+			{
+				activeEscapeSymbol = String.Empty;
+			}
 
 			// MAIN ////////////////////////////
 			// Cheatsheet:
@@ -262,7 +292,6 @@ namespace PurpleDatabase
             UPDATE                                  table_name          SET column1=value1,column2=value2           WHERE some_column=some_value;
             DELETE                         FROM     table_name                                                      WHERE some_column=some_value;
             */
-
 
 
 			public string build()
@@ -283,24 +312,24 @@ namespace PurpleDatabase
 					Add(keyFrom);
 				}
 
-				// TABLE
-				Add(Table);
+				// TABLE // TODO - more than one table
+				Add(activeEscapeSymbol+Table+activeEscapeSymbol);
 
 				if (Type == TypeEnum.INSERT_INTO)
 				{
-					build_insertvalue_fields();
+					build_insert_value_fields();
 				}
 
 				if (Type == TypeEnum.UPDATE)
 				{
 					Add(keySet);
-					build_updateset_fields();
+					build_set_fields();
 				}
 
 
 				if (Type != TypeEnum.INSERT_INTO)
 				{
-					if (Filter.Count > 0)
+					if (FilterList.Count > 0)
 					{
 						Add(keyWhere);
 						build_where_fields();
@@ -312,7 +341,7 @@ namespace PurpleDatabase
 					if (SortList.Count > 0)
 					{
 						Add(keyOrderBy);
-						build_orderby_fields();
+						build_order_by_fields();
 					}
 
 					if (Limit != 0)
@@ -330,46 +359,107 @@ namespace PurpleDatabase
 
 				_query = _query.Trim() + keyEnd;
 
-				_SQLHistory.Add(_query);
+				_SQLQueryHistory.Add(_query);
+				return _query;
+			}
+
+
+			// HELPER ////////////////////////////
+			public void set_filter(string SortOption)
+			{
+				string[] split = SortOption.Split(new Char[] { '=' });
+				for (int i = 0; i < split.Length; i += 2)
+				{
+					FilterList.Add((split[i]).Trim(), (split[i+1]).Trim());
+				}
+			}
+
+			public void set_order_by(string SortOption)
+			{
+				string[] split = SortOption.Split(new Char[] { ' ', ',' });
+				for (int i = 0; i < split.Length; i += 2)
+				{
+					SortList.Add((split[i]).Trim(), (SortEnum)Enum.Parse(typeof(SortEnum), split[i + 1], true));
+				}
+			}
+
+			public void set_order_by(string SortField, string SortOrder)
+			{
+				SortList.Add(SortField.Trim(), (SortEnum)Enum.Parse(typeof(SortEnum), SortOrder, true));
+			}
+
+			public void set_set_field(string SetOption)
+			{
+				string[] split = SetOption.Split(new Char[] { '=' });
+				for (int i = 0; i < split.Length; i += 2)
+				{
+					SetFields.Add((split[i]).Trim(), (split[i+1]).Trim());
+				}
+			}
+
+			public void set_set_field(string Key, string Value)
+			{
+				SetFields.Add(Key.Trim(), Value.Trim());
+			}
+
+
+			// PRIVATE ////////////////////////////
+			private string Add(string part)
+			{
+				_query += (keySpace + part).TrimEnd();
 				return _query;
 			}
 
 			// BUILD SELECT FIELDS
-			public void build_select_fields()
+			private void build_select_fields()
 			{
 				// TODO: is this working all the time?
 				SelectFields.RemoveAll(x => x == keyStar);
 				if (SelectFields.Count > 0)
 				{
-					string select_string = string.Join(keyEscapeSymbol + ", " + keyEscapeSymbol, SelectFields.ToArray());
-					Add(keyEscapeSymbol + select_string + keyEscapeSymbol);
+					string select_string = string.Join(activeEscapeSymbol + ", " + activeEscapeSymbol, SelectFields.ToArray());
+					Add(activeEscapeSymbol + select_string + activeEscapeSymbol);
 				}
 				else
 				{
 					Add(keyStar);
 				}
 			}
-
-			public void build_where_fields()
+			
+			private void build_where_fields()
 			{
 				// TODO - Not only AND
-				Add(string.Join("AND ", Filter.ToArray()));
+				bool first = true;
+				foreach (KeyValuePair<string, string> FilterElement in FilterList) {
+					if(first)
+					{
+						first = false;
+					}
+					else
+					{
+						// TODO: OR ...
+						Add ("AND");
+					}
+					Add(activeEscapeSymbol + FilterElement.Key + activeEscapeSymbol);
+					Add(keyEqualsSymbol);
+					Add(FilterElement.Value);
+				}
 			}
-
-			public void build_insertvalue_fields()
+			
+			private void build_insert_value_fields()
 			{
 				// TODO: (field1, field2)        VALUES (value1,value2);
-
+				
 				// (field1,field2);
 				Add(keyValues);
 				//  (value1,value2);
-
+				
 			}
-
-			public void build_updateset_fields()
+			
+			private void build_set_fields()
 			{
 				foreach (KeyValuePair<string, string> SetElement in SetFields) {
-					Add(SetElement.Key);
+					Add(activeEscapeSymbol + SetElement.Key + activeEscapeSymbol);
 					Add(keyEqualsSymbol);
 					if(SetElement.Value.ToUpper() == keyNULL)
 					{
@@ -377,60 +467,21 @@ namespace PurpleDatabase
 					}
 					else
 					{
-						Add(keyEscapeSymbol + SetElement.Value + keyEscapeSymbol);
+						Add(activeEscapeSymbol + SetElement.Value + activeEscapeSymbol);
 					}
 				}
 			}
-
-			public void build_orderby_fields()
+			
+			private void build_order_by_fields()
 			{
 				foreach (KeyValuePair<string, SortEnum> SortElement in SortList)
 				{
 					if (SortElement.Value != SortEnum.NONE)
 					{
-						Add(keyEscapeSymbol + SortElement.Key + keyEscapeSymbol);
+						Add(activeEscapeSymbol + SortElement.Key + activeEscapeSymbol);
 						Add(SortElement.Value.ToString());
 					}
 				}
-			}
-
-			// HELPER ////////////////////////////
-			public void set_filter(string SortOption)
-			{
-				Filter.Add(SortOption);
-			}
-
-
-			public void set_order_by(string SortOption)
-			{
-				string[] split = SortOption.Split(new Char[] { ' ', ',' });
-				for (int i = 0; i < split.Length; i += 2)
-				{
-					SortList.Add(split[i], (SortEnum)Enum.Parse(typeof(SortEnum), split[i + 1], true));
-				}
-			}
-
-			public void set_order_by(string SortField, string SortOrder)
-			{
-				SortList.Add(SortField, (SortEnum)Enum.Parse(typeof(SortEnum), SortOrder, true));
-			}
-
-			public void set_set_field(string SetOption)
-			{
-				string[] split = SetOption.Split(new Char[] { '=' });
-				SetFields.Add(split[0], split[1]);
-			}
-
-			public void set_set_field(string Key, string Value)
-			{
-				SetFields.Add(Key, Value);
-			}
-
-			// PRIVATE ////////////////////////////
-			private string Add(string part)
-			{
-				_query += (keySpace + part).TrimEnd();
-				return _query;
 			}
 		}
 	}
