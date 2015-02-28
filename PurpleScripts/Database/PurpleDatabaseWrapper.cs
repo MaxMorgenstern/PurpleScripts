@@ -79,15 +79,41 @@ namespace PurpleDatabase
 			return String.Empty;
 		}
 
+
 		// UPDATE - MASTER
-		public static string Update(string update)
+		public static string Update(string set, string from = "", string where = "")
 		{
-			_SQLQuery = new SQLQueryItem();
+			return Update (new string[]{set}, from, where);
+		}
+
+		public static string Update(string[] set, string from = "", string where = "")
+		{
+			// If more passed than select do a query reset
+			if (!String.IsNullOrEmpty(from) || !String.IsNullOrEmpty(where))
+				_SQLQuery = new SQLQueryItem();
+
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.UPDATE;
 
-			// TODO
-			return String.Empty;
+			UpdateSet (set);
+
+			if (!String.IsNullOrEmpty(from))
+				_SQLQuery.Table = from;
+			
+			if (!String.IsNullOrEmpty(where))
+				_SQLQuery.set_filter(where);
+
+			return  _SQLQuery.build();
 		}
+
+		public static void UpdateSet(string[] set)
+		{
+			foreach (string singleSet in set)
+			{
+				if (!String.IsNullOrEmpty(singleSet))
+					_SQLQuery.set_set_field(singleSet);
+			}
+		}
+
 
 		// DELETE - MASTER
 		public static string Delete(string delete)
@@ -113,7 +139,6 @@ namespace PurpleDatabase
 		{
 			_SQLQuery = new SQLQueryItem();
 		}
-
 
 		// FROM
 		public static void From(string table)
@@ -168,15 +193,17 @@ namespace PurpleDatabase
 			return PurpleDatabase.SelectQuery(query);
 		}
 
+		public static void ASC(string SortField) {
+			_SQLQuery.set_order_by(SortField, "ASC");
+		}
 
-
+		public static void DESC(string SortField) {
+			_SQLQuery.set_order_by(SortField, "DESC");
+		}
 
 
 		/*
         public static void Like() {}
-        public static void ASC() {}
-        public static void DESC() {}
-        public static void Set() {}
         */
 
 
@@ -188,6 +215,9 @@ namespace PurpleDatabase
 			// Variables
 			public TypeEnum Type = TypeEnum.SELECT;
 			public List<string> SelectFields = new List<string>();
+
+			public Dictionary<string, string> SetFields 
+				= new Dictionary<string, string>();
 
 			public string Table = string.Empty;
 
@@ -211,12 +241,14 @@ namespace PurpleDatabase
 			private static string keyLimit 			= "LIMIT";
 			private static string keyOffset 		= "OFFSET";
 			private static string keyOrderBy 		= "ORDER BY";
+			private static string keyNULL	 		= "NULL";
 			private static string keyStar 			= "*";
 			// private static string keyLikeSymbol  = "%";
 			private static string keyEnd 			= ";";
 			private static string keySpace 			= " ";
 			private static string keyPlaceholder 	= "_";
 			private static string keyEscapeSymbol 	= "`";
+			private static string keyEqualsSymbol 	= "=";
 
 
 			// MAIN ////////////////////////////
@@ -238,17 +270,17 @@ namespace PurpleDatabase
 				// Reset query
 				_query = String.Empty;
 
-				// TYPE (SELECT / INSERT INTO...)
 				Add(Regex.Replace(Type.ToString(), keyPlaceholder, keySpace, RegexOptions.IgnoreCase));
 
 				if (Type == TypeEnum.SELECT)
 				{
-					build_select_fields();	// SELECT FIELDS
-					Add(keyFrom);       	// FROM
+					build_select_fields();
+					Add(keyFrom);
 				}
+
 				if (Type == TypeEnum.DELETE)
 				{
-					Add(keyFrom);       	// FROM
+					Add(keyFrom);
 				}
 
 				// TABLE
@@ -256,47 +288,39 @@ namespace PurpleDatabase
 
 				if (Type == TypeEnum.INSERT_INTO)
 				{
-					build_select_fields();	// SELECT FIELDS
-					Add(keyValues);     	// VALUES
-					// TODO: VALUE PART
+					build_insertvalue_fields();
 				}
 
 				if (Type == TypeEnum.UPDATE)
 				{
-					Add(keySet);			// SET
-					// TODO: UPDATE PART
+					Add(keySet);
+					build_updateset_fields();
 				}
-
 
 
 				if (Type != TypeEnum.INSERT_INTO)
 				{
-					// WHERE
 					if (Filter.Count > 0)
 					{
 						Add(keyWhere);
-						// TODO - Not only AND
-						Add(string.Join("AND ", Filter.ToArray()));
+						build_where_fields();
 					}
 				}
 
 				if (Type == TypeEnum.SELECT)
 				{
-					// ORDER BY
 					if (SortList.Count > 0)
 					{
 						Add(keyOrderBy);
 						build_orderby_fields();
 					}
 
-					// LIMIT
 					if (Limit != 0)
 					{
 						Add(keyLimit);
 						Add(Limit.ToString());
 					}
 
-					// OFFSET
 					if (Offset != 0)
 					{
 						Add(keyOffset);
@@ -313,7 +337,7 @@ namespace PurpleDatabase
 			// BUILD SELECT FIELDS
 			public void build_select_fields()
 			{
-				// TODO: what if
+				// TODO: is this working all the time?
 				SelectFields.RemoveAll(x => x == keyStar);
 				if (SelectFields.Count > 0)
 				{
@@ -326,14 +350,36 @@ namespace PurpleDatabase
 				}
 			}
 
+			public void build_where_fields()
+			{
+				// TODO - Not only AND
+				Add(string.Join("AND ", Filter.ToArray()));
+			}
+
 			public void build_insertvalue_fields()
 			{
+				// TODO: (field1, field2)        VALUES (value1,value2);
+
+				// (field1,field2);
+				Add(keyValues);
+				//  (value1,value2);
 
 			}
 
 			public void build_updateset_fields()
 			{
-
+				foreach (KeyValuePair<string, string> SetElement in SetFields) {
+					Add(SetElement.Key);
+					Add(keyEqualsSymbol);
+					if(SetElement.Value.ToUpper() == keyNULL)
+					{
+						Add (keyNULL);
+					}
+					else
+					{
+						Add(keyEscapeSymbol + SetElement.Value + keyEscapeSymbol);
+					}
+				}
 			}
 
 			public void build_orderby_fields()
@@ -369,6 +415,16 @@ namespace PurpleDatabase
 				SortList.Add(SortField, (SortEnum)Enum.Parse(typeof(SortEnum), SortOrder, true));
 			}
 
+			public void set_set_field(string SetOption)
+			{
+				string[] split = SetOption.Split(new Char[] { '=' });
+				SetFields.Add(split[0], split[1]);
+			}
+
+			public void set_set_field(string Key, string Value)
+			{
+				SetFields.Add(Key, Value);
+			}
 
 			// PRIVATE ////////////////////////////
 			private string Add(string part)

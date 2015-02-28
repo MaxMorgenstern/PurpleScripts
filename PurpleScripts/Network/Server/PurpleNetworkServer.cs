@@ -6,11 +6,6 @@ using UnityEngine;
 // This class is not optimized for games with a lot of server interaction but for
 // 		games that are turn based or need less network traffic
 
-// TODO
-// login
-// options in general
-// option autoritative
-
 namespace PurpleNetwork.Server
 {
 	public class PurpleServer : MonoBehaviour
@@ -194,6 +189,8 @@ namespace PurpleNetwork.Server
 		private void launch_server(ServerConfig config)
 		{
 			currentServerConfig = config;
+			initialize_database_connection (currentServerConfig);
+			
 			PurpleNetwork.LaunchLocalServer(config.ServerMaxClients, config.ServerPassword, config.ServerPort);
 			PurpleNetwork.SetSpamProtection (config.SpamPrevention);
 			PurpleNetwork.SetSpamResponse (config.SpamResponse);
@@ -381,6 +378,12 @@ namespace PurpleNetwork.Server
 			PurpleMessages.Server.Message PSM = new PurpleMessages.Server.Message ();
 			PSM.message = data;
 			return PSM;
+		}
+		
+		private void initialize_database_connection(ServerConfig config)
+		{
+			PurpleDatabase.PurpleDatabase.Setup(config.DatabaseHost, config.DatabaseName, 
+			                                    config.DatabaseUser, config.DatabasePassword, config.DatabasePort);
 		}
 	}
 }
