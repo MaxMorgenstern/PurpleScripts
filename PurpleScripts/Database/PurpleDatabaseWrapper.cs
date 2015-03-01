@@ -91,23 +91,23 @@ namespace PurpleDatabase
 
 
 		// UPDATE - MASTER
-		public static string Update(string set, string from = "", string where = "")
+		public static string Update(string set, string table = "", string where = "")
 		{
-			return Update (new string[]{set}, from, where);
+			return Update (new string[]{set}, table, where);
 		}
 
-		public static string Update(string[] set, string from = "", string where = "")
+		public static string Update(string[] set, string table = "", string where = "")
 		{
 			// If more passed than select do a query reset
-			if (!String.IsNullOrEmpty(from) || !String.IsNullOrEmpty(where))
+			if (!String.IsNullOrEmpty(table) || !String.IsNullOrEmpty(where))
 				_SQLQuery = new SQLQueryItem();
 
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.UPDATE;
 
 			UpdateSet (set);
 
-			if (!String.IsNullOrEmpty(from))
-				_SQLQuery.Table = from;
+			if (!String.IsNullOrEmpty(table))
+				_SQLQuery.Table = table;
 			
 			if (!String.IsNullOrEmpty(where))
 				_SQLQuery.set_filter(where);
@@ -152,6 +152,12 @@ namespace PurpleDatabase
 
 		// FROM
 		public static string From(string table)
+		{
+			_SQLQuery.Table = table;
+			return _SQLQuery.build();
+		}
+
+		public static string Table(string table)
 		{
 			_SQLQuery.Table = table;
 			return _SQLQuery.build();
@@ -282,16 +288,18 @@ namespace PurpleDatabase
 			private static string keyOrderBy 		= "ORDER BY";
 			private static string keyNULL	 		= "NULL";
 			private static string keyStar 			= "*";
-			// private static string keyLikeSymbol  = "%";
 			private static string keyEnd 			= ";";
 			private static string keySpace 			= " ";
 			private static string keyPlaceholder 	= "_";
 			private static string keyEscapeSymbol 	= "`";
+			private static string keyStringEscapeSymbol= "'";
 			private static string keyEqualsSymbol 	= "=";
+			private static string keyDelimiter 		= ",";
 			
-			private static string[] _splitChar = new string[] { "<=", ">=", "=", ">", "<", keyLike };
-
 			private static string activeEscapeSymbol= "`";
+
+			private static char[] _trimSymbols 		= new char[] { ' ', activeEscapeSymbol[0], keyStringEscapeSymbol[0] };
+			private static string[] _splitChar 		= new string[] { "<=", ">=", "=", ">", "<", keyLike };
 
 			public class SQLQueryField
 			{
@@ -344,7 +352,7 @@ namespace PurpleDatabase
 				}
 
 				// TABLE // TODO - more than one table
-				Add(activeEscapeSymbol+Table+activeEscapeSymbol);
+				Add(AddEscapeSymbol(Table));
 
 				if (Type == TypeEnum.INSERT_INTO)
 				{
@@ -355,6 +363,12 @@ namespace PurpleDatabase
 				{
 					Add(keySet);
 					build_set_fields();
+
+					if (Limit != 0)
+					{
+						Add(keyLimit);
+						Add(Limit.ToString());
+					}
 				}
 
 
@@ -395,6 +409,7 @@ namespace PurpleDatabase
 			}
 
 
+
 			// HELPER ////////////////////////////
 			public void set_like_filter(string field, string like, string conjunction)
 			{
@@ -403,8 +418,6 @@ namespace PurpleDatabase
 
 			public void set_filter(string SortOption)
 			{
-				// TODO: what if multiple filter are passed?
-
 				string conjunction = (SortOption.IndexOf("OR") != -1) ? "OR" : "AND";
 
 				SortOption = SortOption.Replace ("AND ", String.Empty);
@@ -434,7 +447,7 @@ namespace PurpleDatabase
 				{
 					SQLQueryField queryField = new SQLQueryField();
 					queryField.key = (split[i]).Trim();
-					queryField.value = (split[i+1]).Trim();
+					queryField.value = AddStringEscapeSymbol(split[i+1]);
 					queryField.operation = operation;
 
 					queryField.conjunction = (ConjunctionEnum)Enum.Parse(typeof(ConjunctionEnum), Conjunction, true);
@@ -472,10 +485,36 @@ namespace PurpleDatabase
 			}
 
 
+			public string AddEscapeSymbol(string str)
+			{
+				return activeEscapeSymbol + str.Trim(_trimSymbols) + activeEscapeSymbol;
+			}
+			
+			public string AddStringEscapeSymbol(string str)
+			{
+				double value = double.MinValue;
+				try
+				{
+					if (double.TryParse (str, out value))
+						return str.Trim ();
+				} catch { }
+				return keyStringEscapeSymbol + str.Trim(_trimSymbols) + keyStringEscapeSymbol;
+			}
+
+
 			// PRIVATE ////////////////////////////
 			private string Add(string part)
 			{
 				_query += (keySpace + part).TrimEnd();
+				return _query;
+			}
+
+			private string Add(string part, bool addSpace)
+			{
+				if(addSpace)
+					return Add (part);
+
+				_query += (part).TrimEnd();
 				return _query;
 			}
 
@@ -487,7 +526,7 @@ namespace PurpleDatabase
 				if (SelectFields.Count > 0)
 				{
 					string select_string = string.Join(activeEscapeSymbol + ", " + activeEscapeSymbol, SelectFields.ToArray());
-					Add(activeEscapeSymbol + select_string + activeEscapeSymbol);
+					Add(AddEscapeSymbol(select_string));
 				}
 				else
 				{
@@ -507,7 +546,7 @@ namespace PurpleDatabase
 					{
 						Add (FilterElement.conjunction.ToString());
 					}
-					Add(activeEscapeSymbol + FilterElement.key + activeEscapeSymbol);
+					Add(AddEscapeSymbol(FilterElement.key));
 					Add(FilterElement.operation);
 					Add(FilterElement.value);
 				}
@@ -525,8 +564,17 @@ namespace PurpleDatabase
 			
 			private void build_set_fields()
 			{
+				bool first = true;
 				foreach (KeyValuePair<string, string> SetElement in SetFields) {
-					Add(activeEscapeSymbol + SetElement.Key + activeEscapeSymbol);
+					if(first)
+					{
+						first = false;
+					}
+					else
+					{
+						Add (keyDelimiter, false);
+					}
+					Add(AddEscapeSymbol(SetElement.Key));
 					Add(keyEqualsSymbol);
 					if(SetElement.Value.ToUpper() == keyNULL)
 					{
@@ -534,7 +582,7 @@ namespace PurpleDatabase
 					}
 					else
 					{
-						Add(activeEscapeSymbol + SetElement.Value + activeEscapeSymbol);
+						Add(AddStringEscapeSymbol(SetElement.Value));
 					}
 				}
 			}
@@ -545,7 +593,7 @@ namespace PurpleDatabase
 				{
 					if (SortElement.Value != SortEnum.NONE)
 					{
-						Add(activeEscapeSymbol + SortElement.Key + activeEscapeSymbol);
+						Add(AddEscapeSymbol(SortElement.Key));
 						Add(SortElement.Value.ToString());
 					}
 				}
