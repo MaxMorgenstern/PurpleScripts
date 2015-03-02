@@ -270,14 +270,20 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Where ("numbervalue = 10");
 			generated = SQLGenerator.Like ("test", "%est%", "OR");
 			Assert.AreEqual (expected, generated);
-		}	
+		}
 
 		[Test]
 		[Category("SELECT Test")]
 		public void Select_13 ()
 		{
-			string expected = "SELECT `test`, `test2` FROM `one` WHERE `test` IN (SELECT `dummy` FROM `two` WHERE `dummy` = 'one');";
-			string generated = "";
+			string expected = "SELECT `test` FROM `one` LIMIT 1;";
+			string generated = SQLGenerator.Select (select: "test", from: "one", limit:1 );
+			Assert.AreEqual (expected, generated);
+			
+			SQLGenerator.Reset ();
+			
+			generated = SQLGenerator.Select ("test", "one");
+			generated = SQLGenerator.Single ();
 			Assert.AreEqual (expected, generated);
 		}
 
@@ -295,6 +301,15 @@ namespace PurpleDatabaseWrapper
 		public void Select_15 ()
 		{
 			string expected = "SELECT `one`.`test`, `two`.`dummy` FROM `one`, `two` WHERE `one`.`test2` = `two`.`dummy2`;";
+			string generated = "";
+			Assert.AreEqual (expected, generated);
+		}
+		
+		[Test]
+		[Category("SELECT Test")]
+		public void Select_16 ()
+		{
+			string expected = "SELECT `test`, `test2` FROM `one` WHERE `test` IN (SELECT `dummy` FROM `two` WHERE `dummy` = 'one');";
 			string generated = "";
 			Assert.AreEqual (expected, generated);
 		}
@@ -338,6 +353,78 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Where ("two = 'Test2'");
 			Assert.AreEqual (expected, generated);
 
+		}
+	}
+
+
+	[TestFixture]
+	[Category("INSERT Tests")]
+	public class INSERT_Test
+	{	
+		[Test]
+		[Category("INSERT Test")]
+		public void Insert_1 ()
+		{
+			string expected = "INSERT INTO `tablename` (`field1`, `field2`, `field3`) VALUES ('value', 'OK', NULL);";
+			string generated = SQLGenerator.Insert ("tablename", new string[]{ "field1=value", "field2=OK", "field3=null" });
+			Assert.AreEqual (expected, generated);
+		}
+
+		[Test]
+		[Category("INSERT Test")]
+		public void Insert_2 ()
+		{
+			string expected = "INSERT INTO `tablename` VALUES ('value b', 'NOK', 900)";
+			string generated = "";
+			Assert.AreEqual (expected, generated);
+		}
+	}
+
+
+	[TestFixture]
+	[Category("DELETE Tests")]
+	public class DELETE_Test
+	{	
+		[Test]
+		[Category("DELETE Test")]
+		public void Delete_1 ()
+		{
+			string expected = "DELETE FROM `example`;";
+			string generated = SQLGenerator.Delete("example");
+			Assert.AreEqual (expected, generated);
+		}
+		
+		[Test]
+		[Category("DELETE Test")]
+		public void Delete_2 ()
+		{
+			string expected = "DELETE FROM `example` WHERE `field` = 'N';";
+			string generated = SQLGenerator.Delete("example", "field=N");
+			Assert.AreEqual (expected, generated);
+		}
+		
+		[Test]
+		[Category("DELETE Test")]
+		public void Delete_3 ()
+		{
+			string expected = "DELETE FROM `example` WHERE `field` = 'N' OR `field2` = 123;";
+			string generated = SQLGenerator.Delete("example", "field=N");
+			generated = SQLGenerator.Where ("field2 = 123", "OR");
+			Assert.AreEqual (expected, generated);
+		}
+		[Test]
+		[Category("DELETE Test")]
+		public void Delete_4 ()
+		{
+			string expected = "DELETE FROM `example` LIMIT 1;";
+			string generated = SQLGenerator.Delete("example");
+			generated = SQLGenerator.Single();
+			Assert.AreEqual (expected, generated);
+			
+			SQLGenerator.Reset ();
+
+			generated = SQLGenerator.Delete("example", limit:1);
+			Assert.AreEqual (expected, generated);
 		}
 	}
 }

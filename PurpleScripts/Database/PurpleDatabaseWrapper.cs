@@ -43,7 +43,7 @@ namespace PurpleDatabase
 
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.SELECT;
 
-			AddSelect(select);
+			add_select(select);
 
 			if (!String.IsNullOrEmpty(from))
 				_SQLQuery.Table = from;
@@ -63,23 +63,15 @@ namespace PurpleDatabase
 			return _SQLQuery.build();
 		}
 
-		public static void AddSelect(string select)
+		public static string Select(string[] select)
 		{
-			AddSelect(select.Split(new Char[] { ' ', ',' }));
-
-		}
-		public static void AddSelect(string[] select)
-		{
-			foreach (string singleSelect in select)
-			{
-				if (!String.IsNullOrEmpty(singleSelect))
-					_SQLQuery.SelectFields.Add(singleSelect);
-			}
+			add_select (select);
+			return _SQLQuery.build();
 		}
 
 
 		// INSERT - MASTER
-		public static string Insert(string into, string[] values)
+		public static string Insert(string into, string[] set)
 		{
 			_SQLQuery = new SQLQueryItem();
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.INSERT_INTO;
@@ -104,7 +96,7 @@ namespace PurpleDatabase
 
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.UPDATE;
 
-			UpdateSet (set);
+			update_set (set);
 
 			if (!String.IsNullOrEmpty(table))
 				_SQLQuery.Table = table;
@@ -115,22 +107,20 @@ namespace PurpleDatabase
 			return  _SQLQuery.build();
 		}
 
-		public static void UpdateSet(string[] set)
-		{
-			foreach (string singleSet in set)
-			{
-				if (!String.IsNullOrEmpty(singleSet))
-					_SQLQuery.set_set_field(singleSet);
-			}
-		}
-
 
 		// DELETE - MASTER
-		public static string Delete(string delete)
+		public static string Delete(string table, string where = "", int limit = 0)
 		{
 			_SQLQuery = new SQLQueryItem();
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.DELETE;
 
+			_SQLQuery.Table = table;
+
+			if (!String.IsNullOrEmpty (where))
+				_SQLQuery.set_filter (where);
+			
+			if (limit != 0)
+				_SQLQuery.Limit = limit;
 
 			return _SQLQuery.build();
 		}
@@ -140,15 +130,17 @@ namespace PurpleDatabase
 		// SINGLE OPERATIONS /////////////
 
 		// NEW QUERY
-		public static void New()
+		public static string New()
 		{
 			_SQLQuery = new SQLQueryItem();
+			return String.Empty;
 		}
 
 		public static void Reset()
 		{
 			_SQLQuery = new SQLQueryItem();
 		}
+
 
 		// FROM
 		public static string From(string table)
@@ -181,6 +173,13 @@ namespace PurpleDatabase
 			return _SQLQuery.build();
 		}
 
+		// TODO
+		public static string Set()
+		{
+			// TODO
+			return _SQLQuery.build();
+		}
+
 
 		// LIMIT - OFFSET
 		public static string Limit(int limit = 0, int offset = 0)
@@ -189,6 +188,7 @@ namespace PurpleDatabase
 			_SQLQuery.Offset = offset;
 			return _SQLQuery.build();
 		}
+
 		public static string Single()
 		{
 			_SQLQuery.Limit = 1;
@@ -208,12 +208,6 @@ namespace PurpleDatabase
 			return _SQLQuery.build();
 		}
 
-		// BUILD QUERY
-		public static string Get()
-		{
-			return _SQLQuery.build();
-		}
-
 		public static string ASC(string SortField) {
 			_SQLQuery.set_order_by(SortField, "ASC");
 			return _SQLQuery.build();
@@ -221,6 +215,13 @@ namespace PurpleDatabase
 
 		public static string DESC(string SortField) {
 			_SQLQuery.set_order_by(SortField, "DESC");
+			return _SQLQuery.build();
+		}
+
+
+		// BUILD QUERY
+		public static string Get()
+		{
 			return _SQLQuery.build();
 		}
 
@@ -249,7 +250,32 @@ namespace PurpleDatabase
 		}
 
 
+		// PRIVATE FUNCTIONS /////////////////////////
+		private static void add_select(string select)
+		{
+			add_select(select.Split(new Char[] { ' ', ',' }));
+			
+		}
+		private static void add_select(string[] select)
+		{
+			foreach (string singleSelect in select)
+			{
+				if (!String.IsNullOrEmpty(singleSelect))
+					_SQLQuery.SelectFields.Add(singleSelect);
+			}
+		}
 
+		private static void update_set(string[] set)
+		{
+			foreach (string singleSet in set)
+			{
+				if (!String.IsNullOrEmpty(singleSet))
+					_SQLQuery.set_set_field(singleSet);
+			}
+		}
+
+		
+		// PRIVATE INNER CLASS /////////////////////////
 		private class SQLQueryItem
 		{
 			public enum TypeEnum { SELECT, INSERT_INTO, UPDATE, DELETE };
@@ -399,6 +425,15 @@ namespace PurpleDatabase
 					{
 						Add(keyOffset);
 						Add(Offset.ToString());
+					}
+				}
+
+				if (Type == TypeEnum.DELETE)
+				{
+					if (Limit != 0)
+					{
+						Add(keyLimit);
+						Add(Limit.ToString());
 					}
 				}
 
