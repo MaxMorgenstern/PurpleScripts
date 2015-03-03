@@ -71,12 +71,24 @@ namespace PurpleDatabase
 
 
 		// INSERT - MASTER
-		public static string Insert(string into, string[] set)
+		public static string Insert(string into, string value)
 		{
 			_SQLQuery = new SQLQueryItem();
 			_SQLQuery.Type = SQLQueryItem.TypeEnum.INSERT_INTO;
 
 			_SQLQuery.Table = into;
+			add_insert_column (value);
+
+			return _SQLQuery.build();
+		}
+
+		public static string Insert(string into, string[] value)
+		{
+			_SQLQuery = new SQLQueryItem();
+			_SQLQuery.Type = SQLQueryItem.TypeEnum.INSERT_INTO;
+
+			_SQLQuery.Table = into;
+			add_insert_value (value);
 
 			return _SQLQuery.build();
 		}
@@ -100,7 +112,7 @@ namespace PurpleDatabase
 
 			if (!String.IsNullOrEmpty(table))
 				_SQLQuery.Table = table;
-			
+
 			if (!String.IsNullOrEmpty(where))
 				_SQLQuery.set_filter(where);
 
@@ -118,7 +130,7 @@ namespace PurpleDatabase
 
 			if (!String.IsNullOrEmpty (where))
 				_SQLQuery.set_filter (where);
-			
+
 			if (limit != 0)
 				_SQLQuery.Limit = limit;
 
@@ -167,16 +179,20 @@ namespace PurpleDatabase
 			return _SQLQuery.build();
 		}
 
-		public static string Like(string field, string like, string conjunction = "AND") 
+		public static string Like(string field, string like, string conjunction = "AND")
 		{
 			_SQLQuery.set_like_filter(field, like, conjunction);
 			return _SQLQuery.build();
 		}
 
-		// TODO
-		public static string Set()
+		public static string Values(string value)
 		{
-			// TODO
+			return Values (new string[] { value });
+		}
+		
+		public static string Values(string[] value)
+		{
+			add_insert_value (value);
 			return _SQLQuery.build();
 		}
 
@@ -232,13 +248,13 @@ namespace PurpleDatabase
 			_SQLHistory.Add(query);
 			return PurpleDatabase.SelectQuery(query);
 		}
-		
+
 		public static DataTable Fetch(this string query)
 		{
 			_SQLHistory.Add(query);
 			return PurpleDatabase.SelectQuery(query);
 		}
-        
+
 
 		// ESCAPE STRINGS
 		public static void EnableEscape() {
@@ -253,8 +269,8 @@ namespace PurpleDatabase
 		// PRIVATE FUNCTIONS /////////////////////////
 		private static void add_select(string select)
 		{
-			add_select(select.Split(new Char[] { ' ', ',' }));
-			
+			add_select(select.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries));
+
 		}
 		private static void add_select(string[] select)
 		{
@@ -274,7 +290,46 @@ namespace PurpleDatabase
 			}
 		}
 
+		private static void add_insert_column (string value)
+		{
+			string[] column = value.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			foreach (string singleColumn in column)
+			{
+				_SQLQuery.InsertColumn.Add(singleColumn.Trim ());
+			}
+		}
 		
+		private static void add_insert_value (string[] value)
+		{
+			foreach (string singleValue in value)
+			{
+				string[] data = singleValue.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+				
+				List<string> tmpList = new List<string>();
+				foreach (string singleData in data)
+				{
+					if (singleData.IndexOf("=") != -1)
+					{
+						string[] dataParts = singleData.Split(new Char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+						
+						if(dataParts.Length > 2)
+							return;
+						
+						if(!_SQLQuery.InsertColumn.Contains(dataParts[0].Trim ()))
+							_SQLQuery.InsertColumn.Add(dataParts[0].Trim ());
+						
+						tmpList.Add(dataParts[1]);
+					}
+					else
+					{
+						tmpList.Add(singleData);
+					}
+				}
+				_SQLQuery.InsertValues.Add(tmpList);
+			}
+		}
+
+
 		// PRIVATE INNER CLASS /////////////////////////
 		private class SQLQueryItem
 		{
@@ -284,20 +339,23 @@ namespace PurpleDatabase
 
 			// Variables
 			public TypeEnum Type = TypeEnum.SELECT;
-			public List<string> SelectFields = new List<string>();
+			public List<string> SelectFields 		= new List<string>();
 
-			public Dictionary<string, string> SetFields 
+			public Dictionary<string, string> SetFields
 				= new Dictionary<string, string>();
 
-			public string Table = string.Empty;
+			public string Table 					= string.Empty;
 
-			public List<SQLQueryField> FilterList = new List<SQLQueryField>();
+			public List<SQLQueryField> FilterList 	= new List<SQLQueryField>();
+
+			public List<string> InsertColumn 		= new List<string>();
+			public List<List<string>> InsertValues 	= new List<List<string>>();
 
 			public Dictionary<string, SortEnum> SortList
 				= new Dictionary<string, SortEnum>();
 
-			public int Limit = 0;
-			public int Offset = 0;
+			public int Limit 						= 0;
+			public int Offset 						= 0;
 
 
 			// PRIVATE ////////////////////////////
@@ -321,7 +379,9 @@ namespace PurpleDatabase
 			private static string keyStringEscapeSymbol= "'";
 			private static string keyEqualsSymbol 	= "=";
 			private static string keyDelimiter 		= ",";
-			
+			private static string keyBracketOpen 	= "(";
+			private static string keyBracketClose 	= ")";
+
 			private static string activeEscapeSymbol= "`";
 
 			private static char[] _trimSymbols 		= new char[] { ' ', activeEscapeSymbol[0], keyStringEscapeSymbol[0] };
@@ -332,7 +392,7 @@ namespace PurpleDatabase
 				public string key;
 				public string value;
 				public string operation;
-				
+
 				public ConjunctionEnum conjunction = ConjunctionEnum.AND;
 			}
 
@@ -471,7 +531,7 @@ namespace PurpleDatabase
 				{
 					operation = keyLike;
 				}
-				else 
+				else
 				{
 					Regex reg = new Regex ("[^<>=]");
 					operation = reg.Replace (SortOption, "");
@@ -493,7 +553,7 @@ namespace PurpleDatabase
 
 			public void set_order_by(string SortOption)
 			{
-				string[] split = SortOption.Split(new Char[] { ' ', ',' });
+				string[] split = SortOption.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 				for (int i = 0; i < split.Length; i += 2)
 				{
 					SortList.Add((split[i]).Trim(), (SortEnum)Enum.Parse(typeof(SortEnum), split[i + 1], true));
@@ -524,16 +584,25 @@ namespace PurpleDatabase
 			{
 				return activeEscapeSymbol + str.Trim(_trimSymbols) + activeEscapeSymbol;
 			}
-			
+
 			public string AddStringEscapeSymbol(string str)
 			{
 				double value = double.MinValue;
 				try
 				{
 					if (double.TryParse (str, out value))
+					{
 						return str.Trim ();
+					}
 				} catch { }
-				return keyStringEscapeSymbol + str.Trim(_trimSymbols) + keyStringEscapeSymbol;
+
+				str = str.Trim (_trimSymbols);
+				if(object.Equals(str.ToUpper(), keyNULL))
+				{
+					return keyNULL;
+				}
+
+				return keyStringEscapeSymbol + str + keyStringEscapeSymbol;
 			}
 
 
@@ -553,6 +622,7 @@ namespace PurpleDatabase
 				return _query;
 			}
 
+
 			// BUILD SELECT FIELDS
 			private void build_select_fields()
 			{
@@ -568,7 +638,7 @@ namespace PurpleDatabase
 					Add(keyStar);
 				}
 			}
-			
+
 			private void build_where_fields()
 			{
 				bool first = true;
@@ -586,17 +656,43 @@ namespace PurpleDatabase
 					Add(FilterElement.value);
 				}
 			}
-			
+
 			private void build_insert_value_fields()
 			{
-				// TODO: (field1, field2)        VALUES (value1,value2);
-				
-				// (field1,field2);
+				string columnString = string.Join(activeEscapeSymbol + ", " + activeEscapeSymbol, InsertColumn.ToArray());
+				if(!String.IsNullOrEmpty(columnString))
+				{
+					Add (keyBracketOpen+AddEscapeSymbol(columnString)+keyBracketClose);
+				}
+
 				Add(keyValues);
-				//  (value1,value2);
-				
+
+				bool first = true;
+				foreach (List<string> valueList in InsertValues)
+				{
+					if(first)
+					{
+						first = false;
+					}
+					else
+					{
+						Add (keyDelimiter, false);
+					}
+
+					string valueString = string.Empty;
+					foreach(string s in valueList)
+					{
+						valueString += " " +AddStringEscapeSymbol(s) + ",";
+					}
+					valueString = valueString.Trim(new char[] {',', ' '});
+
+					if(!String.IsNullOrEmpty(valueString))
+					{
+						Add(keyBracketOpen+(valueString)+keyBracketClose);
+					}
+				}
 			}
-			
+
 			private void build_set_fields()
 			{
 				bool first = true;
@@ -611,17 +707,10 @@ namespace PurpleDatabase
 					}
 					Add(AddEscapeSymbol(SetElement.Key));
 					Add(keyEqualsSymbol);
-					if(SetElement.Value.ToUpper() == keyNULL)
-					{
-						Add (keyNULL);
-					}
-					else
-					{
-						Add(AddStringEscapeSymbol(SetElement.Value));
-					}
+					Add(AddStringEscapeSymbol(SetElement.Value));
 				}
 			}
-			
+
 			private void build_order_by_fields()
 			{
 				foreach (KeyValuePair<string, SortEnum> SortElement in SortList)

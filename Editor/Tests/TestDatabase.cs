@@ -366,16 +366,46 @@ namespace PurpleDatabaseWrapper
 		public void Insert_1 ()
 		{
 			string expected = "INSERT INTO `tablename` (`field1`, `field2`, `field3`) VALUES ('value', 'OK', NULL);";
-			string generated = SQLGenerator.Insert ("tablename", new string[]{ "field1=value", "field2=OK", "field3=null" });
+			string generated = SQLGenerator.Insert ("tablename", new string[]{ "field1=value, field2=OK, field3=null" });
 			Assert.AreEqual (expected, generated);
 		}
-
+		
+		[Test]
+		[Category("INSERT Test")]
+		public void Insert_1b ()
+		{
+			string expected = "INSERT INTO `tablename` (`field1`, `field2`, `field3`) VALUES ('value', 'OK', NULL), ('test', 42, 'test2');";
+			string generated = SQLGenerator.Insert ("tablename", new string[]{ "field1=value, field2=OK, field3=null", "field1=test, field2=42, field3='test2'" });
+			Assert.AreEqual (expected, generated);
+		}
+		
 		[Test]
 		[Category("INSERT Test")]
 		public void Insert_2 ()
 		{
-			string expected = "INSERT INTO `tablename` VALUES ('value b', 'NOK', 900)";
-			string generated = "";
+			string expected = "INSERT INTO `tablename` VALUES ('value b', 'NOK', 900);";
+			string generated = SQLGenerator.Insert ("tablename", new string[]{ "value b, NOK, 900" });
+			Assert.AreEqual (expected, generated);
+		}
+		
+		[Test]
+		[Category("INSERT Test")]
+		public void Insert_2b ()
+		{
+			string expected = "INSERT INTO `tablename` VALUES ('value b', 'NOK', 900), ('number 6', 'OKAY', NULL);";
+			string generated = SQLGenerator.Insert ("tablename", new string[]{ "value b, NOK, 900", "number 6, OKAY, null" });
+			Assert.AreEqual (expected, generated);
+		}
+		
+		[Test]
+		[Category("INSERT Test")]
+		public void Insert_3 ()
+		{
+			string expected = "INSERT INTO `tablename` (`col1`, `col2`) VALUES ('A', 'B'), ('C', 'D'), ('E', 'F'), ('G', 'H'), ('I', 'J');";
+			string generated = SQLGenerator.Insert ("tablename", "col1, col2");
+			generated = SQLGenerator.Values ("A, B");
+			generated = SQLGenerator.Values (new string[] {"C, D", "E, F"});
+			generated = SQLGenerator.Values (new string[] {"col1=G, col2=H", "col1=I, col2=J"});
 			Assert.AreEqual (expected, generated);
 		}
 	}
