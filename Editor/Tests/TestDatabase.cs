@@ -296,19 +296,10 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.In ("test", "value1, value2, value3");
 			Assert.AreEqual (expected, generated);
 		}
-
-		[Test]
-		[Category("SELECT Test")]
-		public void Select_15 ()
-		{
-			string expected = "SELECT `one`.`test`, `two`.`dummy` FROM `one`, `two` WHERE `one`.`test2` = `two`.`dummy2`;";
-			string generated = "";
-			Assert.AreEqual (expected, generated);
-		}
 		
 		[Test]
 		[Category("SELECT Test")]
-		public void Select_16 ()
+		public void Select_15 ()
 		{
 			string expected = "SELECT `test`, `test2` FROM `one` WHERE `test` IN (SELECT `dummy` FROM `two` WHERE `dummy` = 'one');";
 
@@ -317,6 +308,18 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.In ("test", preGenerated, false);
 			Assert.AreEqual (expected, generated);
 		}
+
+		/*
+		TODO:
+		[Test]
+		[Category("SELECT Test")]
+		public void Select_16 ()
+		{
+			string expected = "SELECT `one`.`test`, `two`.`dummy` FROM `one`, `two` WHERE `one`.`test2` = `two`.`dummy2`;";
+			string generated = "";
+			Assert.AreEqual (expected, generated);
+		}
+		*/
 	}
 
 

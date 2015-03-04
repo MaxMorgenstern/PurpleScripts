@@ -1,11 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System;
-using System.Text.RegularExpressions;
 using System.Linq;
-
-// TODO: SELECT * FROM xx WHERE y "IN (...)"
+using System.Text.RegularExpressions;
 
 namespace PurpleDatabase
 {
@@ -33,7 +31,7 @@ namespace PurpleDatabase
 
 		// SELECT - MASTER
 		// TODO: if !UNITY_5_0
-		// No named arguments with Unity versions below 5
+		// Test: No named arguments with Unity versions below 5
 		public static string Select(string select = "*", string from = "",
 		                            string where = "", int limit = 0, int offset = 0, string sorting = "")
 		{
@@ -174,6 +172,7 @@ namespace PurpleDatabase
 			_SQLQuery.SetFilter(logic);
 			return _SQLQuery.build();
 		}
+
 		public static string Where(string logic, string conjunction)
 		{
 			_SQLQuery.SetFilter(logic, conjunction);
@@ -205,7 +204,6 @@ namespace PurpleDatabase
 			add_insert_value (value);
 			return _SQLQuery.build();
 		}
-
 
 		// LIMIT - OFFSET
 		public static string Limit(int limit = 0, int offset = 0)
@@ -248,6 +246,11 @@ namespace PurpleDatabase
 
 		// BUILD QUERY
 		public static string Get()
+		{
+			return _SQLQuery.build();
+		}
+
+		public static string Build()
 		{
 			return _SQLQuery.build();
 		}
@@ -354,7 +357,7 @@ namespace PurpleDatabase
 			public enum ConjunctionEnum { AND, OR };
 
 			// Variables
-			public TypeEnum Type = TypeEnum.SELECT;
+			public TypeEnum Type 					= TypeEnum.SELECT;
 			public List<string> SelectFields 		= new List<string>();
 
 			public Dictionary<string, string> SetFields
@@ -423,18 +426,8 @@ namespace PurpleDatabase
 				activeEscapeSymbol = String.Empty;
 			}
 
-			// MAIN ////////////////////////////
-			// Cheatsheet:
-			/*
-            Type        SelectFields                Table                                                           Filter                          SortList    Limit   Offset
-             *
-            SELECT      (field1, field2)   FROM     table_name                                                      WHERE some_column=some_value    ORDER BY X LIMIT Y OFFSET Z;
-            INSERT INTO                             table_name                          VALUES (value1,value2);
-            INSERT INTO                             table_name  (field1, field2)        VALUES (value1,value2);
-            UPDATE                                  table_name          SET column1=value1,column2=value2           WHERE some_column=some_value;
-            DELETE                         FROM     table_name                                                      WHERE some_column=some_value;
-            */
 
+			// MAIN ////////////////////////////
 
 			public string build()
 			{
