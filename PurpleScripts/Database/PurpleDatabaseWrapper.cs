@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 // TODO: SELECT * FROM xx WHERE y "IN (...)"
 
@@ -49,7 +50,7 @@ namespace PurpleDatabase
 				_SQLQuery.Table = from;
 
 			if (!String.IsNullOrEmpty(where))
-				_SQLQuery.set_filter(where);
+				_SQLQuery.SetFilter(where);
 
 			if (limit != 0)
 				_SQLQuery.Limit = limit;
@@ -58,7 +59,7 @@ namespace PurpleDatabase
 				_SQLQuery.Offset = offset;
 
 			if (!String.IsNullOrEmpty(sorting))
-				_SQLQuery.set_order_by(sorting);
+				_SQLQuery.SetOrderBy(sorting);
 
 			return _SQLQuery.build();
 		}
@@ -114,7 +115,7 @@ namespace PurpleDatabase
 				_SQLQuery.Table = table;
 
 			if (!String.IsNullOrEmpty(where))
-				_SQLQuery.set_filter(where);
+				_SQLQuery.SetFilter(where);
 
 			return  _SQLQuery.build();
 		}
@@ -129,7 +130,7 @@ namespace PurpleDatabase
 			_SQLQuery.Table = table;
 
 			if (!String.IsNullOrEmpty (where))
-				_SQLQuery.set_filter (where);
+				_SQLQuery.SetFilter (where);
 
 			if (limit != 0)
 				_SQLQuery.Limit = limit;
@@ -170,26 +171,35 @@ namespace PurpleDatabase
 		// WHERE
 		public static string Where(string logic)
 		{
-			_SQLQuery.set_filter(logic);
+			_SQLQuery.SetFilter(logic);
 			return _SQLQuery.build();
 		}
 		public static string Where(string logic, string conjunction)
 		{
-			_SQLQuery.set_filter(logic, conjunction);
+			_SQLQuery.SetFilter(logic, conjunction);
 			return _SQLQuery.build();
 		}
 
+		// LIKE
 		public static string Like(string field, string like, string conjunction = "AND")
 		{
-			_SQLQuery.set_like_filter(field, like, conjunction);
+			_SQLQuery.SetLikeFilter(field, like, conjunction);
 			return _SQLQuery.build();
 		}
 
+		// WHERE IN
+		public static string In(string field, string inQuery, bool filterQuery = true, string conjunction = "AND")
+		{
+			_SQLQuery.SetInFilter (field, inQuery, filterQuery, conjunction);
+			return _SQLQuery.build();
+		}
+
+		// INSERT VALUES
 		public static string Values(string value)
 		{
 			return Values (new string[] { value });
 		}
-		
+
 		public static string Values(string[] value)
 		{
 			add_insert_value (value);
@@ -214,23 +224,24 @@ namespace PurpleDatabase
 		// ORDER BY
 		public static string OrderBy(string SortOption)
 		{
-			_SQLQuery.set_order_by(SortOption);
+			_SQLQuery.SetOrderBy(SortOption);
 			return _SQLQuery.build();
 		}
 
 		public static string OrderBy(string SortField, string SortOrder)
 		{
-			_SQLQuery.set_order_by(SortField, SortOrder);
+			_SQLQuery.SetOrderBy(SortField, SortOrder);
 			return _SQLQuery.build();
 		}
 
+		// ASC - DESC
 		public static string ASC(string SortField) {
-			_SQLQuery.set_order_by(SortField, "ASC");
+			_SQLQuery.SetOrderBy(SortField, "ASC");
 			return _SQLQuery.build();
 		}
 
 		public static string DESC(string SortField) {
-			_SQLQuery.set_order_by(SortField, "DESC");
+			_SQLQuery.SetOrderBy(SortField, "DESC");
 			return _SQLQuery.build();
 		}
 
@@ -255,7 +266,6 @@ namespace PurpleDatabase
 			return PurpleDatabase.SelectQuery(query);
 		}
 
-
 		// ESCAPE STRINGS
 		public static void EnableEscape() {
 			_SQLQuery.enable_escape_symbol ();
@@ -269,9 +279,9 @@ namespace PurpleDatabase
 		// PRIVATE FUNCTIONS /////////////////////////
 		private static void add_select(string select)
 		{
-			add_select(select.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries));
-
+			add_select(split_field_data(select));
 		}
+
 		private static void add_select(string[] select)
 		{
 			foreach (string singleSelect in select)
@@ -286,38 +296,38 @@ namespace PurpleDatabase
 			foreach (string singleSet in set)
 			{
 				if (!String.IsNullOrEmpty(singleSet))
-					_SQLQuery.set_set_field(singleSet);
+					_SQLQuery.SetSetField(singleSet);
 			}
 		}
 
 		private static void add_insert_column (string value)
 		{
-			string[] column = value.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			string[] column = split_field_data(value);
 			foreach (string singleColumn in column)
 			{
 				_SQLQuery.InsertColumn.Add(singleColumn.Trim ());
 			}
 		}
-		
+
 		private static void add_insert_value (string[] value)
 		{
 			foreach (string singleValue in value)
 			{
-				string[] data = singleValue.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-				
+				string[] data = split_field_data(singleValue);
+
 				List<string> tmpList = new List<string>();
 				foreach (string singleData in data)
 				{
 					if (singleData.IndexOf("=") != -1)
 					{
 						string[] dataParts = singleData.Split(new Char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-						
+
 						if(dataParts.Length > 2)
 							return;
-						
+
 						if(!_SQLQuery.InsertColumn.Contains(dataParts[0].Trim ()))
 							_SQLQuery.InsertColumn.Add(dataParts[0].Trim ());
-						
+
 						tmpList.Add(dataParts[1]);
 					}
 					else
@@ -327,6 +337,12 @@ namespace PurpleDatabase
 				}
 				_SQLQuery.InsertValues.Add(tmpList);
 			}
+		}
+
+		private static string[] split_field_data (string value)
+		{
+			string[] stringArray = value.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			return stringArray.Select (x => x.Trim ()).ToArray ();
 		}
 
 
@@ -366,6 +382,7 @@ namespace PurpleDatabase
 			private static string keyWhere 			= "WHERE";
 			private static string keyValues 		= "VALUES";
 			private static string keyLike       	= "LIKE";
+			private static string keyIN		       	= "IN";
 			private static string keySet 			= "SET";
 			private static string keyLimit 			= "LIMIT";
 			private static string keyOffset 		= "OFFSET";
@@ -506,38 +523,38 @@ namespace PurpleDatabase
 
 
 			// HELPER ////////////////////////////
-			public void set_like_filter(string field, string like, string conjunction)
+			public void SetLikeFilter(string field, string like, string conjunction)
 			{
-				set_filter (field + keySpace + keyLike + keySpace + like, conjunction);
+				SetFilter (field + keySpace + keyLike + keySpace + like, conjunction);
 			}
 
-			public void set_filter(string SortOption)
+			public void SetFilter(string SortOption)
 			{
 				string conjunction = (SortOption.IndexOf("OR") != -1) ? "OR" : "AND";
 
 				SortOption = SortOption.Replace ("AND ", String.Empty);
 				SortOption = SortOption.Replace ("OR ", String.Empty);
 
-				set_filter (SortOption, conjunction);
+				SetFilter (SortOption, conjunction);
 			}
 
-			public void set_filter(string SortOption, string Conjunction)
+			public void SetFilter(string WhereOption, string Conjunction)
 			{
 				if(String.IsNullOrEmpty(Conjunction))
 					Conjunction = "AND";
 
 				string operation = String.Empty;
-				if (SortOption.IndexOf(keyLike) != -1)
+				if (WhereOption.IndexOf(keyLike) != -1)
 				{
 					operation = keyLike;
 				}
 				else
 				{
 					Regex reg = new Regex ("[^<>=]");
-					operation = reg.Replace (SortOption, "");
+					operation = reg.Replace (WhereOption, "");
 				}
 
-				string[] split = SortOption.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries);
+				string[] split = WhereOption.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries);
 				for (int i = 0; i < split.Length; i += 2)
 				{
 					SQLQueryField queryField = new SQLQueryField();
@@ -551,7 +568,39 @@ namespace PurpleDatabase
 				}
 			}
 
-			public void set_order_by(string SortOption)
+			public void SetInFilter(string InFields, string InOption, bool filterOptions, string Conjunction)
+			{
+				if(String.IsNullOrEmpty(Conjunction))
+					Conjunction = "AND";
+
+				SQLQueryField queryField = new SQLQueryField();
+				queryField.conjunction = (ConjunctionEnum)Enum.Parse(typeof(ConjunctionEnum), Conjunction, true);
+
+				queryField.key = InFields;
+
+				InOption = InOption.Trim(new char[] {keyBracketOpen[0], keyBracketClose[0]});
+				if(filterOptions)
+				{
+					List<string> stringList = new List<string>();
+					string[] stringArrayTmp = InOption.Split(new Char[] { keyDelimiter[0] }, StringSplitOptions.RemoveEmptyEntries);
+					foreach(string s in stringArrayTmp)
+					{
+						stringList.Add(AddStringEscapeSymbol(s));
+					}
+					InOption = string.Join(", ", stringList.ToArray());
+				}
+				else
+				{
+					InOption = InOption.Trim(new char[] { keyEnd[0], keySpace[0] });
+				}
+
+				queryField.value = keyBracketOpen + InOption + keyBracketClose;
+				queryField.operation = keyIN;
+
+				FilterList.Add(queryField);
+			}
+
+			public void SetOrderBy(string SortOption)
 			{
 				string[] split = SortOption.Split(new Char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
 				for (int i = 0; i < split.Length; i += 2)
@@ -560,12 +609,12 @@ namespace PurpleDatabase
 				}
 			}
 
-			public void set_order_by(string SortField, string SortOrder)
+			public void SetOrderBy(string SortField, string SortOrder)
 			{
 				SortList.Add(SortField.Trim(), (SortEnum)Enum.Parse(typeof(SortEnum), SortOrder, true));
 			}
 
-			public void set_set_field(string SetOption)
+			public void SetSetField(string SetOption)
 			{
 				string[] split = SetOption.Split(_splitChar, StringSplitOptions.RemoveEmptyEntries);
 				for (int i = 0; i < split.Length; i += 2)
@@ -574,7 +623,7 @@ namespace PurpleDatabase
 				}
 			}
 
-			public void set_set_field(string Key, string Value)
+			public void SetSetField(string Key, string Value)
 			{
 				SetFields.Add(Key.Trim(), Value.Trim());
 			}

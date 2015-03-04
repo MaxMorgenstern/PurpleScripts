@@ -292,7 +292,8 @@ namespace PurpleDatabaseWrapper
 		public void Select_14 ()
 		{
 			string expected = "SELECT `test`, `test2` FROM `one` WHERE `test` IN ('value1', 'value2', 'value3');";
-			string generated = "";
+			string generated = SQLGenerator.Select ("test, test2", "one");
+			generated = SQLGenerator.In ("test", "value1, value2, value3");
 			Assert.AreEqual (expected, generated);
 		}
 
@@ -310,7 +311,10 @@ namespace PurpleDatabaseWrapper
 		public void Select_16 ()
 		{
 			string expected = "SELECT `test`, `test2` FROM `one` WHERE `test` IN (SELECT `dummy` FROM `two` WHERE `dummy` = 'one');";
-			string generated = "";
+
+			string preGenerated = SQLGenerator.Select ("dummy", "two", "dummy=one");
+			string generated = SQLGenerator.Select ("test, test2", "one");
+			generated = SQLGenerator.In ("test", preGenerated, false);
 			Assert.AreEqual (expected, generated);
 		}
 	}
