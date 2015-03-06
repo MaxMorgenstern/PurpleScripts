@@ -58,7 +58,7 @@ Class to store/load data locally.
 Version
 ----
 
-0.3.40.1388 (at the time this readme was updated)
+0.3.42.1285 (at the time this readme was updated)
 
 
 
@@ -67,7 +67,9 @@ Technical information
 
 This Repository has been tested with:
 
-Unity 4.3.4 - Mac OS
+Unity 4.3.4 - Mac OS (until 2015-03-04)
+
+Unity 5.0.0 - Mac OS (from 2015-03-04)
 
 Unity 4.6.0 - Windows 8.1
 
