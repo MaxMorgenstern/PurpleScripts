@@ -136,6 +136,5 @@ namespace PurpleDatabase.Extension
 		{
 			return SQLGenerator.Build ();
 		}
-
 	}
 }

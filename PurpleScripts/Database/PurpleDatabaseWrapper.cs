@@ -30,8 +30,6 @@ namespace PurpleDatabase
 		}
 
 		// SELECT - MASTER
-		// TODO: if !UNITY_5_0
-		// Test: No named arguments with Unity versions below 5
 		public static string Select(string select = "*", string from = "",
 		                            string where = "", int limit = 0, int offset = 0, string sorting = "")
 		{
@@ -256,11 +254,11 @@ namespace PurpleDatabase
 		}
 
 
-		// EXECUTE QUERY
-		public static DataTable Execute(this string query)
+		// EXECUTE / FETCH QUERY
+		public static int Execute(this string query)
 		{
 			_SQLHistory.Add(query);
-			return PurpleDatabase.SelectQuery(query);
+			return PurpleDatabase.ExecuteQuery(query);
 		}
 
 		public static DataTable Fetch(this string query)
@@ -268,6 +266,32 @@ namespace PurpleDatabase
 			_SQLHistory.Add(query);
 			return PurpleDatabase.SelectQuery(query);
 		}
+
+		public static DataRow FetchSingle(this string query)
+		{
+			_SQLHistory.Add(query);
+			return PurpleDatabase.SelectQuerySingle(query);
+		}
+
+
+		public static int ExecuteQuery(string query)
+		{
+			_SQLHistory.Add(query);
+			return PurpleDatabase.ExecuteQuery(query);
+		}
+
+		public static DataTable FetchQuery(string query)
+		{
+			_SQLHistory.Add(query);
+			return PurpleDatabase.SelectQuery(query);
+		}
+
+		public static DataRow FetchSingleQuery(string query)
+		{
+			_SQLHistory.Add(query);
+			return PurpleDatabase.SelectQuerySingle(query);
+		}
+
 
 		// ESCAPE STRINGS
 		public static void EnableEscape() {
@@ -447,7 +471,7 @@ namespace PurpleDatabase
 					Add(keyFrom);
 				}
 
-				// TABLE // TODO - more than one table
+				// TABLE // TODO - more than one table!?
 				Add(AddEscapeSymbol(Table));
 
 				if (Type == TypeEnum.INSERT_INTO)
