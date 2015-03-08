@@ -297,29 +297,39 @@ namespace PurpleDatabase
 
 		private bool is_sql_valid(string query, bool isWrite)
 		{
+			string[] invalidSymbols = new string[] { "--", ";--", "/*", "*/", "@@", "@", "''" };
 			string[] invalidWords = {};
 
 			if(isWrite)
 			{
-			// TODO: better validation
 				// WRITE
-			//	invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
-			//		"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "drop",
-			//		"end", "exec", "execute", "fetch", "kill", "sys", "sysobjects", "syscolumns",
-			//		"table", "''" };
+				invalidWords = new string[] { "char", "nchar", "varchar", "nvarchar", "alter", 
+					"begin", "cast", "create", "cursor", "declare", "drop", "end", "exec", 
+					"execute", "fetch", "kill", "sys", "sysobjects", "syscolumns", "table" };
 			} 
 			else
 			{
-			// TODO: better validation "_created"
 				// READ
-			//	invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
-			//		"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
-			//		"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
-			//		"table", "update", "''" };
+				invalidWords = new string[] { "char", "nchar", "varchar", "nvarchar", "alter", 
+					"begin", "cast", "create", "cursor", "declare", "delete", "drop", "end", 
+					"exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
+					"table", "update", "''" };
 			}
-			
 
-			if (invalidWords.Any(query.ToLowerInvariant().Contains))
+			string PatternTemplate = @"\b({0})(s?)\b";
+
+			IEnumerable<Regex> badWordMatchers = invalidWords.
+				Select(x => new Regex(string.Format(PatternTemplate, x), RegexOptions.IgnoreCase));
+
+			string output = badWordMatchers.
+				Aggregate(query, (current, matcher) => matcher.Replace(current, String.Empty));
+
+			if(!query.Equals(output))
+			{
+				return false;
+			}
+
+			if (invalidSymbols.Any(query.ToLowerInvariant().Contains))
 			{
 				return false;
 			}
