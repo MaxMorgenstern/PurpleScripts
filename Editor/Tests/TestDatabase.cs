@@ -31,9 +31,9 @@ namespace PurpleDatabaseWrapper
 			string expected = "SELECT `test`, `test2` FROM `one` LIMIT 5 OFFSET 10;";
 			string generated = SQLGenerator.Select (select: "test, test2", from: "one", limit:5, offset:10 );
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test, test2", "one");
 			generated = SQLGenerator.Limit (5, 10);
 			Assert.AreEqual (expected, generated);
@@ -46,20 +46,20 @@ namespace PurpleDatabaseWrapper
 			string expected = "SELECT `test`, `test2` FROM `one` ORDER BY `test` ASC;";
 			string generated = SQLGenerator.Select (select: "test, test2", from: "one", sorting:"test ASC" );
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test, test2", "one");
 			generated = SQLGenerator.OrderBy ("test", "ASC");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test, test2", "one");
 			generated = SQLGenerator.OrderBy ("test ASC");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("SELECT Test")]
 		public void Select_04 ()
@@ -81,11 +81,11 @@ namespace PurpleDatabaseWrapper
 			string expected = "SELECT `test` FROM `one` WHERE `test` = 'Test';";
 			string generated = SQLGenerator.Select ("test", "one", "test = 'Test'");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT `test`, `test2` FROM `one` WHERE `test` = 'Test';";
 			generated = SQLGenerator.Select ("test2");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT `test`, `test2`, `test3` FROM `one` WHERE `test` = 'Test';";
 			generated = SQLGenerator.Select ("test3");
 			Assert.AreEqual (expected, generated);
@@ -94,7 +94,7 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Where ("test2='Test12'");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("SELECT Test")]
 		public void Select_05_NoEscape ()
@@ -103,15 +103,15 @@ namespace PurpleDatabaseWrapper
 			string expected = "SELECT test FROM one WHERE test = 'Test';";
 			string generated = SQLGenerator.Select ("test", "one", "test = 'Test'");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT test, test2 FROM one WHERE test = 'Test';";
 			generated = SQLGenerator.Select ("test2");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT test, test2, test3 FROM one WHERE test = 'Test';";
 			generated = SQLGenerator.Select ("test3");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT test, test2, test3 FROM one WHERE test = 'Test' AND test2 = 'Test12';";
 			generated = SQLGenerator.Where ("test2='Test12'");
 			Assert.AreEqual (expected, generated);
@@ -125,15 +125,15 @@ namespace PurpleDatabaseWrapper
 			string expected = "SELECT `test` FROM `one` WHERE `test` = 'Test';";
 			string generated = SQLGenerator.Select ("test", "one", "test = Test");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT `test`, `test2` FROM `one` WHERE `test` = 'Test';";
 			generated = SQLGenerator.Select ("test2");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT `test`, `test2`, `test3` FROM `one` WHERE `test` = 'Test';";
 			generated = SQLGenerator.Select ("test3");
 			Assert.AreEqual (expected, generated);
-			
+
 			expected = "SELECT `test`, `test2`, `test3` FROM `one` WHERE `test` = 'Test' AND `test2` = 'Test12';";
 			generated = SQLGenerator.Where ("test2=Test12");
 			Assert.AreEqual (expected, generated);
@@ -146,7 +146,7 @@ namespace PurpleDatabaseWrapper
 			string expected = "SELECT * FROM `one`;";
 			string generated = SQLGenerator.Select (from: "one");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
 
 			generated = SQLGenerator.Select (select: "*", from: "one");
@@ -172,16 +172,16 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Select ("test2");
 			generated = SQLGenerator.Where ("numbervalue >= 10");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test");
 			generated = SQLGenerator.From ("one");
 			generated = SQLGenerator.Select ("test2");
 			generated = SQLGenerator.Where ("numbervalue >= 10");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("SELECT Test")]
 		public void Select_09 ()
@@ -212,17 +212,17 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Where ("numbervalue = 10");
 			generated = SQLGenerator.Where ("OR test = 'test'");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test", "one");
 			generated = SQLGenerator.Select ("test2");
 			generated = SQLGenerator.Where ("numbervalue = 10");
 			generated = SQLGenerator.Where ("test = 'test'", "OR");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test");
 			generated = SQLGenerator.Select ("test2");
 			generated = SQLGenerator.From ("one");
@@ -230,7 +230,7 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Where ("test = 'test'", "OR");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("SELECT Test")]
 		public void Select_11 ()
@@ -239,21 +239,21 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Select ("test", "one");
 			generated = SQLGenerator.Where ("test LIKE '%est%'");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test", "one");
 			generated = SQLGenerator.Like ("test", "%est%");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test");
 			generated = SQLGenerator.From ("one");
 			generated = SQLGenerator.Like ("test", "'%est%'");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("SELECT Test")]
 		public void Select_12 ()
@@ -263,7 +263,7 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Where ("numbervalue = 10");
 			generated = SQLGenerator.Where ("test LIKE '%est%'", "OR");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
 
 			generated = SQLGenerator.Select ("test", "one");
@@ -279,9 +279,9 @@ namespace PurpleDatabaseWrapper
 			string expected = "SELECT `test` FROM `one` LIMIT 1;";
 			string generated = SQLGenerator.Select (select: "test", from: "one", limit:1 );
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Select ("test", "one");
 			generated = SQLGenerator.Single ();
 			Assert.AreEqual (expected, generated);
@@ -296,7 +296,7 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.In ("test", "value1, value2, value3");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("SELECT Test")]
 		public void Select_15 ()
@@ -326,7 +326,7 @@ namespace PurpleDatabaseWrapper
 	[TestFixture]
 	[Category("UPDATE Tests")]
 	public class UPDATE_Test
-	{		
+	{
 		[Test]
 		[Category("UPDATE Test")]
 		public void Update_1 ()
@@ -334,7 +334,7 @@ namespace PurpleDatabaseWrapper
 			string expected = "UPDATE `tabletwo` SET `one` = NULL WHERE `two` = 'Test';";
 			string generated = SQLGenerator.Update ("one=null", "tabletwo",  "two = 'Test'");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
 
 			generated = SQLGenerator.Table ("tabletwo");
@@ -342,7 +342,7 @@ namespace PurpleDatabaseWrapper
 			generated = SQLGenerator.Where ("two = 'Test'");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("UPDATE Test")]
 		public void Update_2 ()
@@ -351,9 +351,9 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Update ("one=null", "tabletwo",  "two = 'Test2'");
 			generated = SQLGenerator.Update ("three=dummy2");
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
-			
+
 			generated = SQLGenerator.Table ("tabletwo");
 			generated = SQLGenerator.Update ("one=null");
 			generated = SQLGenerator.Update ("three=dummy2");
@@ -367,7 +367,7 @@ namespace PurpleDatabaseWrapper
 	[TestFixture]
 	[Category("INSERT Tests")]
 	public class INSERT_Test
-	{	
+	{
 		[Test]
 		[Category("INSERT Test")]
 		public void Insert_1 ()
@@ -376,7 +376,7 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Insert ("tablename", new string[]{ "field1=value, field2=OK, field3=null" });
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("INSERT Test")]
 		public void Insert_1b ()
@@ -385,7 +385,7 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Insert ("tablename", new string[]{ "field1=value, field2=OK, field3=null", "field1=test, field2=42, field3='test2'" });
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("INSERT Test")]
 		public void Insert_2 ()
@@ -394,7 +394,7 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Insert ("tablename", new string[]{ "value b, NOK, 900" });
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("INSERT Test")]
 		public void Insert_2b ()
@@ -403,7 +403,7 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Insert ("tablename", new string[]{ "value b, NOK, 900", "number 6, OKAY, null" });
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("INSERT Test")]
 		public void Insert_3 ()
@@ -421,7 +421,7 @@ namespace PurpleDatabaseWrapper
 	[TestFixture]
 	[Category("DELETE Tests")]
 	public class DELETE_Test
-	{	
+	{
 		[Test]
 		[Category("DELETE Test")]
 		public void Delete_1 ()
@@ -430,7 +430,7 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Delete("example");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("DELETE Test")]
 		public void Delete_2 ()
@@ -439,7 +439,7 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Delete("example", "field=N");
 			Assert.AreEqual (expected, generated);
 		}
-		
+
 		[Test]
 		[Category("DELETE Test")]
 		public void Delete_3 ()
@@ -457,7 +457,7 @@ namespace PurpleDatabaseWrapper
 			string generated = SQLGenerator.Delete("example");
 			generated = SQLGenerator.Single();
 			Assert.AreEqual (expected, generated);
-			
+
 			SQLGenerator.Reset ();
 
 			generated = SQLGenerator.Delete("example", limit:1);

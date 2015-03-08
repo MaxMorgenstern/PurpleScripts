@@ -185,9 +185,9 @@ namespace PurpleDatabase
 		{
 			if (!is_sql_valid (query, true))
 				return 0;
-			
+
 			int affectedRows = 0;
-			if (open_connection () == true) 
+			if (open_connection () == true)
 			{
 				try
 				{
@@ -202,7 +202,7 @@ namespace PurpleDatabase
 			}
 			return affectedRows;
 		}
-		
+
 		// SELECT
 		private DataTable sql_read_statement(string query, out int rowCount, out int colCount)
 		{
@@ -210,28 +210,28 @@ namespace PurpleDatabase
 			rowCount = 0;
 			DataTable dt = new DataTable();
 			dt.Clear();
-			
+
 			if (!is_sql_valid (query, false))
 				return dt;
-				
-			if (open_connection () == true) 
+
+			if (open_connection () == true)
 			{
 				MySqlDataReader reader = null;
 				try
 				{
 					MySqlCommand cmd = new MySqlCommand (query, connection);
 					reader = cmd.ExecuteReader ();
-					
+
 					if(reader.HasRows)
 					{
 						colCount = reader.FieldCount;
 						bool first_run = true;
-						
+
 						while (reader.Read())
 						{
 							rowCount++;
 							DataRow dt_row = dt.NewRow();
-							
+
 							for(int i=0;i<reader.FieldCount;i++)
 							{
 								if(first_run)
@@ -240,7 +240,7 @@ namespace PurpleDatabase
 								}
 								dt_row[i] = reader[i];
 							}
-							
+
 							dt.Rows.Add(dt_row);
 							first_run = false;
 						}
@@ -303,15 +303,15 @@ namespace PurpleDatabase
 			if(isWrite)
 			{
 				// WRITE
-				invalidWords = new string[] { "char", "nchar", "varchar", "nvarchar", "alter", 
-					"begin", "cast", "create", "cursor", "declare", "drop", "end", "exec", 
+				invalidWords = new string[] { "char", "nchar", "varchar", "nvarchar", "alter",
+					"begin", "cast", "create", "cursor", "declare", "drop", "end", "exec",
 					"execute", "fetch", "kill", "sys", "sysobjects", "syscolumns", "table" };
-			} 
+			}
 			else
 			{
 				// READ
-				invalidWords = new string[] { "char", "nchar", "varchar", "nvarchar", "alter", 
-					"begin", "cast", "create", "cursor", "declare", "delete", "drop", "end", 
+				invalidWords = new string[] { "char", "nchar", "varchar", "nvarchar", "alter",
+					"begin", "cast", "create", "cursor", "declare", "delete", "drop", "end",
 					"exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
 					"table", "update", "''" };
 			}
@@ -324,14 +324,23 @@ namespace PurpleDatabase
 			string output = badWordMatchers.
 				Aggregate(query, (current, matcher) => matcher.Replace(current, String.Empty));
 
-			if(!query.Equals(output))
-			{
+			if (!query.Equals (output))
 				return false;
-			}
 
-			if (invalidSymbols.Any(query.ToLowerInvariant().Contains))
-			{
+			if (invalidSymbols.Any (query.ToLowerInvariant().Contains))
 				return false;
+
+			if (Regex.Matches (query, ";").Count > 1)
+				return false;
+
+			Regex outerRegex = new Regex(@"\S*\s?=");
+			foreach (Match m in outerRegex.Matches(query))
+			{
+				string leftSide = m.Value.Trim(new char[] { '=', ' ' });
+				Regex innerRegex = new Regex(leftSide+@"*\s?=\s?"+leftSide);
+
+				if (innerRegex.Matches (query).Count > 0)
+					return false;
 			}
 
 			return true;
