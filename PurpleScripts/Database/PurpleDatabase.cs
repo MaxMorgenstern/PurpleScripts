@@ -213,7 +213,7 @@ namespace PurpleDatabase
 			
 			if (!is_sql_valid (query, false))
 				return dt;
-			
+				
 			if (open_connection () == true) 
 			{
 				MySqlDataReader reader = null;
@@ -236,7 +236,7 @@ namespace PurpleDatabase
 							{
 								if(first_run)
 								{
-									dt.Columns.Add(reader.GetName(i));
+									dt.Columns.Add(reader.GetName(i), reader.GetType());
 								}
 								dt_row[i] = reader[i];
 							}
@@ -297,32 +297,34 @@ namespace PurpleDatabase
 
 		private bool is_sql_valid(string query, bool isWrite)
 		{
-			bool isSQLValid = true;
 			string[] invalidWords = {};
 
 			if(isWrite)
 			{
+			// TODO: better validation
 				// WRITE
-				invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
-					"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "drop",
-					"end", "exec", "execute", "fetch", "kill", "sys", "sysobjects", "syscolumns",
-					"table", "''" };
+			//	invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
+			//		"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "drop",
+			//		"end", "exec", "execute", "fetch", "kill", "sys", "sysobjects", "syscolumns",
+			//		"table", "''" };
 			} 
 			else
 			{
+			// TODO: better validation "_created"
 				// READ
-				invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
-					"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
-					"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
-					"table", "update", "''" };
+			//	invalidWords = new string[] { "--", ";--", "/*", "*/", "@@", "@", "char", "nchar", "varchar",
+			//		"nvarchar", "alter", "begin", "cast", "create", "cursor", "declare", "delete", "drop",
+			//		"end", "exec", "execute", "fetch", "insert", "kill", "sys", "sysobjects", "syscolumns",
+			//		"table", "update", "''" };
 			}
+			
 
 			if (invalidWords.Any(query.ToLowerInvariant().Contains))
 			{
 				return false;
 			}
 
-			return isSQLValid;
+			return true;
 		}
 
 
