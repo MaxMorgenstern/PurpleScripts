@@ -10,12 +10,28 @@ namespace PurpleConfig
 		public static int MaxPlayer { get { return ItemIds.getConfigInt ("Network.MaxPlayer"); } }
 		public static string Password { get { return ItemIds.getConfigString ("Network.Password"); } }
 		public static int Pause { get { return ItemIds.getConfigInt ("Network.Pause"); } }
-
+	
 		public static class Server {
 			public static string Name { get { return ItemIds.getConfigString ("Network.Server.Name"); } }
 			public static string Type { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
 			public static string IPScript { get { return ItemIds.getConfigString ("Network.Server.IPScript"); } }
 			public static int Delay { get { return ItemIds.getConfigInt ("Network.Server.ActionDelay"); } }
+			public static string Host { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
+			public static int Port { get { return ItemIds.getConfigInt ("Network.Server.Port"); } }
+			public static string Password { get { return ItemIds.getConfigString ("Network.Server.Password"); } }
+			public static bool AllowMonitoring { get { return ItemIds.getConfigBoolean ("Network.Server.AllowMonitoring"); } }
+			public static int ActionDelay { get { return ItemIds.getConfigInt ("Network.Server.ActionDelay"); } }
+
+			public static class Clients {
+				public static int Max { get { return ItemIds.getConfigInt ("Network.Server.Clients.Max"); } }
+				public static int AuthentificationTimeout { get { 
+						return ItemIds.getConfigInt ("Network.Server.Clients.AuthentificationTimeout"); } }
+			}
+			
+			public static class Spam {
+				public static bool Prevention { get { return ItemIds.getConfigBoolean ("Network.Server.Spam.Prevention"); } }
+				public static bool Response { get { return ItemIds.getConfigBoolean ("Network.Server.Spam.Response"); } }
+			}
 		}
 
 		public static class Message {
