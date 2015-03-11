@@ -3,7 +3,8 @@ namespace PurpleConfig
 {
 	// Networking /////////////////////////
 	public static class Network {
-		public static string IP { get { return ItemIds.getConfigString ("Network.IP"); } }
+		// TODO: use as alternative to host
+		//public static string IP { get { return ItemIds.getConfigString ("Network.IP"); } }
 		public static string Host { get { return ItemIds.getConfigString ("Network.Host"); } }
 		public static int Port { get { return ItemIds.getConfigInt ("Network.Port"); } }
 		public static int MaxPlayer { get { return ItemIds.getConfigInt ("Network.MaxPlayer"); } }
@@ -97,6 +98,28 @@ namespace PurpleConfig
 		public static class Sender {
 			public static string Address { get { return ItemIds.getConfigString ("Mail.Sender.Address"); } }
 			public static string Name { get { return ItemIds.getConfigString ("Mail.Sender.Name"); } }
+		}
+	}
+
+	// ACCOUNT /////////////////////////
+	public static class Account {
+		public static class User {
+			public static class Name {
+				public static int MinLength { get { return ItemIds.getConfigInt ("Account.User.Name.MinLength"); } }
+				public static int MaxLength { get { return ItemIds.getConfigInt ("Account.User.Name.MaxLength"); } }
+			}
+			public static class Password {
+				public static int MinLength { get { return ItemIds.getConfigInt ("Account.User.Password.MinLength"); } }
+				public static int MaxLength { get { return ItemIds.getConfigInt ("Account.User.Password.MaxLength"); } }
+
+				public static class Strength {
+					public static bool UpperCase { get { return ItemIds.getConfigBoolean ("Account.User.Password.Strength.UpperCase"); } }
+					public static bool LowerCase { get { return ItemIds.getConfigBoolean ("Account.User.Password.Strength.LowerCase"); } }
+					public static bool DecimalDigit { get { return ItemIds.getConfigBoolean ("Account.User.Password.Strength.DecimalDigit"); } }
+					public static bool SpecialCharacter { get { return ItemIds.getConfigBoolean ("Account.User.Password.Strength.SpecialCharacter"); } }
+					public static string AllowedSpecialChars { get { return ItemIds.getConfigString ("Account.User.Password.AllowedSpecialChars"); } }
+				}
+			}
 		}
 	}
 }
