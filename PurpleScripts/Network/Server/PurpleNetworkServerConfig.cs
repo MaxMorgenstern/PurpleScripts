@@ -29,27 +29,27 @@ namespace PurpleNetwork.Server
 		// CONSTRUCTOR
 		public ServerConfig ()
 		{
-			ServerType 		= ServerTypes.Multi;
+			ServerType 		= parse_server_type (PurpleConfig.Network.Server.Type);
 			ServerID 		= System.Guid.NewGuid ();
 
-			ServerHost 		= "localhost";
-			ServerName 		= "PurpleServer";
-			ServerPort 		= 25001;
+			ServerHost 		= PurpleConfig.Network.Server.Host;
+			ServerName 		= PurpleConfig.Network.Server.Name;
+			ServerPort 		= PurpleConfig.Network.Server.Port;
 			
-			ServerPassword 	= String.Empty;
-			ServerMaxClients= 32;
-			ServerAllowMonitoring = true;
+			ServerPassword 	= PurpleConfig.Network.Server.Password;
+			ServerMaxClients = PurpleConfig.Network.Server.Clients.Max;
+			ServerAllowMonitoring = PurpleConfig.Network.Server.AllowMonitoring;
 
-			ClientAuthentificationTimeout = 20;
+			ClientAuthentificationTimeout = PurpleConfig.Network.Server.Clients.AuthentificationTimeout;
 
-			SpamPrevention 	= true;
-			SpamResponse 	= false;
+			SpamPrevention 	= PurpleConfig.Network.Server.Spam.Prevention;
+			SpamResponse 	= PurpleConfig.Network.Server.Spam.Response;
 
-			DatabaseHost 	= "localhost";
-			DatabaseName 	= "PurpleDatabase";
-			DatabasePort 	= 3306;
-			DatabaseUser 	= "root";
-			DatabasePassword= String.Empty;
+			DatabaseHost 	= PurpleConfig.Database.IP;
+			DatabaseName 	= PurpleConfig.Database.Name;
+			DatabasePort 	= PurpleConfig.Database.Port;
+			DatabaseUser 	= PurpleConfig.Database.User;
+			DatabasePassword= PurpleConfig.Database.Password;
 		}
 		
 		public void SetType(string serverType)

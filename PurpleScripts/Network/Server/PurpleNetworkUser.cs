@@ -1,26 +1,30 @@
 using UnityEngine;
 using System.Collections;
 using System;
+using System.Data;
 
 namespace PurpleNetwork.Server
 {
 	public class PurpleNetworkUser
 	{
 		public NetworkPlayer 	UserReference;
-
-		public Guid				UserID;
+		
+		public Guid				UserGUID;
+		public int				UserID;
 		public UserTypes		UserType;
 		public bool				UserAuthenticated;
 		public DateTime			UserConnectedTime;
 
 		public string			UserName;
 		public string			UserToken;
+		public DateTime			UserTokenCreated;
 
 
 		// CONSTRUCTOR
 		public PurpleNetworkUser ()
 		{
-			UserID 				= new Guid ();
+			UserGUID 			= new Guid ();
+			UserID				= -1;
 			UserType 			= UserTypes.User;
 			UserAuthenticated 	= false;
 			UserConnectedTime 	= DateTime.Now;
@@ -33,13 +37,28 @@ namespace PurpleNetwork.Server
 		{
 			UserReference 		= player;
 
-			UserID 				= new Guid ();
+			UserGUID 			= new Guid ();
+			UserID				= -1;
 			UserType 			= UserTypes.User;
 			UserAuthenticated 	= false;
 			UserConnectedTime 	= DateTime.Now;
 
 			UserName			= String.Empty;
 			UserToken 			= String.Empty;
+			UserTokenCreated	= DateTime.MinValue;
+		}
+
+		public DataTable GetAsDataTable()
+		{
+			DataTable table = new DataTable();
+			table.Columns.Add("id", typeof(int));
+			table.Columns.Add("username", typeof(string));
+			table.Columns.Add("password", typeof(string));
+			table.Columns.Add("token", typeof(string));
+			table.Columns.Add("token_created", typeof(DateTime));
+
+			table.Rows.Add(UserID, UserName, string.Empty, UserToken, UserTokenCreated);
+			return table;
 		}
 	}
 }

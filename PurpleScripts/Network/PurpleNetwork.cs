@@ -84,6 +84,7 @@ namespace PurpleNetwork
 				networkPort = PurpleConfig.Network.Port;
 				networkPassword = PurpleConfig.Network.Password;
 				networkPause = PurpleConfig.Network.Pause;
+				serverPlayer = PurpleConfig.Network.MaxPlayer;
 			} catch(Exception e){
 				Debug.LogError("Can not read Purple Config! Set network pause to 500ms. " + e.ToString());
 			}
