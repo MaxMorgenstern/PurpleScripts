@@ -1,9 +1,10 @@
-using UnityEngine;
-using System.Collections;
 using System;
+using System.Collections;
 using System.Data;
+using UnityEngine;
+using PurpleNetwork;
 
-namespace PurpleNetwork.Server
+namespace Entities.PurpleNetwork
 {
 	public class PurpleNetworkUser
 	{

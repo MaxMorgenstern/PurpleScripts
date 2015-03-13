@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Entities.PurpleNetwork;
+using Entities.PurpleNetwork.Server;
+using _PurpleMessages = Entities.PurpleMessages;
 
 // This is just an idea to provide a client and (autoritative) server class
 // This class is not optimized for games with a lot of server interaction but for
@@ -373,9 +376,9 @@ namespace PurpleNetwork.Server
 			return new int[] { time.Days, time.Hours, time.Minutes, time.Seconds };
 		}
 		
-		private PurpleMessages.Server.Message create_broadcast_message(string data)
+		private _PurpleMessages.Server.Message create_broadcast_message(string data)
 		{
-			PurpleMessages.Server.Message PSM = new PurpleMessages.Server.Message ();
+			_PurpleMessages.Server.Message PSM = new _PurpleMessages.Server.Message ();
 			PSM.message = data;
 			return PSM;
 		}

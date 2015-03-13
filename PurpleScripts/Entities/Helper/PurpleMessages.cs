@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-namespace PurpleMessages
+namespace Entities.PurpleMessages
 {
 	// BASE MESSAGE CLASS ////////////////////////////
 	public class PurpleMessage

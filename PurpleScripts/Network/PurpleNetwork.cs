@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _PurpleSerializer = PurpleSerializer;
+using _PurpleMessages = Entities.PurpleMessages;
 
 /**
  *		using _PurpleMessages = PurpleNetwork.Messages;
@@ -554,7 +555,7 @@ namespace PurpleNetwork
 
 					if(serverSpamResponse && Spam.Prevention.SendSpamResponse(clientID))
 					{
-						PurpleMessages.Server.SpamPrevention spamPreventionMessage = new PurpleMessages.Server.SpamPrevention();
+						_PurpleMessages.Server.SpamPrevention spamPreventionMessage = new _PurpleMessages.Server.SpamPrevention();
 						Spam.Prevention.GetRequestsInTimespan(clientID, 
 											out spamPreventionMessage.requestsInTime, 
 						                	out spamPreventionMessage.requestTimeSpan);

@@ -1,6 +1,7 @@
 using System;
+using PurpleNetwork;
 
-namespace PurpleNetwork.Server
+namespace Entities.PurpleNetwork.Server
 {
 	public class ServerConfig
 	{

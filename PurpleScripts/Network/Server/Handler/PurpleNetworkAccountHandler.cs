@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using _PurpleMessages = Entities.PurpleMessages;
 
 namespace PurpleNetwork.Server.Handler
 {
@@ -8,7 +9,7 @@ namespace PurpleNetwork.Server.Handler
 	{
 		public static void register_account_handler()
 		{
-			PurpleNetwork.AddListener<PurpleMessages.User.CreateAccount>("server_create_account", 
+			PurpleNetwork.AddListener<_PurpleMessages.User.CreateAccount>("server_create_account", 
 			        server_create_account_handler);
 		}
 

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
+using Entities.PurpleNetwork;
+using _PurpleMessages = Entities.PurpleMessages;
 
 namespace PurpleNetwork.Server.Handler
 {
@@ -15,10 +17,10 @@ namespace PurpleNetwork.Server.Handler
 			baseHandlerTick.TriggerEvent += periodically_validate_player;
 			baseHandlerTick.Trigger (60, PurpleServer.CurrentConfig.ClientAuthentificationTimeout/4);
 			
-			PurpleNetwork.AddListener<PurpleMessages.Server.Message>("server_broadcast",
+			PurpleNetwork.AddListener<_PurpleMessages.Server.Message>("server_broadcast",
 			                                                         server_broadcast_handler);
 			
-			PurpleNetwork.AddListener<PurpleMessages.Server.Message>("player_authenticate",
+			PurpleNetwork.AddListener<_PurpleMessages.Server.Message>("player_authenticate",
 			                                                         player_authenticate_handler);
 			
 			PurpleNetwork.PurplePlayerConnected += on_player_connected;

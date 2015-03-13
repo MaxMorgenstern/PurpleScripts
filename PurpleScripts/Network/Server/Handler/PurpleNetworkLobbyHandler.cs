@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using _PurpleMessages = Entities.PurpleMessages;
 
 namespace PurpleNetwork.Server.Handler
 {
@@ -8,9 +9,9 @@ namespace PurpleNetwork.Server.Handler
 	{
 		public static void register_lobby_handler()
 		{
-			PurpleNetwork.AddListener<PurpleMessages.User.CreateCharacter>("lobby_create_character", 
+			PurpleNetwork.AddListener<_PurpleMessages.User.CreateCharacter>("lobby_create_character", 
 			       lobby_create_character_handler);
-			PurpleNetwork.AddListener<PurpleMessages.User.CreateGame>("lobby_create_game", 
+			PurpleNetwork.AddListener<_PurpleMessages.User.CreateGame>("lobby_create_game", 
 			       lobby_create_game_handler);
 		}
 
