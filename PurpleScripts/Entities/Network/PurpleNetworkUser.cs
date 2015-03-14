@@ -53,12 +53,13 @@ namespace Entities.PurpleNetwork
 		{
 			DataTable table = new DataTable();
 			table.Columns.Add("id", typeof(int));
+			table.Columns.Add("guid", typeof(int));
 			table.Columns.Add("username", typeof(string));
 			table.Columns.Add("password", typeof(string));
 			table.Columns.Add("token", typeof(string));
 			table.Columns.Add("token_created", typeof(DateTime));
 
-			table.Rows.Add(UserID, UserName, string.Empty, UserToken, UserTokenCreated);
+			table.Rows.Add(UserID, UserGUID, UserName, string.Empty, UserToken, UserTokenCreated);
 			return table;
 		}
 	}
