@@ -1,0 +1,96 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GenPurpleCSharpModel`(in pTableName VARCHAR(255) )
+BEGIN
+DECLARE vClassName varchar(255);
+declare vClassCode mediumtext;
+declare v_codeChunk varchar(1024);
+DECLARE v_finished INTEGER DEFAULT 0;
+DEClARE code_cursor CURSOR FOR 
+    SELECT code FROM temp1; 
+
+DECLARE CONTINUE HANDLER 
+        FOR NOT FOUND SET v_finished = 1;
+
+set vClassCode ='';
+/* Make class name*/
+
+    SELECT (CONCAT('Purple',UCASE(MID(col1,1,1)),LCASE(MID(col1,2)))) into vClassName
+    FROM(
+    SELECT ColumnName1 as col1
+    FROM
+    (SELECT pTableName as ColumnName1) A) B;
+
+    /*store all properties into temp table*/
+    CREATE TEMPORARY TABLE IF NOT EXISTS  temp1 ENGINE=MyISAM  
+    as (
+    select concat( 'public ', ColumnType , ' ' , FieldName,' { get; set; }') code
+    FROM(
+    SELECT col1 AS FieldName, 
+    case DATA_TYPE 
+            when 'bigint' then 'long'
+            when 'binary' then 'byte[]'
+            when 'bit' then 'bool'
+            when 'char' then 'string'
+            when 'date' then 'DateTime'
+            when 'datetime' then 'DateTime'
+            when 'datetime2' then 'DateTime'
+            when 'datetimeoffset' then 'DateTimeOffset'
+            when 'decimal' then 'decimal'
+            when 'float' then 'float'
+            when 'image' then 'byte[]'
+            when 'int' then 'int'
+            when 'money' then 'decimal'
+            when 'nchar' then 'char'
+            when 'ntext' then 'string'
+            when 'numeric' then 'decimal'
+            when 'nvarchar' then 'string'
+            when 'real' then 'double'
+            when 'smalldatetime' then 'DateTime'
+            when 'smallint' then 'short'
+            when 'mediumint' then 'INT'
+            when 'smallmoney' then 'decimal'
+            when 'text' then 'string'
+            when 'time' then 'TimeSpan'
+            when 'timestamp' then 'DateTime'
+            when 'tinyint' then 'byte'
+            when 'uniqueidentifier' then 'Guid'
+            when 'varbinary' then 'byte[]'
+            when 'varchar' then 'string'
+            when 'year' THEN 'UINT'
+            when 'enum' THEN 'string'
+            else 'UNKNOWN_' + DATA_TYPE
+        end ColumnType
+    FROM(
+    select ColumnName1 as col1, DATA_TYPE
+    from
+    (SELECT COLUMN_NAME as ColumnName1,
+    DATA_TYPE, COLUMN_TYPE FROM INFORMATION_SCHEMA.COLUMNS  WHERE table_name = pTableName) A) B)C);
+
+    set vClassCode = '';
+    /* concat all properties*/
+    OPEN code_cursor;
+ 
+            get_code: LOOP
+         
+                FETCH code_cursor INTO v_codeChunk;
+         
+                IF v_finished = 1 THEN 
+                    LEAVE get_code;
+                END IF;
+                
+                -- build code
+                select  CONCAT(vClassCode,'\r\n', v_codeChunk) into  vClassCode ;
+         
+            END LOOP get_code;
+     
+        CLOSE code_cursor;
+
+drop table temp1;
+/*make class*/
+select concat('public class ',vClassName,'\r\n{', vClassCode,'\r\n}');
+END
