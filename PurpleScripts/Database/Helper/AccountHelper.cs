@@ -1,10 +1,12 @@
-using UnityEngine;
+using System;
 using System.Collections;
-using PurpleDatabase.Extension;
-using PurpleNetwork.Server;
 using System.Data;
 using System.Linq;
-using System;
+using System.Text.RegularExpressions;
+using UnityEngine;
+using Entities.PurpleNetwork;
+using PurpleDatabase.Extension;
+using PurpleNetwork.Server;
 
 namespace PurpleDatabase.Helper
 {
@@ -42,6 +44,15 @@ namespace PurpleDatabase.Helper
 		// TODO
 		public static bool Register(string todo)
 		{
+			string testusername = "testbuddy";
+			string testpassword = "helloworld";
+
+			if (PurpleAccountValidator.ValidatePasswordStrength (testpassword) 
+			    	&& PurpleAccountValidator.ValidateUsername (testusername))
+			{
+
+			}
+
 			// TODO: usernanme regex + password regex
 			/*
 			Username
@@ -201,7 +212,6 @@ VALUES ('INSERT GUID HERE', 'INSERTUSERNAME', 'PASSWORDHASH', 'MAILADDRESS', NUL
 			// INSERT INTO `account_log` (`account_id`, `log`, `timestamp`) VALUES ('1', 'Logdata', now());
 			return SQLGenerator.New ().Insert ("account_log", "account_id, log, timestamp").Values (account_id+", "+comment+", now()").Execute();
 		} 
-
 
 	}
 }
