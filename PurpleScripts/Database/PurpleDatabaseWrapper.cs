@@ -302,6 +302,18 @@ namespace PurpleDatabase
 			_SQLQuery.disable_escape_symbol ();
 		}
 
+		// TABLE PREFIX
+		public static void EnableTablePrefix(string prefix) {
+			_SQLQuery.enable_table_prefix (prefix);
+		}
+
+		public static void EnableTablePrefix() {
+			_SQLQuery.enable_table_prefix ();
+		}
+
+		public static void disableTablePrefix() {
+			_SQLQuery.disable_table_prefix ();
+		}
 
 		// PRIVATE FUNCTIONS /////////////////////////
 		private static void add_select(string select)
@@ -425,8 +437,9 @@ namespace PurpleDatabase
 			private static string keyDelimiter 		= ",";
 			private static string keyBracketOpen 	= "(";
 			private static string keyBracketClose 	= ")";
-
+			
 			private static string activeEscapeSymbol= "`";
+			private static string activeTablePrefix	= "";
 
 			private static char[] _trimSymbols 		= new char[] { ' ', activeEscapeSymbol[0], keyStringEscapeSymbol[0] };
 			private static string[] _splitChar 		= new string[] { "<=", ">=", "=", ">", "<", keyLike };
@@ -450,6 +463,23 @@ namespace PurpleDatabase
 				activeEscapeSymbol = String.Empty;
 			}
 
+			public void enable_table_prefix(string prefix)
+			{
+				activeTablePrefix = prefix;
+			}
+
+			public void enable_table_prefix()
+			{
+				activeTablePrefix = PurpleConfig.Database.Prefix;
+			}
+			
+			public void disable_table_prefix()
+			{
+				activeTablePrefix = String.Empty;
+			}
+
+
+
 
 			// MAIN ////////////////////////////
 
@@ -472,7 +502,7 @@ namespace PurpleDatabase
 				}
 
 				// TABLE // TODO - more than one table!?
-				Add(AddEscapeSymbol(Table));
+				Add(AddEscapeSymbol(activeTablePrefix + Table));
 
 				if (Type == TypeEnum.INSERT_INTO)
 				{

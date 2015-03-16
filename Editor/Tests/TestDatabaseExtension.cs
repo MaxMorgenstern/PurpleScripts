@@ -258,8 +258,12 @@ namespace PurpleDatabaseWrapperExtension
 			string generated = SQLGenerator.New().Update ("one=null", "tabletwo",  "two = 'Test2'").Update ("three=dummy2");
 			Assert.AreEqual (expected, generated);
 
-
+			
 			generated = SQLGenerator.New().Table ("tabletwo").Update ("one=null").Update ("three=dummy2").Where ("two = 'Test2'");
+			Assert.AreEqual (expected, generated);
+
+			
+			generated = SQLGenerator.New().Table ("tabletwo").Update (new string[] {"one=null","three=dummy2"}).Where ("two = 'Test2'");
 			Assert.AreEqual (expected, generated);
 
 		}

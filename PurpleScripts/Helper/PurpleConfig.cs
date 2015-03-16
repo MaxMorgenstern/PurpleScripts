@@ -75,6 +75,7 @@ namespace PurpleConfig
 		public static string User { get { return ItemIds.getConfigString ("Database.User"); } }
 		public static string Password { get { return ItemIds.getConfigString ("Database.Password"); } }
 		public static int Port { get { return ItemIds.getConfigInt ("Database.Port"); } }
+		public static string Prefix { get { return ItemIds.getConfigString ("Database.Prefix"); } }
 	}
 
 	// Password generation/validation /////////////////////////
