@@ -513,12 +513,6 @@ namespace PurpleDatabase
 				{
 					Add(keySet);
 					build_set_fields();
-
-					if (Limit != 0)
-					{
-						Add(keyLimit);
-						Add(Limit.ToString());
-					}
 				}
 
 
@@ -552,7 +546,7 @@ namespace PurpleDatabase
 					}
 				}
 
-				if (Type == TypeEnum.DELETE)
+				if (Type == TypeEnum.DELETE || Type == TypeEnum.UPDATE)
 				{
 					if (Limit != 0)
 					{
