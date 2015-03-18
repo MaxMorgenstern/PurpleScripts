@@ -297,7 +297,7 @@ namespace PurpleDatabase
 
 		private bool is_sql_valid(string query, bool isWrite)
 		{
-			string[] invalidSymbols = new string[] { "--", ";--", "/*", "*/", "@@", "@", "''" };
+			string[] invalidSymbols = new string[] { "--", ";--", "/*", "*/", "@@", "''" };
 			string[] invalidWords = {};
 
 			if(isWrite)

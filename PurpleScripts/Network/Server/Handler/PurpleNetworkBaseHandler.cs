@@ -47,6 +47,8 @@ namespace PurpleNetwork.Server.Handler
 			// save 2 spaces if monitoring is allowed otherwise just one for Admin/Mod/GM
 			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 2 : 1;
 
+			// TODO:
+
 			/*
 			PurpleMessages.User.Authentication auth = 
 				PurpleSerializer.StringToObjectConverter<PurpleMessages.User.Authentication> (dataObject);
