@@ -9,49 +9,55 @@ namespace Entities.Database
 {
 	public static class PurpleDatabaseObject
 	{
-		// TODO - SELECT: PurpleAccount + id
+		// PurpleAccount ////////////////////////////
 
-		public static string ToSQLInsert(this PurpleAccount data)  
-		{
-			Dictionary<string, string> dict = convert_to_dictionary (data);
-
-			return SQLGenerator.New ().Insert (get_table_name (data), 
-						dictionary_to_insertarray(dict));
-		}
-		
-		public static string ToSQLUpdate(this PurpleAccount data) 
-		{
-			Dictionary<string, string> dict = convert_to_dictionary (data);
-
-			return SQLGenerator.New ().Update (dictionary_to_updatearray (dict), 
-						get_table_name (data)).Where ("id=" + data.id);
-		}
-		
-		public static string ToSQLDelete(this PurpleAccount data) 
-		{
-			return SQLGenerator.New ().Delete(get_table_name (data))
-						.Where ("id=" + data.id);
-		}
-
-
-
-
-
-
-
-
-
-		public static string ToSQLInsertTEST(this PurpleAccount data)  
+		public static string ToSQLInsert(this PurpleAccount data)
 		{
 			return to_sql_insert (data);
 		}
 
-		public static string ToSQLUpdateTEST(this PurpleAccount data) 
+		public static string ToSQLUpdate(this PurpleAccount data)
 		{
 			return to_sql_update (data, data.id);
 		}
 
-		public static string ToSQLDeleteTEST(this PurpleAccount data) 
+		public static string ToSQLDelete(this PurpleAccount data)
+		{
+			return to_sql_delete(data, data.id);
+		}
+
+
+		// PurpleAccountLog ////////////////////////////
+
+		public static string ToSQLInsert(this PurpleAccountLog data)
+		{
+			return to_sql_insert (data);
+		}
+
+		public static string ToSQLUpdate(this PurpleAccountLog data)
+		{
+			return to_sql_update (data, data.id);
+		}
+
+		public static string ToSQLDelete(this PurpleAccountLog data)
+		{
+			return to_sql_delete(data, data.id);
+		}
+
+
+		// PurpleAccountWarnings ////////////////////////////
+
+		public static string ToSQLInsert(this PurpleAccountWarnings data)
+		{
+			return to_sql_insert (data);
+		}
+
+		public static string ToSQLUpdate(this PurpleAccountWarnings data)
+		{
+			return to_sql_update (data, data.id);
+		}
+
+		public static string ToSQLDelete(this PurpleAccountWarnings data)
 		{
 			return to_sql_delete(data, data.id);
 		}
@@ -60,31 +66,36 @@ namespace Entities.Database
 
 
 
-		
 
 
-		
+
+
 		// PRIVATE /////////////
 
-		private static string to_sql_insert<T>(T data) 
-		{			
-			Dictionary<string, string> dict = convert_to_dictionary (data);
-			return SQLGenerator.New ().Insert (get_table_name (data), 
-			                                   dictionary_to_insertarray(dict)).Single();
+		private static string to_sql_select<T>(T data, int id, string guid)
+		{
+			return SQLGenerator.New ().Select ("*", get_table_name (data))
+				.Where ("id=" + id).Where ("guid=" + guid, "OR").Single();
 		}
-		
-		private static string to_sql_update<T>(T data, int id) 
+
+		private static string to_sql_insert<T>(T data)
 		{
 			Dictionary<string, string> dict = convert_to_dictionary (data);
-			return SQLGenerator.New ().Update (dictionary_to_updatearray (dict), 
+			return SQLGenerator.New ().Insert (get_table_name (data),
+			                                   dictionary_to_insertarray(dict)).Single();
+		}
+
+		private static string to_sql_update<T>(T data, int id)
+		{
+			Dictionary<string, string> dict = convert_to_dictionary (data);
+			return SQLGenerator.New ().Update (dictionary_to_updatearray (dict),
 			                                   get_table_name (data)).Where ("id=" + id).Single();
 		}
-		
-		private static string to_sql_delete<T>(T data, int id) 
+
+		private static string to_sql_delete<T>(T data, int id)
 		{
 			return SQLGenerator.New ().Delete(get_table_name (data)).Where ("id=" + id).Single();
 		}
-
 
 
 		// PRIVATE HELPER /////////////
@@ -92,7 +103,7 @@ namespace Entities.Database
 		private static string[] dictionary_to_updatearray(Dictionary<string, string> dict)
 		{
 			List<string> returnvalue = new List<string> ();
-			
+
 			foreach(KeyValuePair<string, string> entry in dict)
 			{
 				returnvalue.Add(entry.Key + "=" + entry.Value);
@@ -103,10 +114,11 @@ namespace Entities.Database
 		private static string[] dictionary_to_insertarray(Dictionary<string, string> dict)
 		{
 			List<string> returnvalue = new List<string> ();
-			
+
 			foreach(KeyValuePair<string, string> entry in dict)
 			{
-				returnvalue.Add(entry.Key + "=" + entry.Value);
+				if(entry.Key != "id")
+					returnvalue.Add(entry.Key + "=" + entry.Value);
 			}
 			return new string[] { string.Join(", ", returnvalue.ToArray()) };
 		}
@@ -120,16 +132,53 @@ namespace Entities.Database
 			return PurpleConfig.Database.Prefix + tableName;
 		}
 
-
-		private static Dictionary<string, string> convert_to_dictionary<T>(T account)
+		
+		// TODO: 
+		// what if nothing is set? null is not converted right
+		// DateTime and Date is not working!
+		// Bool is not working
+		private static Dictionary<string, string> convert_to_dictionary<T>(T data)
 		{
-			Type classtype = typeof(T); 
+			string nullDate = "0001-01-01 00:00:00";
+			string nullGUID = new Guid ().ToString();
+			string nullValue = "NULL";
+			
 			Dictionary<string, string> dict = new Dictionary<string, string> ();
-			foreach (PropertyInfo singleProperty in classtype.GetProperties())  
-			{  
+			
+			foreach (PropertyInfo singleProperty in typeof(T).GetProperties()) 
+			{ 
 				try {
-					dict.Add(singleProperty.Name, 
-					         account.GetType().GetProperty(singleProperty.Name).GetValue(account, null).ToString());
+					string propertyValue = string.Empty;
+					switch (Type.GetTypeCode(singleProperty.PropertyType))
+					{
+					case TypeCode.DateTime:
+						DateTime dt = (DateTime)singleProperty.GetValue(data, null);
+						DateTime dtNull = Convert.ToDateTime(nullDate);         
+						
+						if(!dt.Equals(dtNull) && !dt.Equals(DateTime.MinValue))
+							propertyValue = dt.ToString("yyyy-MM-dd HH:mm:ss");
+						break;
+						
+					case TypeCode.Boolean:
+						bool value = Convert.ToBoolean(singleProperty.GetValue(data, null));
+						propertyValue = (value) ? "1" : "0";
+						break;
+						
+					default:
+						object tmpPropertyValue = singleProperty.GetValue(data, null);
+						if(tmpPropertyValue != null && tmpPropertyValue.ToString() != nullGUID)
+							propertyValue = tmpPropertyValue.ToString();
+						break;
+					}
+					
+					if(!String.IsNullOrEmpty(propertyValue))
+					{
+						dict.Add(singleProperty.Name, propertyValue);
+					}
+					else
+					{
+						dict.Add(singleProperty.Name, nullValue);
+					}
 				} catch {
 					continue;
 				}
