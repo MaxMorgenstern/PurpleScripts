@@ -106,7 +106,8 @@ namespace Entities.Database
 
 			foreach(KeyValuePair<string, string> entry in dict)
 			{
-				returnvalue.Add(entry.Key + "=" + entry.Value);
+				if(entry.Key != "id")
+					returnvalue.Add(entry.Key + "=" + entry.Value);
 			}
 			return returnvalue.ToArray();
 		}
@@ -132,17 +133,13 @@ namespace Entities.Database
 			return PurpleConfig.Database.Prefix + tableName;
 		}
 
-		
-		// TODO: 
-		// what if nothing is set? null is not converted right
-		// DateTime and Date is not working!
-		// Bool is not working
+
 		private static Dictionary<string, string> convert_to_dictionary<T>(T data)
 		{
 			string nullDate = "0001-01-01 00:00:00";
 			string nullGUID = new Guid ().ToString();
 			string nullValue = "NULL";
-			
+
 			Dictionary<string, string> dict = new Dictionary<string, string> ();
 			
 			foreach (PropertyInfo singleProperty in typeof(T).GetProperties()) 
