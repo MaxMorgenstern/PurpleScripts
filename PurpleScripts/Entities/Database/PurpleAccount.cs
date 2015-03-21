@@ -17,7 +17,14 @@ namespace Entities.Database
 
 			set
 			{
-				_guid = new Guid(value);
+				if (String.IsNullOrEmpty(value))
+				{
+					NewGuid();
+				}
+				else
+				{
+					_guid = new Guid(value);
+				}
 			}
 		}
 		public string username { get; set; }
@@ -40,5 +47,10 @@ namespace Entities.Database
 		public DateTime token_created { get; set; }
 		public string comment { get; set; }
 		public bool active { get; set; } 
+
+		public void NewGuid()
+		{
+			_guid = Guid.NewGuid ();
+		}
 	}
 }
