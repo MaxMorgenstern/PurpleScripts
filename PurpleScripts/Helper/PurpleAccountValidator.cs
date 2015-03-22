@@ -16,7 +16,7 @@ public class PurpleAccountValidator
 		
 		if ( username.Length >= MIN_LENGTH && username.Length <= MAX_LENGTH  )
 		{
-			Regex r = new Regex("^[a-zA-Z0-9]*$");
+			Regex r = new Regex("^[a-zA-Z0-9-_]*$");
 			if (r.IsMatch(username))
 				return true;
 		}

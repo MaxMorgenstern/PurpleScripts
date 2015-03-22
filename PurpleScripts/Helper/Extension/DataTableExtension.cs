@@ -32,8 +32,7 @@ public static class DataTableExtension
 		}
 		catch
 		{
-			T obj = Activator.CreateInstance<T>(); 
-			return obj;
+			return default(T);
 		}
 	}
 
