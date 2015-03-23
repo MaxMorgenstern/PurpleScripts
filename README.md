@@ -58,7 +58,7 @@ Class to store/load data locally.
 Version
 ----
 
-0.3.46.1357 (at the time this readme was updated)
+0.3.59.818 (at the time this readme was updated)
 
 
 

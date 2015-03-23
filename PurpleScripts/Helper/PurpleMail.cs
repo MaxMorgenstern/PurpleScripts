@@ -112,6 +112,11 @@ public class PurpleMail : MonoBehaviour
 		Instance.add_dictionary_entry (key, value);
 	}
 
+	public static void RemoveDictionaryEntry(string key, string value)
+	{
+		Instance.remove_dictionary_entry (key);
+	}
+
 
 	// TODO ...
 	/*
@@ -182,15 +187,16 @@ public class PurpleMail : MonoBehaviour
 			client.EnableSsl = mailUseSSL;
 
 			client.Send(mail);
+			Debug.Log ("Mail sent: " + title + " - " + recipient);
 			return true;
 		}
 		catch (SmtpException exc)
 		{
-			Debug.Log("Fehler: "+ exc.Message);
+			Debug.LogWarning("Error: "+ exc.Message);
 		}
 		catch (Exception exce)
 		{
-			Debug.Log(exce);
+			Debug.LogError(exce);
 		}
 		return false;
 	}
@@ -232,6 +238,11 @@ public class PurpleMail : MonoBehaviour
 	{
 		placeholderDictionary.Remove (key);
 		placeholderDictionary.Add (key, value);
+	}
+
+	private void remove_dictionary_entry(string key)
+	{
+		placeholderDictionary.Remove (key);
 	}
 
 	private string get_placeholder_entry(string entry)
