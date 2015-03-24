@@ -13,17 +13,18 @@ public class PurpleMailGenerator
 		{
 			string body = string.Empty;
 			string bodyFallback = string.Empty;
+			string culture = recipient.language_code + "-"+recipient.country_code.ToUpper();
+			string languageFallback = PurpleConfig.Mail.Content.Fallback.Language;
+
 			foreach (string filePath in files) 
 			{
-				string culture = recipient.language_code + "-"+recipient.country_code.ToUpper();
 				if(filePath.Contains("/"+culture+"/") || filePath.Contains("\\"+culture+"\\"))
 				{
 					body = File.ReadAllText(filePath);
 					break;
 				}
-				
-				// TODO: fallback to en-EN - config
-				if(filePath.Contains("/en/") || filePath.Contains("\\en\\"))
+
+				if(filePath.Contains("/"+languageFallback+"/") || filePath.Contains("\\"+languageFallback+"\\"))
 				{
 					bodyFallback = File.ReadAllText(filePath);
 				}
@@ -34,11 +35,10 @@ public class PurpleMailGenerator
 
 			if(!string.IsNullOrEmpty(body))
 			{
-				// TODO: fallback title - config
 				Regex titleRegex = new Regex(@"\{(Title:)(.*)\}");
 				string title = titleRegex.Match(body).Groups[2].ToString();
 				if(string.IsNullOrEmpty(title))
-					title = "Default Title";
+					title = PurpleConfig.Mail.Content.Fallback.Title;
 
 				Regex bodyRegex = new Regex(@"\{(Title:).*\}");
 				body = bodyRegex.Replace(body, string.Empty);
@@ -51,6 +51,10 @@ public class PurpleMailGenerator
 
 				// TODO - gender
 				// recipient.gender
+
+				// TODO - token
+
+				// TODO - password
 				
 				PurpleMail.Send (recipient.email, title, body);
 

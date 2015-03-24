@@ -116,6 +116,13 @@ namespace PurpleConfig
 			public static string Address { get { return ItemIds.getConfigString ("Mail.Sender.Address"); } }
 			public static string Name { get { return ItemIds.getConfigString ("Mail.Sender.Name"); } }
 		}
+
+		public static class Content {
+			public static class Fallback { 
+				public static string Language { get { return ItemIds.getConfigString ("Mail.Content.Fallback.Language"); } }
+				public static string Title { get { return ItemIds.getConfigString ("Mail.Content.Fallback.Title"); } }
+			}
+		}
 	}
 
 	// ACCOUNT /////////////////////////
