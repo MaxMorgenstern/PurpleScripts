@@ -49,12 +49,11 @@ public class PurpleMailGenerator
 				PurpleMail.AddDictionaryEntry("LAST_NAME",recipient.last_name);
 				PurpleMail.AddDictionaryEntry("EMAIL",recipient.email);
 
+				string token = PurpleHash.CalculateSHA(recipient.guid) + ":" + PurpleHash.CalculateSHA(recipient.email);
+				PurpleMail.AddDictionaryEntry("TOKEN",token);
+
 				// TODO - gender
 				// recipient.gender
-
-				// TODO - token
-
-				// TODO - password
 				
 				PurpleMail.Send (recipient.email, title, body);
 
