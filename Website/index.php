@@ -7,14 +7,16 @@
 $config = include('config.php');
 
 if (isset($_GET["token"])) {	
-	list($guid, $email) = explode(":", $_GET["token"]);
+	list($guid, $email, $salt) = explode(":", $_GET["token"]);
 
 	$dbconnection = mysql_connect($config["host"],$config["username"],$config["password"]);
 	mysql_select_db($config["database"]) or die("No connection to database!\n");
 	
-	$query = "SELECT guid FROM `account` WHERE SHA1(email) = '".mysql_real_escape_string($email)."' ".
-				"AND SHA1(guid) = '".mysql_real_escape_string($guid)."' ".
-				"LIMIT 1";
+	$salt = mysql_real_escape_string($salt);
+
+	$query = "SELECT guid FROM `account` WHERE SHA1(Concat('".$salt."', email)) = '".mysql_real_escape_string($email)."' ".
+				"AND SHA1(Concat('".$salt."', guid)) = '".mysql_real_escape_string($guid)."' ".
+				"AND `email_verification` IS NULL LIMIT 1";
 
 	$queryResult = mysql_query($query, $dbconnection);
 	while ($lineData = mysql_fetch_assoc($queryResult)) {

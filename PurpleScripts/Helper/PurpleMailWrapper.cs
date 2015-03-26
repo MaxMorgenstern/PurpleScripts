@@ -49,7 +49,9 @@ public class PurpleMailGenerator
 				PurpleMail.AddDictionaryEntry("LAST_NAME",recipient.last_name);
 				PurpleMail.AddDictionaryEntry("EMAIL",recipient.email);
 
-				string token = PurpleHash.CalculateSHA(recipient.guid) + ":" + PurpleHash.CalculateSHA(recipient.email);
+				string salt = PurpleHash.Token ().Substring(0,5);
+				string token = PurpleHash.CalculateSHA(salt + recipient.guid) + ":" + 
+								PurpleHash.CalculateSHA(salt + recipient.email) + ":" + salt;
 				PurpleMail.AddDictionaryEntry("TOKEN",token);
 
 				// TODO - gender
