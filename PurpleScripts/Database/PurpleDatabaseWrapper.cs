@@ -427,6 +427,7 @@ namespace PurpleDatabase
 			private static string keyOffset 		= "OFFSET";
 			private static string keyOrderBy 		= "ORDER BY";
 			private static string keyNULL	 		= "NULL";
+			private static string keyNow	 		= "now()";
 			private static string keyStar 			= "*";
 			private static string keyEnd 			= ";";
 			private static string keySpace 			= " ";
@@ -688,9 +689,10 @@ namespace PurpleDatabase
 
 				str = str.Trim (_trimSymbols);
 				if(object.Equals(str.ToUpper(), keyNULL))
-				{
 					return keyNULL;
-				}
+
+				if(object.Equals(str.ToLower(), keyNow))
+					return keyNow;
 
 				return keyStringEscapeSymbol + str + keyStringEscapeSymbol;
 			}

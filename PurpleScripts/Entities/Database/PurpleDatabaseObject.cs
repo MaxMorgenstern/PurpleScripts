@@ -65,17 +65,20 @@ namespace Entities.Database
 
 
 
-
-
-
+		// TODO - Test
+		public static PurpleAccount ToSQLSelect(this PurpleAccount data, int id = 0)
+		{
+			int identifier = (data.id != 0) ? data.id : id;
+			return to_sql_select(data, identifier).FetchSingle().ToObject<PurpleAccount>();
+		}
 
 
 		// PRIVATE /////////////
 
-		private static string to_sql_select<T>(T data, int id, string guid)
+		private static string to_sql_select<T>(T data, int identifier)
 		{
 			return SQLGenerator.New ().Select ("*", get_table_name (data))
-				.Where ("id=" + id).Where ("guid=" + guid, "OR").Single();
+				.Where ("id=" + identifier).Single();
 		}
 
 		private static string to_sql_insert<T>(T data)
@@ -96,6 +99,7 @@ namespace Entities.Database
 		{
 			return SQLGenerator.New ().Delete(get_table_name (data)).Where ("id=" + id).Single();
 		}
+
 
 
 		// PRIVATE HELPER /////////////
@@ -141,33 +145,33 @@ namespace Entities.Database
 			string nullValue = "NULL";
 
 			Dictionary<string, string> dict = new Dictionary<string, string> ();
-			
-			foreach (PropertyInfo singleProperty in typeof(T).GetProperties()) 
-			{ 
+
+			foreach (PropertyInfo singleProperty in typeof(T).GetProperties())
+			{
 				try {
 					string propertyValue = string.Empty;
 					switch (Type.GetTypeCode(singleProperty.PropertyType))
 					{
 					case TypeCode.DateTime:
 						DateTime dt = (DateTime)singleProperty.GetValue(data, null);
-						DateTime dtNull = Convert.ToDateTime(nullDate);         
-						
+						DateTime dtNull = Convert.ToDateTime(nullDate);
+
 						if(!dt.Equals(dtNull) && !dt.Equals(DateTime.MinValue))
 							propertyValue = dt.ToString("yyyy-MM-dd HH:mm:ss");
 						break;
-						
+
 					case TypeCode.Boolean:
 						bool value = Convert.ToBoolean(singleProperty.GetValue(data, null));
 						propertyValue = (value) ? "1" : "0";
 						break;
-						
+
 					default:
 						object tmpPropertyValue = singleProperty.GetValue(data, null);
 						if(tmpPropertyValue != null && tmpPropertyValue.ToString() != nullGUID)
 							propertyValue = tmpPropertyValue.ToString();
 						break;
 					}
-					
+
 					if(!String.IsNullOrEmpty(propertyValue))
 					{
 						dict.Add(singleProperty.Name, propertyValue);
@@ -182,6 +186,5 @@ namespace Entities.Database
 			}
 			return dict;
 		}
-
 	}
 }
