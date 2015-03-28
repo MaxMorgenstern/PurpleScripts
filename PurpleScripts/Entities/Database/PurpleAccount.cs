@@ -9,7 +9,7 @@ namespace Entities.Database
 	{
 		public int id { get; set; }
 		protected Guid _guid;
-		public string guid { 
+		public string guid {
 			get
 			{
 				return _guid.ToString();
@@ -46,7 +46,7 @@ namespace Entities.Database
 		public string token { get; set; }
 		public DateTime token_created { get; set; }
 		public string comment { get; set; }
-		public bool active { get; set; } 
+		public bool active { get; set; }
 
 		public void NewGuid()
 		{

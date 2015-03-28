@@ -23,9 +23,9 @@ public class PurpleMail : MonoBehaviour
 
 	private static string		storedTitle;
 	private static string		storedBody;
-	
+
 	private static Dictionary<string,string> placeholderDictionary;
-	
+
 
 	// START UP /////////////////////////
 	protected PurpleMail ()
@@ -57,7 +57,7 @@ public class PurpleMail : MonoBehaviour
 
 		senderMail = new MailAddress(senderAddress, senderDisplayName);
 		placeholderDictionary = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
-		
+
 		storedTitle = String.Empty;
 		storedBody = String.Empty;
 	}
@@ -106,7 +106,7 @@ public class PurpleMail : MonoBehaviour
 	{
 		Instance.reset_dictionary ();
 	}
-	
+
 	public static void AddDictionaryEntry(string key, string value)
 	{
 		Instance.add_dictionary_entry (key, value);
@@ -124,12 +124,12 @@ public class PurpleMail : MonoBehaviour
 	{
 		Instance.enable_smime ();
 	}
-	
+
 	public static void DisableSigning()
 	{
 		Instance.disable_smime ();
 	}
-	
+
 	private void enable_smime()
 	{
 	}
@@ -139,14 +139,14 @@ public class PurpleMail : MonoBehaviour
 	}
 	*/
 
-	
+
 	// PRIVATE FUNCTIONS /////////////////////////
 
 	private bool send_mail(string recipient, string title, string body, string sender_address, string sender_name)
 	{
 		return send_mail(recipient, title, body, new MailAddress(sender_address, sender_name));
 	}
-	
+
 	private bool send_mail(string recipient, string title, string body, MailAddress sender)
 	{
 		senderMail = sender;
@@ -169,17 +169,17 @@ public class PurpleMail : MonoBehaviour
 		storedTitle = title;
 		storedBody = body;
 
-		try 
+		try
 		{
 			MailMessage mail = new MailMessage();
 			mail.From = senderMail;
 			mail.To.Add(recipient);
-			
+
 			mail.Subject = replace_placeholder(title);
 			mail.Body = replace_placeholder(body);
 
 			mail.IsBodyHtml = is_html(body);
-			
+
 			SmtpClient client = new SmtpClient(mailHost);
 			client.Credentials = new NetworkCredential(mailUser, mailPassword);
 
@@ -209,13 +209,13 @@ public class PurpleMail : MonoBehaviour
 
 
 	// PRIVATE HELPER /////////////////////////
-	
+
 	private bool is_html(string probe)
 	{
 		Regex tagRegex = new Regex(@"<\s*([^ >]+)[^>]*>.*?<\s*/\s*\1\s*>|<br *\/>");
 		return tagRegex.IsMatch(probe);
 	}
-	
+
 	private string replace_placeholder(string source)
 	{
 		Regex re = new Regex(@"\{(\w+)\}", RegexOptions.Compiled);

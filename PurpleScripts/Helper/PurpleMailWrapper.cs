@@ -9,12 +9,14 @@ public class PurpleMailGenerator
 	{
 		SendMail (template, recipient, string.Empty);
 	}
-	
+
 	public static void SendMail(string template, PurpleAccount recipient, string password)
 	{
-		string culture = recipient.language_code + "-"+recipient.country_code.ToUpper();
+		string culture = "#";
+		if(!string.IsNullOrEmpty(recipient.language_code) && !string.IsNullOrEmpty(recipient.country_code))
+			culture = recipient.language_code + "-"+recipient.country_code.ToUpper();
 		string body = get_mail_template (template, culture);
-	
+
 		if(!string.IsNullOrEmpty(body))
 		{
 			string title = extract_title(body);
@@ -27,13 +29,13 @@ public class PurpleMailGenerator
 			PurpleMail.AddDictionaryEntry("EMAIL",recipient.email);
 
 			string salt = PurpleHash.Token ().Substring(0,5);
-			string token = PurpleHash.CalculateSHA(salt + recipient.guid) + ":" + 
+			string token = PurpleHash.CalculateSHA(salt + recipient.guid) + ":" +
 							PurpleHash.CalculateSHA(salt + recipient.email) + ":" + salt;
 			PurpleMail.AddDictionaryEntry("TOKEN",token);
 
 			if(!string.IsNullOrEmpty(password))
 				PurpleMail.AddDictionaryEntry("PASSWORD",password);
-			
+
 			PurpleMail.Send (recipient.email, title, body);
 
 			PurpleMail.ResetDictionary();
@@ -42,28 +44,28 @@ public class PurpleMailGenerator
 
 	private static string get_mail_template(string template, string culture)
 	{
-		string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), 
+		string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(),
 		                                    (template+".email"), SearchOption.AllDirectories);
 		if(files.Length > 0)
 		{
 			string body = string.Empty;
 			string bodyFallback = string.Empty;
 			string languageFallback = PurpleConfig.Mail.Content.Fallback.Language;
-			
-			foreach (string filePath in files) 
+
+			foreach (string filePath in files)
 			{
 				if(filePath.Contains("/"+culture+"/") || filePath.Contains("\\"+culture+"\\"))
 				{
 					body = File.ReadAllText(filePath);
 					break;
 				}
-				
+
 				if(filePath.Contains("/"+languageFallback+"/") || filePath.Contains("\\"+languageFallback+"\\"))
 				{
 					bodyFallback = File.ReadAllText(filePath);
 				}
 			}
-			
+
 			if(string.IsNullOrEmpty(body))
 				body = bodyFallback;
 
