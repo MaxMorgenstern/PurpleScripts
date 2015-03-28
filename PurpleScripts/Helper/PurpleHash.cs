@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
+using System.Linq;
 
 /**
  * This class only tests the content. 
@@ -12,6 +14,21 @@ using UnityEngine;
 
 public class PurpleHash
 {
+	// TOKEN /////////////////////////
+
+	public static string Token ()
+	{
+		byte[] time = BitConverter.GetBytes(DateTime.Now.ToBinary());
+		byte[] key = Guid.NewGuid().ToByteArray();
+		return Convert.ToBase64String(time.Concat(key).ToArray());
+	}
+
+	public static DateTime GetTokenDate(string token)
+	{
+		byte[] data = Convert.FromBase64String(token);
+		return DateTime.FromBinary(BitConverter.ToInt64(data, 0));
+	}
+
 	// MD5 /////////////////////////
 
 	public static string CalculateMD5 (object hashObject)
