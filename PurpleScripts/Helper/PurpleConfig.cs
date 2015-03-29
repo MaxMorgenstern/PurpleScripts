@@ -123,11 +123,19 @@ namespace PurpleConfig
 				public static string Title { get { return ItemIds.getConfigString ("Mail.Content.Fallback.Title"); } }
 			}
 		}
+
+		public static class Template {
+			public static string Register { get { return ItemIds.getConfigString ("Mail.Template.Register"); } }
+			public static string Warning { get { return ItemIds.getConfigString ("Mail.Template.Warning"); } }
+		}
 	}
 
 	// ACCOUNT /////////////////////////
 	public static class Account {
 		public static class User {
+			public static class Token {
+				public static int DaysValid { get { return ItemIds.getConfigInt ("Account.User.Token.DaysValid"); } }
+			}
 			public static class Name {
 				public static int MinLength { get { return ItemIds.getConfigInt ("Account.User.Name.MinLength"); } }
 				public static int MaxLength { get { return ItemIds.getConfigInt ("Account.User.Name.MaxLength"); } }

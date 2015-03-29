@@ -311,7 +311,7 @@ public class PurpleLog : MonoBehaviour
 		}
 		return false;
 	}
-	
+
 	private bool remove_listener(string event_name, PurpleLogCallback listener)
 	{
 		if (eventListeners.ContainsKey (event_name))
@@ -349,4 +349,3 @@ public class PurpleLog : MonoBehaviour
 		return "'"+configString+"'";
 	}
 }
-
