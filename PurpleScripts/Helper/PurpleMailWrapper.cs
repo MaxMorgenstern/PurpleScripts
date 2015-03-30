@@ -5,13 +5,14 @@ using Entities.Database;
 
 public class PurpleMailGenerator
 {
-	public static void SendMail(string template, PurpleAccount recipient)
+	public static bool SendMail(string template, PurpleAccount recipient)
 	{
-		SendMail (template, recipient, string.Empty);
+		return SendMail (template, recipient, string.Empty);
 	}
 
-	public static void SendMail(string template, PurpleAccount recipient, string password)
+	public static bool SendMail(string template, PurpleAccount recipient, string placeholder)
 	{
+		bool result = false;
 		string culture = "#";
 		if(!string.IsNullOrEmpty(recipient.language_code) && !string.IsNullOrEmpty(recipient.country_code))
 			culture = recipient.language_code + "-"+recipient.country_code.ToUpper();
@@ -33,13 +34,15 @@ public class PurpleMailGenerator
 							PurpleHash.CalculateSHA(salt + recipient.email) + ":" + salt;
 			PurpleMail.AddDictionaryEntry("TOKEN",token);
 
-			if(!string.IsNullOrEmpty(password))
-				PurpleMail.AddDictionaryEntry("PASSWORD",password);
+			if(!string.IsNullOrEmpty(placeholder))
+				PurpleMail.AddDictionaryEntry("PLACEHOLDER",placeholder);
 
-			PurpleMail.Send (recipient.email, title, body);
+			body = clean_gender_specific_data(body, recipient.gender);
 
+			result = PurpleMail.Send (recipient.email, title, body);
 			PurpleMail.ResetDictionary();
 		}
+		return result;
 	}
 
 	private static string get_mail_template(string template, string culture)
@@ -86,6 +89,24 @@ public class PurpleMailGenerator
 	private static string clean_body(string body)
 	{
 		Regex bodyRegex = new Regex(@"\{(Title:).*\}");
+		return bodyRegex.Replace(body, string.Empty);
+	}
+
+	private static string clean_gender_specific_data(string body, string gender)
+	{
+		string removedGender = string.Empty;
+
+		if(gender.ToLower() == "male")
+		{
+			removedGender = "FEMALE";
+		}
+		else if(gender.ToLower() == "female")
+		{
+			removedGender = "MALE";
+		}
+		Regex bodyRegex = new Regex(@"{(/?)"+gender.ToUpper()+"}");
+		body = bodyRegex.Replace(body, string.Empty);
+		bodyRegex = new Regex(@"{"+removedGender+"}.*{/"+removedGender+"}");
 		return bodyRegex.Replace(body, string.Empty);
 	}
 }

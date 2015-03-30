@@ -10,7 +10,7 @@ namespace PurpleConfig
 		public static int MaxPlayer { get { return ItemIds.getConfigInt ("Network.MaxPlayer"); } }
 		public static string Password { get { return ItemIds.getConfigString ("Network.Password"); } }
 		public static int Pause { get { return ItemIds.getConfigInt ("Network.Pause"); } }
-	
+
 		public static class Server {
 			public static string Name { get { return ItemIds.getConfigString ("Network.Server.Name"); } }
 			public static string Type { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
@@ -24,10 +24,10 @@ namespace PurpleConfig
 
 			public static class Clients {
 				public static int Max { get { return ItemIds.getConfigInt ("Network.Server.Clients.Max"); } }
-				public static int AuthentificationTimeout { get { 
+				public static int AuthentificationTimeout { get {
 						return ItemIds.getConfigInt ("Network.Server.Clients.AuthentificationTimeout"); } }
 			}
-			
+
 			public static class Spam {
 				public static bool Prevention { get { return ItemIds.getConfigBoolean ("Network.Server.Spam.Prevention"); } }
 				public static bool Response { get { return ItemIds.getConfigBoolean ("Network.Server.Spam.Response"); } }
@@ -38,7 +38,7 @@ namespace PurpleConfig
 			public static string Placeholder { get { return ItemIds.getConfigString ("Network.Message.Placeholder"); } }
 		}
 	}
-	
+
 	// Globalization /////////////////////////
 	public static class Globalization {
 		public static string Culture { get { return ItemIds.getConfigString ("Globalization.Culture"); } }
@@ -118,7 +118,7 @@ namespace PurpleConfig
 		}
 
 		public static class Content {
-			public static class Fallback { 
+			public static class Fallback {
 				public static string Language { get { return ItemIds.getConfigString ("Mail.Content.Fallback.Language"); } }
 				public static string Title { get { return ItemIds.getConfigString ("Mail.Content.Fallback.Title"); } }
 			}
