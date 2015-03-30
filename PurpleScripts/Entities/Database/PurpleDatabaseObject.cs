@@ -143,6 +143,8 @@ namespace Entities.Database
 			string nullDate = "0001-01-01 00:00:00";
 			string nullGUID = new Guid ().ToString();
 			string nullValue = "NULL";
+			string timestamp = "timestamp";
+			string nowFunction = "now()";
 
 			Dictionary<string, string> dict = new Dictionary<string, string> ();
 
@@ -171,6 +173,9 @@ namespace Entities.Database
 							propertyValue = tmpPropertyValue.ToString();
 						break;
 					}
+
+					if(singleProperty.Name == timestamp)
+						propertyValue = nowFunction;
 
 					if(!String.IsNullOrEmpty(propertyValue))
 					{
