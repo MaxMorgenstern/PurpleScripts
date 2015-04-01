@@ -1,4 +1,4 @@
-{Title: Approve your Purple Account}
+{Title: You have been warned!}
 <table class="centered" style="border-collapse: collapse;border-spacing: 0;Margin-left: auto;Margin-right: auto">
   <tbody>
     <tr>
@@ -16,7 +16,7 @@
                   <td class="padded" style="padding: 0;vertical-align: top;padding-left: 32px;padding-right: 32px;word-break: break-word;word-wrap: break-word">
                   <h1 style="Margin-top: 0;color: #565656;font-weight: 700;font-size: 36px;Margin-bottom: 18px;font-family: sans-serif;line-height: 42px">Welcome to PupleScripts</h1>
 
-                  <p style="Margin-top: 0;color: #565656;font-family: Georgia,serif;font-size: 16px;line-height: 25px;Margin-bottom: 25px">Hello {FIRST_NAME} {LAST_NAME},<br />
+                  <p style="Margin-top: 0;color: #565656;font-family: Georgia,serif;font-size: 16px;line-height: 25px;Margin-bottom: 25px">Hello {MALE}Mr.{/MALE}{FEMALE}Ms.{/FEMALE} {FIRST_NAME} {LAST_NAME},<br />
                   Thanks for registering your PurpleAccount. To&nbsp;finalize the registration process &nbsp;you now need to validate your mailaddress by clicking on the link below.<br />
                   <a href="http://localhost/~maximilianporzelt/PurpleScripts/Website/index.php?token={TOKEN}">http://localhost/index.php?token={TOKEN}</a></p>
 

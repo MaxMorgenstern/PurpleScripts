@@ -94,15 +94,17 @@ public class PurpleMailGenerator
 
 	private static string clean_gender_specific_data(string body, string gender)
 	{
-		string removedGender = string.Empty;
+		if (string.IsNullOrEmpty (body))
+			return body;
 
-		if(gender.ToLower() == "male")
-		{
-			removedGender = "FEMALE";
-		}
-		else if(gender.ToLower() == "female")
+		string removedGender = string.Empty;
+		if(!string.IsNullOrEmpty (gender) && gender.ToLower() == "female")
 		{
 			removedGender = "MALE";
+		}
+		else
+		{
+			removedGender = "FEMALE";
 		}
 		Regex bodyRegex = new Regex(@"{(/?)"+gender.ToUpper()+"}");
 		body = bodyRegex.Replace(body, string.Empty);
