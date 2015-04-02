@@ -66,9 +66,16 @@ namespace Entities.PurpleMessages
 		public class CreateAccount : PurpleMessage
 		{
 			public NetworkPlayer player;
-			public string playerName;
+			public string playerUsername;
 			public string playerPassword;
 			public string playerEmail;
+			public string playerFirstName;
+			public string playerLastName;
+			public string playerGender;
+			public DateTime playerBirthday;
+			public string playerCountry;
+			public string playerLanguage;
+			public string playerComment;
 		}
 
 		// CREATE CHARACTER 

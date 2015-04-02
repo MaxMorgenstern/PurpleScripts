@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Entities.PurpleMessages.User;
 using Entities.PurpleNetwork;
+using PurpleDatabase.Helper;
 using _PurpleMessages = Entities.PurpleMessages;
 
 namespace PurpleNetwork.Server.Handler
@@ -42,26 +44,49 @@ namespace PurpleNetwork.Server.Handler
 		{
 			Debug.Log ("Authentication received: " + np.ToString ());
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
-			
-			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
+
+			Authentication authObject = PurpleSerializer.StringToObjectConverter<Authentication> (dataObject);
+			bool validationResult = false;
+			string token = string.Empty;
+
+			if(string.IsNullOrEmpty(authObject.playerPassword))
+			{
+				validationResult = AccountHelper.ValidateAuthentication (authObject.playerName, authObject.playerToken);
+				if(validationResult)
+					token = AccountHelper.GenerateToken(authObject.playerName, authObject.playerPassword);
+			}
+			else 
+			{
+				validationResult = AccountHelper.Login (authObject.playerName, authObject.playerPassword, out token);
+			}
+
 			// save 2 spaces if monitoring is allowed otherwise just one for Admin/Mod/GM
+			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
 			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 2 : 1;
 
-			// TODO:
+			if(validationResult && PurpleServer.UserList.Count <= maxAllowedConnections)
+			{
+				// TODO: send token to user
 
-			/*
-			PurpleMessages.User.Authentication auth = 
-				PurpleSerializer.StringToObjectConverter<PurpleMessages.User.Authentication> (dataObject);
-			*/
-			
-			// check authentication
-			//		token set? - valid?
-			//		password valid?
-			//			validate token
-			// update PurpleServer.UserList...
-			// send response
-		}
+			}
+			else if(validationResult)
+			{
+				PurpleNetworkUser playerReference = get_network_player_reference(np);
+				if (playerReference.UserType != UserTypes.User)
+				{
+					// TODO: send token to mod / GM / monitor
+
+				}
+			}
+			// TODO: send denial
 		
+		}
+
+		public static PurpleNetworkUser get_network_player_reference(NetworkPlayer np)
+		{
+			return PurpleServer.UserList.Find (x => x.UserReference == np);
+		}
+
 		
 		// EVENT /////////////////////////
 		
