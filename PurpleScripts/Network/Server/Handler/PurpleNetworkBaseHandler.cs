@@ -87,6 +87,7 @@ namespace PurpleNetwork.Server.Handler
 			return PurpleServer.UserList.Find (x => x.UserReference == np);
 		}
 
+
 		
 		// EVENT /////////////////////////
 		
@@ -100,21 +101,23 @@ namespace PurpleNetwork.Server.Handler
 		{
 			PurpleServer.UserList.RemoveAll (x => x.UserReference == np);
 		}
-		
+
+
 		// PERIODICAL EVENTS /////////////////////////
 		private static void periodically_validate_player()
 		{
-			PurpleServer.UserList.Where(x =>
-			                            !x.UserAuthenticated &&
+			PurpleServer.UserList.Where(x => !x.UserAuthenticated &&
 			                            x.UserConnectedTime.AddSeconds(System.Convert.ToDouble(
 				PurpleServer.CurrentConfig.ClientAuthentificationTimeout)) < DateTime.Now )
-				.ToList().ForEach( x =>
-				                  {
+				.ToList().ForEach( x => {
 					Debug.Log ("PurpleNetwork.Server.Handler.Base: Disconnect Unauthenticated User "
 					           + x.UserReference.ToString());
+					_PurpleMessages.Server.Disconnect disconnectMessage = new _PurpleMessages.Server.Disconnect();
+					disconnectMessage.status = 2;
+					disconnectMessage.message = PurpleI18n.Get("server_disconnect_unauthenticated");
+					PurpleNetwork.ToPlayer(x.UserReference, "server_disconnect_unauthenticated", disconnectMessage);
 					Network.CloseConnection(x.UserReference, true);
-				}
-				);
+				});
 		}
 	}
 }

@@ -31,6 +31,7 @@ namespace PurpleConfig
 			public static class Spam {
 				public static bool Prevention { get { return ItemIds.getConfigBoolean ("Network.Server.Spam.Prevention"); } }
 				public static bool Response { get { return ItemIds.getConfigBoolean ("Network.Server.Spam.Response"); } }
+				public static int MaxRequests { get { return ItemIds.getConfigInt ("Network.Server.Spam.MaxRequests"); } }
 			}
 		}
 

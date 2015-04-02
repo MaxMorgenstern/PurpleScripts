@@ -15,5 +15,7 @@
 	<add key="SHUTDOWN" value="Der Server wird in !!time!! herunter gefahren!" />
 	<add key="SHUTDOWNNOW" value="Der Sertver wird jetzt herunter gefahren!" />
 
+	<add key="server_disconnect_unauthenticated" value="Aufgrund fehlender Authentifizierung wurden Ihre Verbindung getrennt." />
+
 	<add key="x" value="y" />
 </LanguageFile>

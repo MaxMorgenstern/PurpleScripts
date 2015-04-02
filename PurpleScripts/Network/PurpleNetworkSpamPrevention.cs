@@ -139,8 +139,8 @@ namespace PurpleNetwork.Spam
 			public RequestQueue(int clientID)
 			{
 				requestClientID = clientID;
-				requestMaxInTimeSpan = 20;	// 20 Requests	
-				requestTimeSpan = new TimeSpan (0, 1, 0);	// 1 Minute
+				requestMaxInTimeSpan = PurpleConfig.Network.Server.Spam.MaxRequests;	// 20 Requests per Minute
+				requestTimeSpan = new TimeSpan (0, 1, 0);
 				requestQueue = new Queue<DateTime>(requestMaxInTimeSpan);
 				serverSpamResponseSend = false;
 			}
