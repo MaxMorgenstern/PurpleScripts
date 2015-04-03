@@ -15,7 +15,7 @@
 	<add key="SHUTDOWN" value="Server shutdown in !!time!!!" />
 	<add key="SHUTDOWNNOW" value="The Server will now be shut down!" />
 
-	<add key="server_disconnect_unauthenticated" value="You have been disconnected due to missing authentication." />
+	<add key="SERVER_DISCONNECT_UNAUTHENTICATED" value="You have been disconnected due to missing authentication." />
 
 	<add key="x" value="y" />
 </LanguageFile>
