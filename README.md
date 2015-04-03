@@ -58,7 +58,7 @@ Class to store/load data locally.
 Version
 ----
 
-0.3.62.1387 (at the time this readme was updated)
+0.3.71.34 (at the time this readme was updated)
 
 
 
@@ -73,7 +73,7 @@ Unity 5.0.0 - Mac OS (from 2015-03-04)
 
 Unity 4.6.0 - Windows 8.1
 
-Unity 5.0 - Windows 8.1
+Unity 5.0.1 - Windows 8.1
 
 API Compatibility: .net 2.0
 

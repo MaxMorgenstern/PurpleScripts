@@ -29,3 +29,7 @@ Local config file
 ============
 Config/local.config
 Config/local.config.meta
+
+*.meta
+!PurpleScripts/*.meta
+!Editor/*.meta
