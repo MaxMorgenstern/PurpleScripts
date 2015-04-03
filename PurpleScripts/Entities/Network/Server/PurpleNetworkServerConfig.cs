@@ -15,6 +15,7 @@ namespace Entities.PurpleNetwork.Server
 		public string 		ServerPassword;
 		public int 			ServerMaxClients;
 		public bool 		ServerAllowMonitoring;
+		public bool			ServerSanityTest;
 
 		public int			ClientAuthentificationTimeout;
 		
@@ -40,6 +41,7 @@ namespace Entities.PurpleNetwork.Server
 			ServerPassword 	= PurpleConfig.Network.Server.Password;
 			ServerMaxClients = PurpleConfig.Network.Server.Clients.Max;
 			ServerAllowMonitoring = PurpleConfig.Network.Server.AllowMonitoring;
+			ServerSanityTest = PurpleConfig.Network.Server.SanityTest;
 
 			ClientAuthentificationTimeout = PurpleConfig.Network.Server.Clients.AuthentificationTimeout;
 

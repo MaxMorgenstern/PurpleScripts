@@ -1,0 +1,35 @@
+Function Calls:
+
+<sender> _ <topic> _ <description> ( _ <detail> )
+
+
+Server:
+Name:									Comment:										Handled in:
+server_disconnect_unspecified			Disconnect State 1 - Unspecified
+server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated
+
+server_broadcast						Server Broadcast for all clients				Server: PurpleNetworkBaseHandler
+
+
+
+
+Client:
+Name:									Comment:										Handled in:
+Account Handler:
+client_create_account
+
+Base Handler:
+client_authenticate																		Server: PurpleNetworkBaseHandler
+
+
+
+
+
+
+
+
+
+RPC used to trigger the calls above:
+receive_purple_network_message			Event triggered: <Custom event listeners depening on setting>
+receive_purple_network_error			Event triggered: PurpleNetworkError
+receive_purple_network_spam_warning		Event triggered: PurpleNetworkSpamWarning

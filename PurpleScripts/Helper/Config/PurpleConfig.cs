@@ -16,10 +16,11 @@ namespace PurpleConfig
 			public static string Type { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
 			public static string IPScript { get { return ItemIds.getConfigString ("Network.Server.IPScript"); } }
 			public static int Delay { get { return ItemIds.getConfigInt ("Network.Server.ActionDelay"); } }
-			public static string Host { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
+			public static string Host { get { return ItemIds.getConfigString ("Network.Server.Host"); } }
 			public static int Port { get { return ItemIds.getConfigInt ("Network.Server.Port"); } }
 			public static string Password { get { return ItemIds.getConfigString ("Network.Server.Password"); } }
 			public static bool AllowMonitoring { get { return ItemIds.getConfigBoolean ("Network.Server.AllowMonitoring"); } }
+			public static bool SanityTest { get { return ItemIds.getConfigBoolean ("Network.Server.SanityTest"); } }
 			public static int ActionDelay { get { return ItemIds.getConfigInt ("Network.Server.ActionDelay"); } }
 
 			public static class Clients {
