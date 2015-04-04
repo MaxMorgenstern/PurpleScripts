@@ -32,15 +32,14 @@ public class PurpleCountdown : MonoBehaviour
 
 	public static PurpleCountdown NewInstance(string name)
 	{
-		return CreateInstance(name);
+		return CreateInstance("PurpleCountdown_"+name);
 	}
 	
 	public void DestroyInstance()
 	{
-		Destroy (_gameObject);
-		Destroy(this);
+		Destroy(this.gameObject);
 	}
-	
+
 	
 	// TRIGGER ////////////////////////////
 	public void Trigger(float offset)
