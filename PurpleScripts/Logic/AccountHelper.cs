@@ -29,6 +29,7 @@ namespace PurpleDatabase.Helper
 				PurplePassword pp = new PurplePassword();
 				if(pp.ValidatePassword(password_or_token, userData.password))
 				{
+					update_user_last_seen(userData);
 					return true;
 				}
 
@@ -37,6 +38,7 @@ namespace PurpleDatabase.Helper
 					if(PurpleHash.GetTokenDate(userData.token)
 					   .AddDays(PurpleConfig.Account.User.Token.DaysValid) >= DateTime.Now)
 					{
+						update_user_last_seen(userData);
 						return true;
 					}
 				}
@@ -52,15 +54,7 @@ namespace PurpleDatabase.Helper
 			if (PurpleAccountValidator.ValidatePasswordStrength (password) 
 			    	&& PurpleAccountValidator.ValidateUsername (account.username))
 			{
-				PurplePassword PuPa = new PurplePassword ();
-				account.password = PuPa.CreateHash(password);
-				account.NewGuid();
-				account.account_created = DateTime.Now;
-				account.account_type = "User";
-				account.active = false;
-
-				// TODO: check if all data is set
-				return create_database_user(account);
+				return create_database_user(account, password);
 			}
 			return false;
 		}
@@ -106,6 +100,12 @@ namespace PurpleDatabase.Helper
 			userData.token = PurpleHash.Token ();
 			token = userData.token;
 			userData.token_created = DateTime.Now;
+			userData.last_login = DateTime.Now;
+
+			PurpleNetworkUser pnu = PurpleServer.UserList
+				.Find (x => x.UserName == identifier || x.UserGUID.Equals(identifier));
+			if(pnu != null)
+				userData.last_login_ip = pnu.UserReference.ipAddress;
 
 			return update_user_reference (userData, true);
 		}
@@ -152,7 +152,7 @@ namespace PurpleDatabase.Helper
 
 		public static bool AddWarning(string identifier, string comment, int level, bool notifyUser)
 		{
-			PurpleAccount userData = get_user_reference (identifier);
+			PurpleAccount userData = get_database_user (identifier);
 			if(userData == null)
 				return false;
 			
@@ -171,10 +171,6 @@ namespace PurpleDatabase.Helper
 			int result = add_database_user_log (userData.id, comment);
 			return (result == 1) ? true : false;
 		}
-
-
-
-
 
 
 		// PRIVATE ////////////////////////////
@@ -211,15 +207,19 @@ namespace PurpleDatabase.Helper
 				pnu.UserID 				= user.id;
 				pnu.UserType 			= (PurpleNetwork.UserTypes) Enum.Parse(
 											typeof(PurpleNetwork.UserTypes), user.account_type, true);
-				pnu.UserConnectedTime	= user.last_login;
 				pnu.UserName			= user.username;
 				pnu.UserToken			= user.token;
 				pnu.UserTokenCreated	= user.token_created;
 
 				pnu.UserAuthenticated	= authenticated;
 			}
-			// TODO - new user ref ???
+			user.last_seen 				= DateTime.Now;
 			return update_database_user (user);
+		}
+
+		private static bool update_user_last_seen(PurpleAccount user)
+		{
+			return SQLGenerator.New ().Update("last_seen = now()", accountTable, user.guid).Execute() == 1;
 		}
 
 		private static bool update_database_user(PurpleAccount user)
@@ -228,17 +228,22 @@ namespace PurpleDatabase.Helper
 			return (result==1) ? true : false;
 		}
 
-		private static bool create_database_user(PurpleAccount user)
+		private static bool create_database_user(PurpleAccount user, string password)
 		{
+			PurplePassword PuPa = new PurplePassword ();
+			user.password = PuPa.CreateHash(password);
+			user.NewGuid();
+			user.account_created = DateTime.Now;
+			user.account_type = "User";
+			user.active = false;
+			
+			// TODO: check if all data is set
+
 			int result = user.ToSQLInsert ().Execute ();
 			if(result == 1)
 				PurpleMailGenerator.SendMail(PurpleConfig.Mail.Template.Register, user);
 			return (result==1) ? true : false;
 		}
-
-
-
-
 
 
 		private static int add_database_user_warning(int account_id, int warning_level, string comment)

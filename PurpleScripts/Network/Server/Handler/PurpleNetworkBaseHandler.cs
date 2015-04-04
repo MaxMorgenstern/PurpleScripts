@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Entities.PurpleMessages.User;
 using Entities.PurpleNetwork;
 using PurpleDatabase.Helper;
-using _PurpleMessages = Entities.PurpleMessages;
+using _PMClient = Entities.PurpleMessages.User;
+using _PMServer = Entities.PurpleMessages.Server;
 
 namespace PurpleNetwork.Server.Handler
 {
@@ -19,11 +19,8 @@ namespace PurpleNetwork.Server.Handler
 			baseHandlerTick.TriggerEvent += periodically_validate_player;
 			baseHandlerTick.Trigger (60, PurpleServer.CurrentConfig.ClientAuthentificationTimeout/4);
 			
-			PurpleNetwork.AddListener<_PurpleMessages.Server.Message>("server_broadcast",
-			                                                         server_broadcast_handler);
-			
-			PurpleNetwork.AddListener<_PurpleMessages.Server.Message>("player_authenticate",
-			                                                         player_authenticate_handler);
+			PurpleNetwork.AddListener<_PMServer.Message>("server_broadcast", server_broadcast_handler);
+			PurpleNetwork.AddListener<_PMClient.Authentication>("client_authenticate", client_authenticate_handler);
 			
 			PurpleNetwork.PurplePlayerConnected += on_player_connected;
 			PurpleNetwork.PurplePlayerDisconnected += on_player_disconnected;
@@ -40,12 +37,12 @@ namespace PurpleNetwork.Server.Handler
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 		}
 		
-		public static void player_authenticate_handler (string dataObject, NetworkPlayer np)
+		public static void client_authenticate_handler (string dataObject, NetworkPlayer np)
 		{
 			Debug.Log ("Authentication received: " + np.ToString ());
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
-			Authentication authObject = PurpleSerializer.StringToObjectConverter<Authentication> (dataObject);
+			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
 			bool validationResult = false;
 			string token = string.Empty;
 
@@ -112,7 +109,7 @@ namespace PurpleNetwork.Server.Handler
 				.ToList().ForEach( x => {
 					Debug.Log ("PurpleNetwork.Server.Handler.Base: Disconnect Unauthenticated User "
 					           + x.UserReference.ToString());
-					_PurpleMessages.Server.Disconnect disconnectMessage = new _PurpleMessages.Server.Disconnect();
+					_PMServer.Disconnect disconnectMessage = new _PMServer.Disconnect();
 					disconnectMessage.status = 2;
 					disconnectMessage.message = PurpleI18n.Get("server_disconnect_unauthenticated");
 					PurpleNetwork.ToPlayer(x.UserReference, "server_disconnect_unauthenticated", disconnectMessage);
