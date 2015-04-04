@@ -15,7 +15,7 @@ namespace PurpleNetwork.Server.Handler
 		
 		public static void register_base_handler()
 		{
-			baseHandlerTick = PurpleCountdown.NewInstance ();
+			baseHandlerTick = PurpleCountdown.NewInstance ("BaseHandlerTick");
 			baseHandlerTick.TriggerEvent += periodically_validate_player;
 			baseHandlerTick.Trigger (60, PurpleServer.CurrentConfig.ClientAuthentificationTimeout/4);
 			

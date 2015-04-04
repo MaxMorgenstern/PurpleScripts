@@ -22,6 +22,12 @@ namespace Entities.PurpleMessages
 	{
 	}
 
+	// EMPTY MESSAGE
+	public class Boolean : PurpleMessage
+	{
+		public bool value;
+	}
+	
 	// EXAMPLE MESSAGE
 	public class Example : PurpleMessage
 	{
