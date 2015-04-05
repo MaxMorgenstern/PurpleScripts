@@ -32,7 +32,10 @@ namespace PurpleDatabase
 
 		private static PurpleDatabase instance;
 
+		private static long lastInsertedId;
+
 		protected PurpleDatabase () {
+			lastInsertedId = -1;
 			try
 			{
 				serverIP = PurpleConfig.Database.IP;
@@ -154,6 +157,11 @@ namespace PurpleDatabase
 			return Instance.is_sql_valid (query, writeStatement);
 		}
 
+		public static long LastInsertedId()
+		{
+			return Instance.sql_last_id ();
+		}
+
 
 		// PRIVATE ////////////////////////////
 		// SETUP ////////////////////////////
@@ -193,6 +201,7 @@ namespace PurpleDatabase
 				{
 					MySqlCommand cmd = new MySqlCommand (query, connection);
 					affectedRows = cmd.ExecuteNonQuery ();
+					lastInsertedId = cmd.LastInsertedId;
 				}
 				catch (Exception ex)
 				{
@@ -260,6 +269,11 @@ namespace PurpleDatabase
 				close_connection ();
 			}
 			return dt;
+		}
+
+		private long sql_last_id()
+		{
+			return lastInsertedId;
 		}
 
 

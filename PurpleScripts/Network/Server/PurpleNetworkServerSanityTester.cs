@@ -363,7 +363,8 @@ namespace PurpleNetwork
 			if(!string.IsNullOrEmpty(externalIP)
 			   && !externalIP.StartsWith("0.")
 			   && !externalIP.StartsWith("127.")
-			   && !externalIP.StartsWith("192."))
+			   && !externalIP.StartsWith("192.")
+			   && !externalIP.Contains("UNASSIGNED_SYSTEM_ADDRESS"))
 			{
 				server_sanity_network_ip = true;
 			}
@@ -441,8 +442,13 @@ namespace PurpleNetwork
 			psl.global_ip = externalIp;
 
 			int insertResult = psl.ToSQLInsert ().Execute ();
+			if (insertResult == 1)
+			{
+				if(PurpleDatabase.PurpleDatabase.LastInsertedId() > 0)
+					return true;
+			}
 
-			return (insertResult==1) ? true : false;
+			return false;
 		}
 	}
 }
