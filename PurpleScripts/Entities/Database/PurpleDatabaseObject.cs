@@ -63,6 +63,24 @@ namespace Entities.Database
 		}
 
 
+		// PurpleServerLog ////////////////////////////
+
+		public static string ToSQLInsert(this PurpleServerLog data)
+		{
+			return to_sql_insert (data);
+		}
+
+		public static string ToSQLUpdate(this PurpleServerLog data)
+		{
+			return to_sql_update (data, data.id);
+		}
+
+		public static string ToSQLDelete(this PurpleServerLog data)
+		{
+			return to_sql_delete(data, data.id);
+		}
+
+
 
 
 		// TODO - Test
