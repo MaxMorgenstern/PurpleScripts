@@ -575,7 +575,7 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
-			Debug.LogWarning ("receive_purple_network_error: can not find called function: " + event_name + " - " + info.sender.ToString());
+			Debug.LogWarning ("receive_purple_network_error: sender can not find called function: " + event_name + " - " + info.sender.ToString());
 			instance.trigger_purple_event(PurpleNetworkError, info.sender, event_name);
 		}
 

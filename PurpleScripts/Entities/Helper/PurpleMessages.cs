@@ -27,7 +27,7 @@ namespace Entities.PurpleMessages
 	{
 		public bool value;
 	}
-	
+
 	// EXAMPLE MESSAGE
 	public class Example : PurpleMessage
 	{
@@ -66,6 +66,7 @@ namespace Entities.PurpleMessages
 			public string playerName;
 			public string playerPassword;
 			public string playerToken;
+			public bool playerAuthenticated;
 		}
 
 		// CREATE ACCOUNT
@@ -105,6 +106,7 @@ namespace Entities.PurpleMessages
 	// SERVER RELATED MESSAGES ////////////////////////////
 	namespace Server
 	{
+		/*
 		// SERVER Credentials
 		public class Credentials : PurpleMessage
 		{
@@ -132,6 +134,7 @@ namespace Entities.PurpleMessages
 				version = pv.GetCurrent ();
 			}
 		}
+		*/
 
 		// PING MESSAGE
 		public class Ping : PurpleMessage

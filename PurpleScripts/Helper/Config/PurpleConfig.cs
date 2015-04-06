@@ -20,8 +20,13 @@ namespace PurpleConfig
 			public static int Port { get { return ItemIds.getConfigInt ("Network.Server.Port"); } }
 			public static string Password { get { return ItemIds.getConfigString ("Network.Server.Password"); } }
 			public static bool AllowMonitoring { get { return ItemIds.getConfigBoolean ("Network.Server.AllowMonitoring"); } }
-			public static bool SanityTest { get { return ItemIds.getConfigBoolean ("Network.Server.SanityTest"); } }
 			public static int ActionDelay { get { return ItemIds.getConfigInt ("Network.Server.ActionDelay"); } }
+
+			public static class Sanity {
+				public static bool Test { get { return ItemIds.getConfigBoolean ("Network.Server.Sanity.Test"); } }
+				public static string Action { get { return ItemIds.getConfigString ("Network.Server.Sanity.Action"); } }
+				public static int Periodical { get { return ItemIds.getConfigInt ("Network.Server.Sanity.Periodical"); } }
+			}
 
 			public static class Clients {
 				public static int Max { get { return ItemIds.getConfigInt ("Network.Server.Clients.Max"); } }

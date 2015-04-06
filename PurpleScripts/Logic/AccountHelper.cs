@@ -51,7 +51,7 @@ namespace PurpleDatabase.Helper
 			if(!IsUniqueUsername(account.username))
 				return false;
 
-			if (PurpleAccountValidator.ValidatePasswordStrength (password) 
+			if (PurpleAccountValidator.ValidatePasswordStrength (password)
 			    	&& PurpleAccountValidator.ValidateUsername (account.username))
 			{
 				return create_database_user(account, password);
@@ -67,7 +67,7 @@ namespace PurpleDatabase.Helper
 			return true;
 		}
 
-		public static bool Disable(string identifier, string password)
+		public static bool Disable(string identifier, string password, NetworkPlayer? np = null)
 		{
 			if(!ValidateAuthentication (identifier, password))
 				return false;
@@ -78,7 +78,14 @@ namespace PurpleDatabase.Helper
 
 			userData.active = false;
 
-			return update_user_reference (userData, false);
+			if(np != null)
+			{
+				return update_user_reference (userData, np, false);
+			}
+			else
+			{
+				return update_user_reference (userData, false);
+			}
 		}
 
 		public static bool Login(string identifier, string password)
@@ -88,6 +95,11 @@ namespace PurpleDatabase.Helper
 		}
 
 		public static bool Login(string identifier, string password, out string token)
+		{
+			return Login (identifier, password, null, out token);
+		}
+
+		public static bool Login(string identifier, string password, NetworkPlayer? np, out string token)
 		{
 			token = String.Empty;
 			if(!ValidateAuthentication (identifier, password))
@@ -107,7 +119,14 @@ namespace PurpleDatabase.Helper
 			if(pnu != null)
 				userData.last_login_ip = pnu.UserReference.ipAddress;
 
-			return update_user_reference (userData, true);
+			if(np != null)
+			{
+				return update_user_reference (userData, np, true);
+			}
+			else
+			{
+				return update_user_reference (userData, true);
+			}
 		}
 
 		public static bool Logout(string identifier)
@@ -121,24 +140,32 @@ namespace PurpleDatabase.Helper
 			return update_user_reference (userData, false);
 		}
 
-		public static string GenerateToken(string identifier, string password_or_token)
+		public static string GenerateToken(string identifier, string password_or_token, NetworkPlayer? np = null)
 		{
 			PurpleAccount userData = get_database_user (identifier);
 			if(userData == null)
 				return string.Empty;
-			return GenerateToken (userData, password_or_token);
+			return GenerateToken (userData, password_or_token, np);
 		}
 
-		public static string GenerateToken(PurpleAccount account, string password_or_token)
+		public static string GenerateToken(PurpleAccount account, string password_or_token, NetworkPlayer? np = null)
 		{
 			if(!ValidateAuthentication (account.username, password_or_token))
 				return string.Empty;
-			
+
 			account.token = PurpleHash.Token ();
 			account.token_created = DateTime.Now;
-			
-			if(update_user_reference (account, true))
-				return account.token;
+
+			if(np != null)
+			{
+				if(update_user_reference (account, np, true))
+					return account.token;
+			}
+			else
+			{
+				if(update_user_reference (account, true))
+					return account.token;
+			}
 			return string.Empty;
 		}
 
@@ -155,7 +182,7 @@ namespace PurpleDatabase.Helper
 			PurpleAccount userData = get_database_user (identifier);
 			if(userData == null)
 				return false;
-			
+
 			int result = add_database_user_warning (userData.id, level, comment);
 			if(result == 1 && notifyUser)
 				PurpleMailGenerator.SendMail(PurpleConfig.Mail.Template.Warning, userData, comment);
@@ -167,7 +194,7 @@ namespace PurpleDatabase.Helper
 			PurpleAccount userData = get_user_reference (identifier);
 			if(userData == null)
 				return false;
-			
+
 			int result = add_database_user_log (userData.id, comment);
 			return (result == 1) ? true : false;
 		}
@@ -196,11 +223,26 @@ namespace PurpleDatabase.Helper
 				.Where ("guid=" + identifier, "OR").Where ("active=1")
 					.FetchSingle ().ToObject<PurpleAccount> ();
 		}
-		
+
+
+		private static bool update_user_reference(PurpleAccount user, NetworkPlayer? np, bool authenticated)
+		{
+			if(np == null)
+				return false;
+			PurpleNetworkUser pnu = PurpleServer.UserList
+				.Find (x => x.UserReference == np || x.UserName == user.username || x.UserGUID.Equals(user.guid));
+			return update_user_reference(user, pnu, authenticated);
+		}
+
 		private static bool update_user_reference(PurpleAccount user, bool authenticated)
 		{
 			PurpleNetworkUser pnu = PurpleServer.UserList
 				.Find (x => x.UserName == user.username || x.UserGUID.Equals(user.guid));
+			return update_user_reference(user, pnu, authenticated);
+		}
+
+		private static bool update_user_reference(PurpleAccount user, PurpleNetworkUser pnu, bool authenticated)
+		{
 			if(pnu != null)
 			{
 				pnu.UserGUID 			= new Guid(user.guid);
@@ -219,7 +261,7 @@ namespace PurpleDatabase.Helper
 
 		private static bool update_user_last_seen(PurpleAccount user)
 		{
-			return SQLGenerator.New ().Update("last_seen = now()", accountTable, user.guid).Execute() == 1;
+			return SQLGenerator.New ().Update("last_seen = now()", accountTable, "guid="+user.guid).Execute() == 1;
 		}
 
 		private static bool update_database_user(PurpleAccount user)
@@ -236,7 +278,7 @@ namespace PurpleDatabase.Helper
 			user.account_created = DateTime.Now;
 			user.account_type = "User";
 			user.active = false;
-			
+
 			// TODO: check if all data is set
 
 			int result = user.ToSQLInsert ().Execute ();
@@ -256,7 +298,7 @@ namespace PurpleDatabase.Helper
 		{
 			return SQLGenerator.New ().Insert (accountLogTable, "account_id, log, timestamp")
 				.Values (account_id+", "+comment+", now()").Execute();
-		} 
+		}
 
 	}
 }

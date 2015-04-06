@@ -6,7 +6,9 @@ Function Calls:
 Server:
 Name:									Comment:										Handled in:
 server_disconnect_unspecified			Disconnect State 1 - Unspecified
-server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated
+server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated 			Server: PurpleNetworkBaseHandler
+server_authenticate_result				Authentication response message 				Server: PurpleNetworkBaseHandler
+
 
 server_broadcast						Server Broadcast for all clients				Server: PurpleNetworkBaseHandler
 
