@@ -12,6 +12,7 @@ namespace PurpleNetwork.Server.Handler
 	public class Base
 	{
 		private static PurpleCountdown baseHandlerTick;
+		private static PurpleCountdown baseHandlerSanity;
 
 		public static void register_base_handler()
 		{
@@ -19,6 +20,15 @@ namespace PurpleNetwork.Server.Handler
 			baseHandlerTick = PurpleCountdown.NewInstance ("BaseHandlerTick");
 			baseHandlerTick.TriggerEvent += periodically_validate_player;
 			baseHandlerTick.Trigger (60, PurpleServer.CurrentConfig.ClientAuthentificationTimeout/4);
+
+			if(PurpleServer.CurrentConfig.SanityPeriodical > 0)
+			{
+				int period = PurpleServer.CurrentConfig.SanityPeriodical*60;
+				period = (period < 600) ? 600 : period;
+				baseHandlerSanity = PurpleCountdown.NewInstance ("BaseHandlerSanity");
+				baseHandlerSanity.TriggerEvent += periodically_sanity_check;
+				baseHandlerSanity.Trigger (period, period);
+			}
 
 			PurpleNetwork.AddListener<_PMServer.Message>("server_broadcast", server_broadcast_handler);
 			PurpleNetwork.AddListener<_PMClient.Authentication>("client_authenticate", client_authenticate_handler);
@@ -60,7 +70,7 @@ namespace PurpleNetwork.Server.Handler
 			// save 2 spaces if monitoring is allowed otherwise just one for Admin/Mod/GM
 			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
 			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 2 : 1;
-			
+
 			authObject.playerPassword = String.Empty;
 			authObject.playerToken = String.Empty;
 			authObject.playerAuthenticated = false;
@@ -83,11 +93,6 @@ namespace PurpleNetwork.Server.Handler
 
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
 		}
-		
-		public static PurpleNetworkUser get_network_player_reference(NetworkPlayer np)
-		{
-			return PurpleServer.UserList.Find (x => x.UserReference == np);
-		}
 
 
 		// EVENT /////////////////////////
@@ -104,6 +109,13 @@ namespace PurpleNetwork.Server.Handler
 		}
 
 
+		// PRIVATE /////////////////////////
+
+		private static PurpleNetworkUser get_network_player_reference(NetworkPlayer np)
+		{
+			return PurpleServer.UserList.Find (x => x.UserReference == np);
+		}
+
 		// PERIODICAL EVENTS /////////////////////////
 		private static void periodically_validate_player()
 		{
@@ -119,6 +131,14 @@ namespace PurpleNetwork.Server.Handler
 					PurpleNetwork.ToPlayer(x.UserReference, "server_disconnect_unauthenticated", disconnectMessage);
 					Network.CloseConnection(x.UserReference, true);
 				});
+		}
+
+		private static void periodically_sanity_check()
+		{
+			if(PurpleServer.CurrentConfig.SanityTest)
+			{
+				PurpleNetworkServerSanityTester.ServerSanityCheck();
+			}
 		}
 	}
 }

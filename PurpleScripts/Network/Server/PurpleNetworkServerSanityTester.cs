@@ -422,10 +422,24 @@ namespace PurpleNetwork
 				if(!server_sanity_network_reachable)
 					Debug.LogError("ServerSanityCheck: Network Error!");
 
-
 				Debug.LogError("ServerSanityCheck: Shut down server...");
-				if(PurpleServer.CurrentConfig.ServerSanityTest)
-					PurpleServer.StopServer(5);
+				if(PurpleServer.CurrentConfig.SanityTest)
+				{
+					switch (PurpleServer.CurrentConfig.SanityAction.ToLower())
+					{
+					case "shutdown":
+						PurpleServer.StopServer(5);
+						break;
+
+					case "restart":
+						PurpleServer.RestartServer(5);
+						break;
+
+					case "warn":
+						Debug.LogError("ServerSanityCheck: Shutdown/Restart recommended!");
+						break;
+					}
+				}
 			}
 		}
 
