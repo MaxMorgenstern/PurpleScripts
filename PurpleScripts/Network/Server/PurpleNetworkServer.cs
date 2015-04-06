@@ -19,6 +19,7 @@ namespace PurpleNetwork.Server
 		private static List<int> stdNotificationIntervalList;
 
 		private static ServerConfig currentServerConfig;
+		private static DateTime serverLaunchDate;
 
 		private static string restartNotificationMessage;
 		private static string restartNotificationDoneMessage;
@@ -40,6 +41,7 @@ namespace PurpleNetwork.Server
 			stdNotificationIntervalList = new List<int> (
 				new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 30, 60, 300, 600, 900, 1800});
 			userList = new List<PurpleNetworkUser> ();
+			serverLaunchDate = DateTime.MinValue;
 
 			try{
 				notificationPlaceholder = PurpleConfig.Network.Message.Placeholder;
@@ -180,6 +182,10 @@ namespace PurpleNetwork.Server
 			return Instance.get_notification_interval ();
 		}
 
+		public static TimeSpan ServerUptime()
+		{
+			return Instance.uptime_calculator ();
+		}
 
 
 		// PRIVATE FUNCTIONS /////////////////////////
@@ -197,6 +203,8 @@ namespace PurpleNetwork.Server
 			PurpleNetwork.LaunchLocalServer(config.ServerMaxClients, config.ServerPassword, config.ServerPort);
 			PurpleNetwork.SetSpamProtection (config.SpamPrevention);
 			PurpleNetwork.SetSpamResponse (config.SpamResponse);
+
+			serverLaunchDate = DateTime.Now;
 
 			switch (config.ServerType)
 			{
@@ -221,7 +229,7 @@ namespace PurpleNetwork.Server
 				break;
 			}
 
-			if(config.ServerSanityTest)
+			if(config.SanityTest)
 			{
 				PurpleNetworkServerSanityTester.ServerSanityCheck();
 			}
@@ -262,7 +270,7 @@ namespace PurpleNetwork.Server
 			if(notificationIntervalList.Contains(time_left))
 			{
 				PurpleNetwork.Broadcast ("server_broadcast",
-				                         create_broadcast_message(combine_notification_message(shutdownNotificationMessage, time_left)));
+						create_broadcast_message(combine_notification_message(shutdownNotificationMessage, time_left)));
 			}
 		}
 
@@ -271,6 +279,7 @@ namespace PurpleNetwork.Server
 			countdown.CountdownDoneEvent -= stop_server_done;
 			countdown.CountdownRunEvent -= stop_server_run;
 			countdown.DestroyInstance ();
+			serverLaunchDate = DateTime.MinValue;
 			PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(shutdownNotificationDoneMessage));
 			PurpleNetwork.StopLocalServer ();
 		}
@@ -310,7 +319,7 @@ namespace PurpleNetwork.Server
 			if(notificationIntervalList.Contains(time_left))
 			{
 				PurpleNetwork.Broadcast ("server_broadcast",
-				                         create_broadcast_message(combine_notification_message(restartNotificationMessage, time_left)));
+						create_broadcast_message(combine_notification_message(restartNotificationMessage, time_left)));
 			}
 		}
 
@@ -319,6 +328,7 @@ namespace PurpleNetwork.Server
 			countdown.CountdownDoneEvent -= restart_server_done;
 			countdown.CountdownRunEvent -= restart_server_run;
 			countdown.DestroyInstance ();
+			serverLaunchDate = DateTime.Now;
 			PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(restartNotificationDoneMessage));
 			PurpleNetwork.RestartLocalServer ();
 		}
@@ -392,6 +402,13 @@ namespace PurpleNetwork.Server
 		{
 			PurpleDatabase.PurpleDatabase.Setup(config.DatabaseHost, config.DatabaseName,
 			                                    config.DatabaseUser, config.DatabasePassword, config.DatabasePort);
+		}
+
+		private TimeSpan uptime_calculator()
+		{
+			if(serverLaunchDate == DateTime.MinValue)
+				return TimeSpan.MinValue;
+			return DateTime.Now - serverLaunchDate;
 		}
 	}
 }
