@@ -9,17 +9,17 @@ namespace PurpleNetwork.Server.Handler
 	{
 		public static void register_account_handler()
 		{
-			PurpleNetwork.AddListener<_PurpleMessages.User.CreateAccount>("client_create_account", 
-			        client_create_account_handler);
+			PurpleNetwork.AddListener<_PurpleMessages.User.CreateAccount>("client_create_character", 
+			        client_create_character_handler);
 		}
 
 
 		// HANDLER /////////////////////////
 
 		// ACCOUNT /////////////////////////
-		public static void client_create_account_handler (string dataObject, NetworkPlayer np)
+		public static void client_create_character_handler (string dataObject, NetworkPlayer np)
 		{
-			Debug.Log ("Create Account received: " + np.ToString () + " | " + dataObject);
+			Debug.Log ("Create Character received: " + np.ToString () + " | " + dataObject);
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 			// TODO: convert data object to account object - purple messages
 		}
