@@ -16,7 +16,6 @@ namespace PurpleNetwork.Server.Handler
 
 		public static void register_base_handler()
 		{
-			// TODO: remove baseHandlerTick and listener on restart or so
 			baseHandlerTick = PurpleCountdown.NewInstance ("BaseHandlerTick");
 			baseHandlerTick.TriggerEvent += periodically_validate_player;
 			baseHandlerTick.Trigger (60, PurpleServer.CurrentConfig.ClientAuthentificationTimeout/4);
@@ -31,10 +30,14 @@ namespace PurpleNetwork.Server.Handler
 			}
 
 			PurpleNetwork.AddListener<_PMServer.Message>("server_broadcast", server_broadcast_handler);
+
+			PurpleNetwork.AddListener<_PMServer.Ping>("client_ping", client_ping_handler);
 			PurpleNetwork.AddListener<_PMClient.Authentication>("client_authenticate", client_authenticate_handler);
 
 			PurpleNetwork.PurplePlayerConnected += on_player_connected;
 			PurpleNetwork.PurplePlayerDisconnected += on_player_disconnected;
+
+			PurpleNetwork.DisconnectedFromPurpleServer += remove_base_handler;
 		}
 
 
@@ -94,6 +97,13 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
 		}
 
+		public static void client_ping_handler (string dataObject, NetworkPlayer np)
+		{
+			_PMServer.Ping pingObject = PurpleSerializer.StringToObjectConverter<_PMServer.Ping> (dataObject);
+			pingObject.bounceTime = DateTime.Now;
+			PurpleNetwork.ToPlayer (np, "server_ping", pingObject);
+		}
+
 
 		// EVENT /////////////////////////
 
@@ -140,5 +150,23 @@ namespace PurpleNetwork.Server.Handler
 				PurpleNetworkServerSanityTester.ServerSanityCheck();
 			}
 		}
+
+		public static void remove_base_handler(object ob, NetworkPlayer np)
+		{
+			baseHandlerTick.DestroyInstance ();
+			if(PurpleServer.CurrentConfig.SanityPeriodical > 0)
+				baseHandlerSanity.DestroyInstance();
+
+			PurpleNetwork.RemoveListener("server_broadcast", server_broadcast_handler);
+
+			PurpleNetwork.RemoveListener("client_ping", client_ping_handler);
+			PurpleNetwork.RemoveListener("client_authenticate", client_authenticate_handler);
+
+			PurpleNetwork.PurplePlayerConnected -= on_player_connected;
+			PurpleNetwork.PurplePlayerDisconnected -= on_player_disconnected;
+
+			PurpleNetwork.DisconnectedFromPurpleServer -= remove_base_handler;
+		}
+
 	}
 }

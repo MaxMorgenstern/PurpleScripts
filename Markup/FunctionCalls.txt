@@ -5,24 +5,24 @@ Function Calls:
 
 Server:
 Name:									Comment:										Handled in:
+server_broadcast						Server Broadcast for all clients				Server: PurpleNetworkBaseHandler
+
 server_disconnect_unspecified			Disconnect State 1 - Unspecified
 server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated 			Server: PurpleNetworkBaseHandler
 server_authenticate_result				Authentication response message 				Server: PurpleNetworkBaseHandler
+server_ping								Ping Response									Server: PurpleNetworkBaseHandler
 
-
-server_broadcast						Server Broadcast for all clients				Server: PurpleNetworkBaseHandler
 
 
 
 
 Client:
 Name:									Comment:										Handled in:
-Account Handler:
-client_create_account
+client_create_account																	Server: PurpleNetworkAccountHandler
 
 Base Handler:
 client_authenticate																		Server: PurpleNetworkBaseHandler
-
+client_ping								Ping request									Server: PurpleNetworkBaseHandler
 
 
 

@@ -140,13 +140,7 @@ namespace Entities.PurpleMessages
 		public class Ping : PurpleMessage
 		{
 			public DateTime triggerTime;
-			public DateTime localTime;
-			public DateTime remoteTime;
-
-			public Ping()
-			{
-				localTime = DateTime.Now;
-			}
+			public DateTime bounceTime;
 		}
 
 		// SERVER MESSAGES
