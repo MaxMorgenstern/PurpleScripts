@@ -456,12 +456,8 @@ namespace PurpleNetwork
 			psl.global_ip = externalIp;
 
 			int insertResult = psl.ToSQLInsert ().Execute ();
-			if (insertResult == 1)
-			{
-				if(PurpleDatabase.PurpleDatabase.LastInsertedId() > 0)
-					return true;
-			}
-
+			if (insertResult == 1 && PurpleDatabase.PurpleDatabase.LastInsertedId() > 0)
+				return true;
 			return false;
 		}
 	}

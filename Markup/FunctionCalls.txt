@@ -9,7 +9,13 @@ server_broadcast						Server Broadcast for all clients				Server: PurpleNetworkB
 
 server_disconnect_unspecified			Disconnect State 1 - Unspecified
 server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated 			Server: PurpleNetworkBaseHandler
+
+server_validate_username_result			Result if username is unique					Server: PurpleNetworkBaseHandler
+server_register_result					Refult of client registering					Server: PurpleNetworkBaseHandler
 server_authenticate_result				Authentication response message 				Server: PurpleNetworkBaseHandler
+server_logout_result					Logout result									Server: PurpleNetworkBaseHandler
+server_disable_result					Disable account									Server: PurpleNetworkBaseHandler
+
 server_ping								Ping Response									Server: PurpleNetworkBaseHandler
 
 
@@ -18,10 +24,15 @@ server_ping								Ping Response									Server: PurpleNetworkBaseHandler
 
 Client:
 Name:									Comment:										Handled in:
-client_create_account																	Server: PurpleNetworkAccountHandler
+client_create_character																	Server: PurpleNetworkAccountHandler
 
 Base Handler:
-client_authenticate																		Server: PurpleNetworkBaseHandler
+client_validate_username				Username valifation								Server: PurpleNetworkBaseHandler
+client_register							Register account								Server: PurpleNetworkBaseHandler
+client_authenticate						Authenticate client								Server: PurpleNetworkBaseHandler
+client_logout							logout call										Server: PurpleNetworkBaseHandler
+client_disable							account disable call							Server: PurpleNetworkBaseHandler
+
 client_ping								Ping request									Server: PurpleNetworkBaseHandler
 
 
