@@ -6,6 +6,7 @@ using Entities.PurpleNetwork;
 using PurpleDatabase.Helper;
 using _PMClient = Entities.PurpleMessages.User;
 using _PMServer = Entities.PurpleMessages.Server;
+using _PMBasic = Entities.PurpleMessages;
 
 namespace PurpleNetwork.Server.Handler
 {
@@ -32,7 +33,11 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.AddListener<_PMServer.Message>("server_broadcast", server_broadcast_handler);
 
 			PurpleNetwork.AddListener<_PMServer.Ping>("client_ping", client_ping_handler);
+			PurpleNetwork.AddListener<_PMBasic.Data>("client_validate_username", client_validate_username_handler);
+			PurpleNetwork.AddListener<_PMClient.CreateAccount>("client_register", client_register_handler);
 			PurpleNetwork.AddListener<_PMClient.Authentication>("client_authenticate", client_authenticate_handler);
+			PurpleNetwork.AddListener<_PMBasic.Data>("client_logout", client_logout_handler);
+			PurpleNetwork.AddListener<_PMClient.Authentication>("client_disable", client_disable_handler);
 
 			PurpleNetwork.PurplePlayerConnected += on_player_connected;
 			PurpleNetwork.PurplePlayerDisconnected += on_player_disconnected;
@@ -48,6 +53,37 @@ namespace PurpleNetwork.Server.Handler
 		{
 			Debug.Log ("Broadcast received: " + np.ToString () + " | " + dataObject);
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
+		}
+
+		// TODO: test
+		public static void client_validate_username_handler (string dataObject, NetworkPlayer np)
+		{
+			Debug.Log ("Username validation received: " + np.ToString ());
+			_PMBasic.Data basicData = PurpleSerializer.StringToObjectConverter<_PMBasic.Data> (dataObject);
+			basicData.validate = AccountHelper.IsUniqueUsername (basicData.data);
+			PurpleNetwork.ToPlayer (np, "server_validate_username_result", basicData);
+		}
+
+		//TODO: test
+		public static void client_register_handler (string dataObject, NetworkPlayer np)
+		{
+			Debug.Log ("Registration received: " + np.ToString ());
+			_PMClient.CreateAccount accountData = PurpleSerializer.StringToObjectConverter<_PMClient.CreateAccount> (dataObject);
+			Entities.Database.PurpleAccount purpleAccount = new Entities.Database.PurpleAccount ();
+
+			purpleAccount.birthday		= accountData.playerBirthday;
+			purpleAccount.country_code	= accountData.playerCountry;
+			purpleAccount.email 		= accountData.playerEmail;
+			purpleAccount.first_name 	= accountData.playerFirstName;
+			purpleAccount.gender 		= accountData.playerGender;
+			purpleAccount.language_code = accountData.playerLanguage;
+			purpleAccount.last_name 	= accountData.playerLastName;
+			purpleAccount.username 		= accountData.playerUsername;
+
+			_PMBasic.Boolean responseData = new _PMBasic.Boolean ();
+			responseData.value = AccountHelper.Register (purpleAccount, accountData.playerPassword);
+
+			PurpleNetwork.ToPlayer (np, "server_register_result", responseData);
 		}
 
 		public static void client_authenticate_handler (string dataObject, NetworkPlayer np)
@@ -95,6 +131,25 @@ namespace PurpleNetwork.Server.Handler
 			}
 
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
+		}
+
+		//TODO: test
+		public static void client_logout_handler (string dataObject, NetworkPlayer np)
+		{
+			Debug.Log ("Logout received: " + np.ToString ());
+			_PMBasic.Data basicData = PurpleSerializer.StringToObjectConverter<_PMBasic.Data> (dataObject);
+			basicData.validate = AccountHelper.Logout (basicData.data);
+			PurpleNetwork.ToPlayer (np, "server_logout_result", basicData);
+		}
+
+		//TODO: test
+		public static void client_disable_handler (string dataObject, NetworkPlayer np)
+		{
+			Debug.Log ("Authentication received: " + np.ToString ());
+			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
+			_PMBasic.Boolean returnData = new _PMBasic.Boolean ();
+			returnData.value = AccountHelper.Disable (authObject.playerName, authObject.playerPassword, np);
+			PurpleNetwork.ToPlayer (np, "server_disable_result", returnData);
 		}
 
 		public static void client_ping_handler (string dataObject, NetworkPlayer np)

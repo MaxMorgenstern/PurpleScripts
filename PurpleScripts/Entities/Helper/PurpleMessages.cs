@@ -39,18 +39,17 @@ namespace Entities.PurpleMessages
 		}
 	}
 
+	// BASIC DATA
+	public class Data : PurpleMessage
+	{
+		public string data;
+		public bool validate;
+	}
+
 
 	// PLAYER MESSAGES ////////////////////////////
 	namespace User
 	{
-		// BASIC USER DATA
-		public class Data : PurpleMessage
-		{
-			public NetworkPlayer player;
-			public string name;
-			public Guid playerGuid;
-		}
-
 		// USER ACTION
 		public class Action : PurpleMessage
 		{
