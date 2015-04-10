@@ -9,8 +9,7 @@ namespace PurpleNetwork.Server.Handler
 	{
 		public static void register_account_handler()
 		{
-			PurpleNetwork.AddListener<_PurpleMessages.User.CreateAccount>("client_create_character", 
-			        client_create_character_handler);
+			PurpleNetwork.AddListener("client_create_character", client_create_character_handler);
 		}
 
 

@@ -42,7 +42,7 @@ namespace PurpleNetwork
 		private static int 		serverPlayer;
 		private static int 		serverPort;
 		private static String 	serverPassword;
-		
+
 		private static bool 	serverSpamPrevention;
 		private static bool 	serverSpamResponse;
 
@@ -68,7 +68,7 @@ namespace PurpleNetwork
 
 		public static event PurpleNetworkEvent PurpleNetworkInstantiate;
 		public static event PurpleNetworkEvent SerializePurpleNetworkView;
-		
+
 		public static event PurpleNetworkEvent PurpleNetworkError;
 		public static event PurpleNetworkEvent PurpleNetworkSpamWarning;
 
@@ -186,13 +186,13 @@ namespace PurpleNetwork
 		}
 
 
-		public static void AddListener<T> (string event_name, PurpleNetCallback listener)
+		public static void AddListener (string event_name, PurpleNetCallback listener)
 		{
-			Instance.add_listener<T> (event_name, listener);
+			Instance.add_listener (event_name, listener);
 		}
-		public static void AddListener<T> (string event_name, PurpleNetCallback listener, bool add_multiple)
+		public static void AddListener (string event_name, PurpleNetCallback listener, bool add_multiple)
 		{
-			Instance.add_listener<T> (event_name, listener, add_multiple);
+			Instance.add_listener (event_name, listener, add_multiple);
 		}
 
 		public static bool RemoveListener(string event_name)
@@ -255,7 +255,7 @@ namespace PurpleNetwork
 			Instance.test_connection (true);
 		}
 
-		
+
 		public static void SetSpamProtection(bool state)
 		{
 			Instance.set_spam_protection (state);
@@ -265,8 +265,8 @@ namespace PurpleNetwork
 		{
 			Instance.set_spam_response (state);
 		}
-		
-		
+
+
 
 		// PRIVATE ////////////////////////////
 
@@ -289,7 +289,7 @@ namespace PurpleNetwork
 			serverSpamResponse = state;
 		}
 
-		
+
 		// SERVER ////////////////////////////
 
 		// CONNECTION CALLS
@@ -407,12 +407,12 @@ namespace PurpleNetwork
 
 
 		// EVENT DISPATCH ////////////////////
-		private void add_listener <T> (string event_name, PurpleNetCallback listener)
+		private void add_listener (string event_name, PurpleNetCallback listener)
 		{
-			add_listener <T> (event_name, listener, false);
+			add_listener (event_name, listener, false);
 		}
 
-		private void add_listener <T> (string event_name, PurpleNetCallback listener, bool add_multiple)
+		private void add_listener (string event_name, PurpleNetCallback listener, bool add_multiple)
 		{
 			if (!eventListeners.ContainsKey (event_name))
 			{
@@ -556,10 +556,10 @@ namespace PurpleNetwork
 					if(serverSpamResponse && Spam.Prevention.SendSpamResponse(clientID))
 					{
 						_PurpleMessages.Server.SpamPrevention spamPreventionMessage = new _PurpleMessages.Server.SpamPrevention();
-						Spam.Prevention.GetRequestsInTimespan(clientID, 
-											out spamPreventionMessage.requestsInTime, 
+						Spam.Prevention.GetRequestsInTimespan(clientID,
+											out spamPreventionMessage.requestsInTime,
 						                	out spamPreventionMessage.requestTimeSpan);
-						purpleNetworkView.RPC("receive_purple_network_spam_warning", info.sender, event_name, 
+						purpleNetworkView.RPC("receive_purple_network_spam_warning", info.sender, event_name,
 						 					_PurpleSerializer.ObjectToStringConverter(spamPreventionMessage));
 					}
 					return;

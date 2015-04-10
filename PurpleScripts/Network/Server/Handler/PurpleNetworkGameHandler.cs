@@ -11,9 +11,9 @@ namespace PurpleNetwork.Server.Handler
 			// TODO
 		}
 
-		
+
 		// HANDLER /////////////////////////
-		
+
 		// GAME /////////////////////////
 		public static void dummy (string dataObject, NetworkPlayer np)
 		{ /* TODO */ }

@@ -30,14 +30,14 @@ namespace PurpleNetwork.Server.Handler
 				baseHandlerSanity.Trigger (period, period);
 			}
 
-			PurpleNetwork.AddListener<_PMServer.Message>("server_broadcast", server_broadcast_handler);
+			PurpleNetwork.AddListener("server_broadcast", server_broadcast_handler);
 
-			PurpleNetwork.AddListener<_PMServer.Ping>("client_ping", client_ping_handler);
-			PurpleNetwork.AddListener<_PMBasic.Data>("client_validate_username", client_validate_username_handler);
-			PurpleNetwork.AddListener<_PMClient.CreateAccount>("client_register", client_register_handler);
-			PurpleNetwork.AddListener<_PMClient.Authentication>("client_authenticate", client_authenticate_handler);
-			PurpleNetwork.AddListener<_PMBasic.Data>("client_logout", client_logout_handler);
-			PurpleNetwork.AddListener<_PMClient.Authentication>("client_disable", client_disable_handler);
+			PurpleNetwork.AddListener("client_ping", client_ping_handler);
+			PurpleNetwork.AddListener("client_validate_username", client_validate_username_handler);
+			PurpleNetwork.AddListener("client_register", client_register_handler);
+			PurpleNetwork.AddListener("client_authenticate", client_authenticate_handler);
+			PurpleNetwork.AddListener("client_logout", client_logout_handler);
+			PurpleNetwork.AddListener("client_disable", client_disable_handler);
 
 			PurpleNetwork.PurplePlayerConnected += on_player_connected;
 			PurpleNetwork.PurplePlayerDisconnected += on_player_disconnected;
