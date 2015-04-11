@@ -201,38 +201,7 @@ namespace PurpleNetwork.Server
 			initialize_database_connection (currentServerConfig);
 
 			PurpleNetwork.LaunchLocalServer(config.ServerMaxClients, config.ServerPassword, config.ServerPort);
-			PurpleNetwork.SetSpamProtection (config.SpamPrevention);
-			PurpleNetwork.SetSpamResponse (config.SpamResponse);
-
-			serverLaunchDate = DateTime.Now;
-
-			switch (config.ServerType)
-			{
-			case ServerTypes.Account:
-				Handler.Handler.RegisterAccountListener();
-				break;
-
-			case ServerTypes.Game:
-				Handler.Handler.RegisterGameListener();
-				break;
-
-			case ServerTypes.Lobby:
-				Handler.Handler.RegisterLobbyListener();
-				break;
-
-			case ServerTypes.Monitoring:
-				Handler.Handler.RegisterLMonitoringListener();
-				break;
-
-			case ServerTypes.Multi:
-				Handler.Handler.RegisterMultiListener();
-				break;
-			}
-
-			if(config.SanityTest)
-			{
-				PurpleNetworkServerSanityTester.ServerSanityCheck();
-			}
+			initialize_server_details ();
 		}
 
 
@@ -331,6 +300,7 @@ namespace PurpleNetwork.Server
 			serverLaunchDate = DateTime.Now;
 			PurpleNetwork.Broadcast ("server_broadcast", create_broadcast_message(restartNotificationDoneMessage));
 			PurpleNetwork.RestartLocalServer ();
+			initialize_server_details ();
 		}
 
 		// NOTIFICATION MESSAGE
@@ -364,6 +334,42 @@ namespace PurpleNetwork.Server
 
 
 		// HELPER ////////////////////
+		private void initialize_server_details()
+		{
+			PurpleNetwork.SetSpamProtection (currentServerConfig.SpamPrevention);
+			PurpleNetwork.SetSpamResponse (currentServerConfig.SpamResponse);
+			
+			serverLaunchDate = DateTime.Now;
+			
+			switch (currentServerConfig.ServerType)
+			{
+			case ServerTypes.Account:
+				Handler.Handler.RegisterAccountListener();
+				break;
+				
+			case ServerTypes.Game:
+				Handler.Handler.RegisterGameListener();
+				break;
+				
+			case ServerTypes.Lobby:
+				Handler.Handler.RegisterLobbyListener();
+				break;
+				
+			case ServerTypes.Monitoring:
+				Handler.Handler.RegisterLMonitoringListener();
+				break;
+				
+			case ServerTypes.Multi:
+				Handler.Handler.RegisterMultiListener();
+				break;
+			}
+			
+			if(currentServerConfig.SanityTest)
+			{
+				PurpleNetworkServerSanityTester.ServerSanityCheck();
+			}
+		}
+
 		private string combine_notification_message(string message, int timeLeft)
 		{
 			int[] convertedTimeLeft = calculate_time_from_seconds (timeLeft);

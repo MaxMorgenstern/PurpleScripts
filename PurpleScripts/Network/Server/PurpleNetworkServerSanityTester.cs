@@ -257,7 +257,8 @@ namespace PurpleNetwork
 
 			testDone = true;
 
-			Network.connectionTesterIP = formerIP;
+			if(!formerIP.StartsWith("0."))
+				Network.connectionTesterIP = formerIP;
 			Network.connectionTesterPort = formerPort;
 		}
 
