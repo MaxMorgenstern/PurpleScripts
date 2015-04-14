@@ -8,6 +8,7 @@ namespace PurpleAttributes
 		private string ErrorMessage;
 		private bool Required;
 
+
 		public RequiredAttribute()
 		{
 			this.ErrorMessage = String.Empty;
@@ -25,6 +26,7 @@ namespace PurpleAttributes
 			this.ErrorMessage = ErrorMessage;
 			this.Required = Required;
 		}
+
 
 		public bool validate<T>(T data, PropertyInfo singleProperty, out string error)
 		{
@@ -66,7 +68,7 @@ namespace PurpleAttributes
 					break;
 				}
 			} catch {
-				returnValue =  false;
+				returnValue = false;
 			}
 
 			if (!returnValue)
