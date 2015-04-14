@@ -71,8 +71,8 @@ namespace PurpleAttributes
 				returnValue = false;
 			}
 
-			if (!returnValue)
-				error = this.ErrorMessage + " " + singleProperty.Name;
+			if (!returnValue && !string.IsNullOrEmpty(this.ErrorMessage))
+				error = this.ErrorMessage;
 			return returnValue;
 		}
 	}

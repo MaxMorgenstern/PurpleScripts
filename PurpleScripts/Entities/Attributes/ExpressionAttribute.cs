@@ -1,7 +1,7 @@
-using System.Collections;
 using System;
-using System.Text.RegularExpressions;
+using System.Collections;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace PurpleAttributes
 {
@@ -56,18 +56,16 @@ namespace PurpleAttributes
 				string stringValue = singleProperty.GetValue(data, null).ToString();
 
 				if(string.IsNullOrEmpty(stringValue))
-					returnValue = false;
+					return returnValue;
 
 				Match match = this.Expression.Match(stringValue);
 				if (!match.Success)
 					returnValue = false;
 
-			} catch {
-				returnValue = false;
-			}
+			} catch { }
 
 			if (!returnValue && !string.IsNullOrEmpty(this.ErrorMessage))
-				error = this.ErrorMessage + " " + singleProperty.Name;
+				error = this.ErrorMessage;
 			return returnValue;
 		}
 

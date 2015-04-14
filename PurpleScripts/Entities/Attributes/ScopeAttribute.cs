@@ -63,11 +63,11 @@ namespace PurpleAttributes
 				returnValue = false;
 			}
 
-			if(numberToTest < this.min || numberToTest > this.max)
+			if(numberToTest != 0 && (numberToTest < this.min || numberToTest > this.max))
 				returnValue = false;
 
-			if (!returnValue)
-				error = this.ErrorMessage + " " + singleProperty.Name;
+			if (!returnValue && !string.IsNullOrEmpty(this.ErrorMessage))
+				error = this.ErrorMessage;
 			return returnValue;
 		}
 
