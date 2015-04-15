@@ -184,9 +184,9 @@ namespace PurpleDatabase.Helper
 				return false;
 
 			int result = add_database_user_warning (userData.id, level, comment);
-			if(result == 1 && notifyUser)
+			if(result && notifyUser)
 				PurpleMailGenerator.SendMail(PurpleConfig.Mail.Template.Warning, userData, comment);
-			return (result == 1) ? true : false;
+			return result;
 		}
 
 		public static bool AddLog(string identifier, string comment)
@@ -195,8 +195,7 @@ namespace PurpleDatabase.Helper
 			if(userData == null)
 				return false;
 
-			int result = add_database_user_log (userData.id, comment);
-			return (result == 1) ? true : false;
+			return add_database_user_log (userData.id, comment);
 		}
 
 
@@ -294,7 +293,7 @@ namespace PurpleDatabase.Helper
 		}
 
 
-		private static int add_database_user_warning(int account_id, int warning_level, string comment)
+		private static bool add_database_user_warning(int account_id, int warning_level, string comment)
 		{
 			PurpleAccountWarnings paw = new PurpleAccountWarnings ();
 			paw.account_id = account_id;
@@ -302,7 +301,8 @@ namespace PurpleDatabase.Helper
 			paw.comment = comment;
 			if(PurpleAttributes.Validator.Validate (paw))
 			{
-				return paw.ToSQLInsert ().Execute ();
+				int result = paw.ToSQLInsert ().Execute ();
+				return (result==1) ? true : false;
 			}
 			return false;
 			/*
@@ -311,14 +311,15 @@ namespace PurpleDatabase.Helper
 			*/
 		}
 
-		private static int add_database_user_log(int account_id, string comment)
+		private static bool add_database_user_log(int account_id, string comment)
 		{
 			PurpleAccountLog pal = new PurpleAccountLog ();
 			pal.account_id = account_id;
 			pal.log = comment;
 			if(PurpleAttributes.Validator.Validate (pal))
 			{
-				return pal.ToSQLInsert ().Execute ();
+				int result = pal.ToSQLInsert ().Execute ();
+				return (result==1) ? true : false;
 			}
 			return false;
 			/*
