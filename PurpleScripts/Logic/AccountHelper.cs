@@ -266,8 +266,12 @@ namespace PurpleDatabase.Helper
 
 		private static bool update_database_user(PurpleAccount user)
 		{
-			int result = user.ToSQLUpdate ().Execute ();
-			return (result==1) ? true : false;
+			if(PurpleAttributes.Validator.Validate (user))
+			{
+				int result = user.ToSQLUpdate ().Execute ();
+				return (result==1) ? true : false;
+			}
+			return false;
 		}
 
 		private static bool create_database_user(PurpleAccount user, string password)
@@ -279,25 +283,48 @@ namespace PurpleDatabase.Helper
 			user.account_type = "User";
 			user.active = false;
 
-			// TODO: check if all data is set
-
-			int result = user.ToSQLInsert ().Execute ();
-			if(result == 1)
-				PurpleMailGenerator.SendMail(PurpleConfig.Mail.Template.Register, user);
-			return (result==1) ? true : false;
+			if(PurpleAttributes.Validator.Validate (user))
+			{
+				int result = user.ToSQLInsert ().Execute ();
+				if(result == 1)
+					PurpleMailGenerator.SendMail(PurpleConfig.Mail.Template.Register, user);
+				return (result==1) ? true : false;
+			}
+			return false;
 		}
 
 
 		private static int add_database_user_warning(int account_id, int warning_level, string comment)
 		{
+			PurpleAccountWarnings paw = new PurpleAccountWarnings ();
+			paw.account_id = account_id;
+			paw.warning_level = warning_level;
+			paw.comment = comment;
+			if(PurpleAttributes.Validator.Validate (paw))
+			{
+				return paw.ToSQLInsert ().Execute ();
+			}
+			return false;
+			/*
 			return SQLGenerator.New ().Insert(accountWarningsTable, "account_id, warning_level, comment, timestamp")
 				.Values(account_id+", "+warning_level+", "+comment+", now()").Execute();
+			*/
 		}
 
 		private static int add_database_user_log(int account_id, string comment)
 		{
+			PurpleAccountLog pal = new PurpleAccountLog ();
+			pal.account_id = account_id;
+			pal.log = comment;
+			if(PurpleAttributes.Validator.Validate (pal))
+			{
+				return pal.ToSQLInsert ().Execute ();
+			}
+			return false;
+			/*
 			return SQLGenerator.New ().Insert (accountLogTable, "account_id, log, timestamp")
 				.Values (account_id+", "+comment+", now()").Execute();
+			*/
 		}
 
 	}
