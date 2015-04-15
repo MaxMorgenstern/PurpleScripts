@@ -183,7 +183,7 @@ namespace PurpleDatabase.Helper
 			if(userData == null)
 				return false;
 
-			int result = add_database_user_warning (userData.id, level, comment);
+			bool result = add_database_user_warning (userData.id, level, comment);
 			if(result && notifyUser)
 				PurpleMailGenerator.SendMail(PurpleConfig.Mail.Template.Warning, userData, comment);
 			return result;
