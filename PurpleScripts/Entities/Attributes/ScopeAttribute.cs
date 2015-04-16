@@ -55,6 +55,10 @@ namespace PurpleAttributes
 					numberToTest = (float)Convert.ToInt32(singleProperty.GetValue(data, null));
 					break;
 
+				case TypeCode.String:
+					numberToTest = (float)Convert.ToInt32(singleProperty.GetValue(data, null).ToString().Length);
+					break;
+
 				default:
 					numberToTest = (float)Convert.ToDecimal(singleProperty.GetValue(data, null));
 					break;
@@ -80,4 +84,3 @@ namespace PurpleAttributes
 		}
 	}
 }
-
