@@ -56,7 +56,7 @@ namespace PurpleAttributes
 					break;
 
 				case TypeCode.String:
-					numberToTest = (float)Convert.ToInt32(singleProperty.GetValue(data, null).ToString().Length);
+					numberToTest = (float)singleProperty.GetValue(data, null).ToString().Length;
 					break;
 
 				default:

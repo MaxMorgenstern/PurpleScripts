@@ -15,8 +15,10 @@ namespace PurpleDatabase.Helper
 	public class AccountHelper : MonoBehaviour
 	{
 		private static string accountTable 			= "account";
-		private static string accountWarningsTable 	= "account_warnings";
-		private static string accountLogTable 		= "account_log";
+		//private static string accountWarningsTable 	= "account_warnings";
+		//private static string accountLogTable 		= "account_log";
+
+		// TODO: get validate error messages
 
 		public static bool ValidateAuthentication(string identifier, string password_or_token)
 		{
@@ -129,8 +131,11 @@ namespace PurpleDatabase.Helper
 			}
 		}
 
-		public static bool Logout(string identifier)
+		public static bool Logout(string identifier, string password_or_token)
 		{
+			if(!ValidateAuthentication (identifier, password_or_token))
+				return false;
+
 			PurpleAccount userData = get_database_user (identifier);
 			if(userData == null)
 				return false;
