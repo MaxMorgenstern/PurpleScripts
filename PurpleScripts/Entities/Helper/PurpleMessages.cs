@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace Entities.PurpleMessages
 {
@@ -50,18 +51,22 @@ namespace Entities.PurpleMessages
 	// PLAYER MESSAGES ////////////////////////////
 	namespace User
 	{
-		// USER ACTION
-		public class Action : PurpleMessage
+		public class PurpleUserMessage : PurpleMessage
 		{
 			public NetworkPlayer player;
+			public List<string> error;
+		}
+
+		// USER ACTION
+		public class Action : PurpleUserMessage
+		{
 			public string playerName;
 			public string actionName;
 		}
 
 		// USER LOGIN
-		public class Authentication : PurpleMessage
+		public class Authentication : PurpleUserMessage
 		{
-			public NetworkPlayer player;
 			public string playerName;
 			public string playerPassword;
 			public string playerToken;
@@ -69,9 +74,8 @@ namespace Entities.PurpleMessages
 		}
 
 		// CREATE ACCOUNT
-		public class CreateAccount : PurpleMessage
+		public class CreateAccount : PurpleUserMessage
 		{
-			public NetworkPlayer player;
 			public string playerUsername;
 			public string playerPassword;
 			public string playerEmail;
@@ -85,17 +89,15 @@ namespace Entities.PurpleMessages
 		}
 
 		// CREATE CHARACTER
-		public class CreateCharacter : PurpleMessage
+		public class CreateCharacter : PurpleUserMessage
 		{
-			public NetworkPlayer player;
 			public string characterName;
 			/// TODO
 		}
 
 		// CREATE Game
-		public class CreateGame : PurpleMessage
+		public class CreateGame : PurpleUserMessage
 		{
-			public NetworkPlayer player;
 			public string gameName;
 			// TODO
 		}
