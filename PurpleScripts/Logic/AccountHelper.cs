@@ -15,10 +15,7 @@ namespace PurpleDatabase.Helper
 	public class AccountHelper : MonoBehaviour
 	{
 		private static string accountTable 			= "account";
-		//private static string accountWarningsTable 	= "account_warnings";
-		//private static string accountLogTable 		= "account_log";
-
-		// TODO: get validate error messages
+		private static List<string> errorList;
 
 		public static bool ValidateAuthentication(string identifier, string password_or_token)
 		{
@@ -177,13 +174,16 @@ namespace PurpleDatabase.Helper
 
 		// Warning / Log ////////////////////////////
 
-		public static bool AddWarning(string identifier, string comment, int level)
+		public static bool AddWarning(string reporter, string password_or_token, string identifier, string comment, int level)
 		{
-			return AddWarning (identifier, comment, level, false);
+			return AddWarning (reporter, password_or_token, identifier, comment, level, false);
 		}
 
-		public static bool AddWarning(string identifier, string comment, int level, bool notifyUser)
+		public static bool AddWarning(string reporter, string password_or_token, string identifier, string comment, int level, bool notifyUser)
 		{
+			if(!ValidateAuthentication (reporter, password_or_token))
+				return false;
+
 			PurpleAccount userData = get_database_user (identifier);
 			if(userData == null)
 				return false;
@@ -203,6 +203,10 @@ namespace PurpleDatabase.Helper
 			return add_database_user_log (userData.id, comment);
 		}
 
+		public static List<string> GetErrorList()
+		{
+			return errorList;
+		}
 
 		// PRIVATE ////////////////////////////
 
@@ -270,7 +274,7 @@ namespace PurpleDatabase.Helper
 
 		private static bool update_database_user(PurpleAccount user)
 		{
-			if(PurpleAttributes.Validator.Validate (user))
+			if(PurpleAttributes.Validator.Validate (user, out errorList))
 			{
 				int result = user.ToSQLUpdate ().Execute ();
 				return (result==1) ? true : false;
@@ -287,7 +291,7 @@ namespace PurpleDatabase.Helper
 			user.account_type = "User";
 			user.active = false;
 
-			if(PurpleAttributes.Validator.Validate (user))
+			if(PurpleAttributes.Validator.Validate (user, out errorList))
 			{
 				int result = user.ToSQLInsert ().Execute ();
 				if(result == 1)
@@ -304,16 +308,13 @@ namespace PurpleDatabase.Helper
 			paw.account_id = account_id;
 			paw.warning_level = warning_level;
 			paw.comment = comment;
-			if(PurpleAttributes.Validator.Validate (paw))
+
+			if(PurpleAttributes.Validator.Validate (paw, out errorList))
 			{
 				int result = paw.ToSQLInsert ().Execute ();
 				return (result==1) ? true : false;
 			}
 			return false;
-			/*
-			return SQLGenerator.New ().Insert(accountWarningsTable, "account_id, warning_level, comment, timestamp")
-				.Values(account_id+", "+warning_level+", "+comment+", now()").Execute();
-			*/
 		}
 
 		private static bool add_database_user_log(int account_id, string comment)
@@ -321,16 +322,12 @@ namespace PurpleDatabase.Helper
 			PurpleAccountLog pal = new PurpleAccountLog ();
 			pal.account_id = account_id;
 			pal.log = comment;
-			if(PurpleAttributes.Validator.Validate (pal))
+			if(PurpleAttributes.Validator.Validate (pal, out errorList))
 			{
 				int result = pal.ToSQLInsert ().Execute ();
 				return (result==1) ? true : false;
 			}
 			return false;
-			/*
-			return SQLGenerator.New ().Insert (accountLogTable, "account_id, log, timestamp")
-				.Values (account_id+", "+comment+", now()").Execute();
-			*/
 		}
 
 	}

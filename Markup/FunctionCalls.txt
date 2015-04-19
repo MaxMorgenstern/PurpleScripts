@@ -10,11 +10,12 @@ server_broadcast						Server Broadcast for all clients				Server: PurpleNetworkB
 server_disconnect_unspecified			Disconnect State 1 - Unspecified
 server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated 			Server: PurpleNetworkBaseHandler
 
-server_validate_username_result			Result if username is unique					Server: PurpleNetworkBaseHandler
-server_register_result					Refult of client registering					Server: PurpleNetworkBaseHandler
+server_validate_username_result			Result if username is unique					Server: PurpleNetworkAccountHandler
+server_register_result					Refult of client registering					Server: PurpleNetworkAccountHandler
 server_authenticate_result				Authentication response message 				Server: PurpleNetworkBaseHandler
+server_generate_token_result			Token Generation Response						Server: PurpleNetworkBaseHandler
 server_logout_result					Logout result									Server: PurpleNetworkBaseHandler
-server_disable_result					Disable account									Server: PurpleNetworkBaseHandler
+server_disable_result					Disable account									Server: PurpleNetworkAccountHandler
 
 server_ping								Ping Response									Server: PurpleNetworkBaseHandler
 
@@ -27,16 +28,22 @@ Name:									Comment:										Handled in:
 client_create_character																	Server: PurpleNetworkAccountHandler
 
 Base Handler:
-client_validate_username				Username valifation								Server: PurpleNetworkBaseHandler
-client_register							Register account								Server: PurpleNetworkBaseHandler
+client_validate_username				Username valifation								Server: PurpleNetworkAccountHandler
+client_register							Register account								Server: PurpleNetworkAccountHandler
 client_authenticate						Authenticate client								Server: PurpleNetworkBaseHandler
+client_generate_token					Generate new Token								Server: PurpleNetworkBaseHandler
 client_logout							logout call										Server: PurpleNetworkBaseHandler
-client_disable							account disable call							Server: PurpleNetworkBaseHandler
+client_disable							account disable call							Server: PurpleNetworkAccountHandler
 
 client_ping								Ping request									Server: PurpleNetworkBaseHandler
 
 
 
+
+
+Gamemaster:
+Name:									Comment:										Handled in:
+gamemaster_add_warning																	Server: PurpleNetworkGamemasterHandler
 
 
 
