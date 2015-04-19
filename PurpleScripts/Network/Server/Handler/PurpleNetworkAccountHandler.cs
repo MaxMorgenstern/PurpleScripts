@@ -6,6 +6,7 @@ using _PMBasic = Entities.PurpleMessages;
 using _PMClient = Entities.PurpleMessages.User;
 using _PMServer = Entities.PurpleMessages.Server;
 
+// TODO: update overview
 
 namespace PurpleNetwork.Server.Handler
 {
@@ -50,10 +51,11 @@ namespace PurpleNetwork.Server.Handler
 			purpleAccount.last_name 	= accountData.playerLastName;
 			purpleAccount.username 		= accountData.playerUsername;
 
-			_PMBasic.Boolean responseData = new _PMBasic.Boolean ();
-			responseData.value = AccountHelper.Register (purpleAccount, accountData.playerPassword);
+			// TODO: test
+			accountData.validate = AccountHelper.Register (purpleAccount, accountData.playerPassword);
+			accountData.error = AccountHelper.GetErrorList();
 
-			PurpleNetwork.ToPlayer (np, "server_register_result", responseData);
+			PurpleNetwork.ToPlayer (np, "server_register_result", accountData);
 		}
 
 		//TODO: test

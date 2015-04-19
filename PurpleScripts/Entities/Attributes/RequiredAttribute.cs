@@ -42,8 +42,8 @@ namespace PurpleAttributes
 				case TypeCode.DateTime:
 					DateTime dateValue = (DateTime)singleProperty.GetValue(data, null);
 					DateTime dtNull = Convert.ToDateTime("0001-01-01 00:00:00");
-					if(dateValue == null || dateValue.Equals(dtNull) || dateValue.Equals(DateTime.MinValue))
-						returnValue =  false;
+					if(dateValue.Equals(dtNull) || dateValue.Equals(DateTime.MinValue))
+						returnValue = false;
 					break;
 
 				case TypeCode.Boolean:
@@ -51,20 +51,20 @@ namespace PurpleAttributes
 
 				case TypeCode.Int32:
 					int intValue = Convert.ToInt32(singleProperty.GetValue(data, null));
-					if (intValue == null || intValue == 0)
-						returnValue =  false;
+					if (intValue == 0)
+						returnValue = false;
 					break;
 
 				case TypeCode.String:
 					string stringValue = singleProperty.GetValue(data, null).ToString();
 					if(string.IsNullOrEmpty(stringValue) || stringValue.Equals("NULL"))
-						returnValue =  false;
+						returnValue = false;
 					break;
 
 				default:
 					object defaultValue = singleProperty.GetValue(data, null);
 					if(defaultValue == null)
-						returnValue =  false;
+						returnValue = false;
 					break;
 				}
 			} catch {

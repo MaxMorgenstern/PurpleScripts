@@ -55,6 +55,7 @@ namespace Entities.PurpleMessages
 		{
 			public NetworkPlayer player;
 			public List<string> error;
+			public bool validate;
 		}
 
 		// USER ACTION
@@ -103,7 +104,26 @@ namespace Entities.PurpleMessages
 		}
 	}
 
+	// GAMEMASTER MESSAGES ////////////////////////////
+	namespace Gamemaster
+	{
+		public class PurpleGamemasterMessage : PurpleMessage
+		{
+			public NetworkPlayer player;
+			public string playerUsername;
+			public string playerPassword;
+			public string playerToken;
+			public bool validate;
+		}
 
+		public class Warning : PurpleGamemasterMessage
+		{
+			public string warningComment;
+			public int warningLevel;
+			public string warningUser;
+		}
+	}
+		
 	// SERVER RELATED MESSAGES ////////////////////////////
 	namespace Server
 	{

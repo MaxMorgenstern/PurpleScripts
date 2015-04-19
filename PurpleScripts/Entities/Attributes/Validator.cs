@@ -63,7 +63,7 @@ namespace PurpleAttributes
 
 
 		// MOCKUP ////////////////////////////
-
+		/*
 		public bool validate_mockup<T>(T data, PropertyInfo singleProperty, out string error)
 		{
 			error = string.Empty;
@@ -107,6 +107,7 @@ namespace PurpleAttributes
 			//	error = this.ErrorMessage + " " + singleProperty.Name;
 			return returnValue;
 		}
+		*/
 	}
 }
 
