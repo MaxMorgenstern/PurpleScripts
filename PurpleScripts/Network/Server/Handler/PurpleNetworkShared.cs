@@ -10,6 +10,5 @@ namespace PurpleNetwork.Server.Handler
 			return PurpleServer.UserList.Find (x => x.UserReference == np);
 		}
 	}
-
 }
 

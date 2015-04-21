@@ -9,7 +9,7 @@ namespace Entities.PurpleNetwork
 	public class PurpleNetworkUser
 	{
 		public NetworkPlayer 	UserReference;
-		
+
 		public Guid				UserGUID;
 		public int				UserID;
 		public UserTypes		UserType;
@@ -29,7 +29,7 @@ namespace Entities.PurpleNetwork
 			UserType 			= UserTypes.User;
 			UserAuthenticated 	= false;
 			UserConnectedTime 	= DateTime.Now;
-			
+
 			UserName			= String.Empty;
 			UserToken 			= String.Empty;
 		}
@@ -53,13 +53,13 @@ namespace Entities.PurpleNetwork
 		{
 			DataTable table = new DataTable();
 			table.Columns.Add("id", typeof(int));
-			table.Columns.Add("guid", typeof(int));
+			table.Columns.Add("guid", typeof(string));
 			table.Columns.Add("username", typeof(string));
 			table.Columns.Add("password", typeof(string));
 			table.Columns.Add("token", typeof(string));
 			table.Columns.Add("token_created", typeof(DateTime));
 
-			table.Rows.Add(UserID, UserGUID, UserName, string.Empty, UserToken, UserTokenCreated);
+			table.Rows.Add(UserID, UserGUID.ToString(), UserName, string.Empty, UserToken, UserTokenCreated);
 			return table;
 		}
 	}

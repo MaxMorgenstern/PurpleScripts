@@ -73,6 +73,8 @@ namespace PurpleNetwork.Server.Handler
 				validationResult = AccountHelper.Login (authObject.playerName, authObject.playerPassword, np, out newToken);
 			}
 
+			authObject.validate = validationResult;
+
 			// save 2 spaces if monitoring is allowed otherwise just one for Admin/Mod/GM
 			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
 			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 2 : 1;
