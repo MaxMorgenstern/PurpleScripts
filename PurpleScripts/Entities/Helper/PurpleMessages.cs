@@ -77,7 +77,7 @@ namespace Entities.PurpleMessages
 		// CREATE ACCOUNT
 		public class CreateAccount : PurpleUserMessage
 		{
-			public string playerUsername;
+			public string playerName;
 			public string playerPassword;
 			public string playerEmail;
 			public string playerFirstName;
@@ -110,9 +110,9 @@ namespace Entities.PurpleMessages
 		public class PurpleGamemasterMessage : PurpleMessage
 		{
 			public NetworkPlayer player;
-			public string playerUsername;
-			public string playerPassword;
-			public string playerToken;
+			public string gmUsername;
+			public string gmPassword;
+			public string gmToken;
 			public bool validate;
 		}
 

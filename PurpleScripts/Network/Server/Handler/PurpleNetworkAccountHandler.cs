@@ -6,11 +6,9 @@ using _PMBasic = Entities.PurpleMessages;
 using _PMClient = Entities.PurpleMessages.User;
 using _PMServer = Entities.PurpleMessages.Server;
 
-// TODO: update overview
-
 namespace PurpleNetwork.Server.Handler
 {
-	public class Account
+	public class Account : Shared
 	{
 		public static void register_account_handler()
 		{
@@ -49,12 +47,14 @@ namespace PurpleNetwork.Server.Handler
 			purpleAccount.gender 		= accountData.playerGender;
 			purpleAccount.language_code = accountData.playerLanguage;
 			purpleAccount.last_name 	= accountData.playerLastName;
-			purpleAccount.username 		= accountData.playerUsername;
+			purpleAccount.username 		= accountData.playerName;
 
 			// TODO: test
 			accountData.validate = AccountHelper.Register (purpleAccount, accountData.playerPassword);
 			accountData.error = AccountHelper.GetErrorList();
 
+			AccountHelper.AddLog(get_network_player_reference(np).UserName,
+			                     "client_register_handler " + accountData.playerName + " - " + accountData.validate.ToString());
 			PurpleNetwork.ToPlayer (np, "server_register_result", accountData);
 		}
 
@@ -65,6 +65,9 @@ namespace PurpleNetwork.Server.Handler
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
 			_PMBasic.Boolean returnData = new _PMBasic.Boolean ();
 			returnData.value = AccountHelper.Disable (authObject.playerName, authObject.playerPassword, np);
+
+			AccountHelper.AddLog(get_network_player_reference(np).UserName,
+			                     "client_disable_handler " + authObject.playerName + " - " + returnData.value.ToString());
 			PurpleNetwork.ToPlayer (np, "server_disable_result", returnData);
 		}
 
@@ -77,14 +80,12 @@ namespace PurpleNetwork.Server.Handler
 		}
 
 
-
-
 		public static void remove_account_handler(object ob, NetworkPlayer np)
 		{
 			PurpleNetwork.RemoveListener("client_validate_username", client_validate_username_handler);
 			PurpleNetwork.RemoveListener("client_register", client_register_handler);
 			PurpleNetwork.RemoveListener("client_disable", client_disable_handler);
-			
+
 			PurpleNetwork.RemoveListener("client_create_character", client_create_character_handler);
 
 			PurpleNetwork.DisconnectedFromPurpleServer -= remove_account_handler;

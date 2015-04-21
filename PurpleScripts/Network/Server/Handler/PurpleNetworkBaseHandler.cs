@@ -10,7 +10,7 @@ using _PMServer = Entities.PurpleMessages.Server;
 
 namespace PurpleNetwork.Server.Handler
 {
-	public class Base
+	public class Base : Shared
 	{
 		private static PurpleCountdown baseHandlerTick;
 		private static PurpleCountdown baseHandlerSanity;
@@ -34,6 +34,7 @@ namespace PurpleNetwork.Server.Handler
 
 			PurpleNetwork.AddListener("client_ping", client_ping_handler);
 			PurpleNetwork.AddListener("client_authenticate", client_authenticate_handler);
+			PurpleNetwork.AddListener("client_generate_token", client_generate_token_handler);
 			PurpleNetwork.AddListener("client_logout", client_logout_handler);
 
 			PurpleNetwork.PurplePlayerConnected += on_player_connected;
@@ -95,15 +96,38 @@ namespace PurpleNetwork.Server.Handler
 					authObject.playerAuthenticated = true;
 				}
 			}
-
+			AccountHelper.AddLog(get_network_player_reference(np).UserName, "client_authenticate_handler "
+			                     + authObject.playerName + " - "+ authObject.playerAuthenticated);
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
+		}
+
+		// TODO: test and add call to overview
+		public static void client_generate_token_handler (string dataObject, NetworkPlayer np)
+		{
+			Debug.Log ("Token re-generation received: " + np.ToString ());
+			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
+
+			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
+			string password_or_token = string.Empty;
+
+			if(!string.IsNullOrEmpty(authObject.playerToken))
+				password_or_token = authObject.playerToken;
+			if(!string.IsNullOrEmpty(authObject.playerPassword))
+				password_or_token = authObject.playerPassword;
+
+			authObject.playerToken = AccountHelper.GenerateToken(authObject.playerName, password_or_token, np);
+
+			AccountHelper.AddLog(get_network_player_reference(np).UserName,
+			                     "client_generate_token_handler " + authObject.playerName);
+			PurpleNetwork.ToPlayer(np, "server_generate_token_result", authObject);
 		}
 
 		public static void client_logout_handler (string dataObject, NetworkPlayer np)
 		{
 			Debug.Log ("Logout received: " + np.ToString ());
-			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
+			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
+			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
 			string password_or_token = string.Empty;
 
 			if(!string.IsNullOrEmpty(authObject.playerPassword))
@@ -112,6 +136,9 @@ namespace PurpleNetwork.Server.Handler
 				password_or_token = authObject.playerToken;
 
 			authObject.playerAuthenticated = AccountHelper.Logout (authObject.playerName, password_or_token);
+
+			AccountHelper.AddLog(get_network_player_reference(np).UserName,
+			                     "client_logout_handler " + authObject.playerName);
 			PurpleNetwork.ToPlayer (np, "server_logout_result", authObject);
 		}
 
@@ -138,11 +165,6 @@ namespace PurpleNetwork.Server.Handler
 
 
 		// PRIVATE /////////////////////////
-
-		private static PurpleNetworkUser get_network_player_reference(NetworkPlayer np)
-		{
-			return PurpleServer.UserList.Find (x => x.UserReference == np);
-		}
 
 		// PERIODICAL EVENTS /////////////////////////
 		private static void periodically_validate_player()
@@ -179,7 +201,7 @@ namespace PurpleNetwork.Server.Handler
 
 			PurpleNetwork.RemoveListener("client_ping", client_ping_handler);
 			PurpleNetwork.RemoveListener("client_authenticate", client_authenticate_handler);
-
+			PurpleNetwork.RemoveListener("client_generate_token", client_generate_token_handler);
 			PurpleNetwork.RemoveListener("client_logout", client_logout_handler);
 
 			PurpleNetwork.PurplePlayerConnected -= on_player_connected;
