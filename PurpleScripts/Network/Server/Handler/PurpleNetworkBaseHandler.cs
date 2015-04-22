@@ -62,15 +62,15 @@ namespace PurpleNetwork.Server.Handler
 			bool validationResult = false;
 			string newToken = string.Empty;
 
-			if(string.IsNullOrEmpty(authObject.playerPassword))
+			if(string.IsNullOrEmpty(authObject.ClientPassword))
 			{
-				validationResult = AccountHelper.ValidateAuthentication (authObject.playerName, authObject.playerToken);
+				validationResult = AccountHelper.ValidateAuthentication (authObject.ClientName, authObject.ClientToken);
 				if(validationResult)
-					newToken = AccountHelper.GenerateToken(authObject.playerName, authObject.playerToken, np);
+					newToken = AccountHelper.GenerateToken(authObject.ClientName, authObject.ClientToken, np);
 			}
 			else
 			{
-				validationResult = AccountHelper.Login (authObject.playerName, authObject.playerPassword, np, out newToken);
+				validationResult = AccountHelper.Login (authObject.ClientName, authObject.ClientPassword, np, out newToken);
 			}
 
 			authObject.validate = validationResult;
@@ -79,14 +79,14 @@ namespace PurpleNetwork.Server.Handler
 			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
 			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 2 : 1;
 
-			authObject.playerPassword = String.Empty;
-			authObject.playerToken = String.Empty;
-			authObject.playerAuthenticated = false;
+			authObject.ClientPassword = String.Empty;
+			authObject.ClientToken = String.Empty;
+			authObject.ClientAuthenticated = false;
 
 			if(validationResult && PurpleServer.UserList.Count <= maxAllowedConnections)
 			{
-				authObject.playerToken = newToken;
-				authObject.playerAuthenticated = true;
+				authObject.ClientToken = newToken;
+				authObject.ClientAuthenticated = true;
 
 			}
 			else if(validationResult)
@@ -94,12 +94,12 @@ namespace PurpleNetwork.Server.Handler
 				PurpleNetworkUser playerReference = get_network_player_reference(np);
 				if (playerReference.UserType != UserTypes.User)
 				{
-					authObject.playerToken = newToken;
-					authObject.playerAuthenticated = true;
+					authObject.ClientToken = newToken;
+					authObject.ClientAuthenticated = true;
 				}
 			}
 			AccountHelper.AddLog(get_network_player_reference(np).UserName, "client_authenticate_handler "
-			                     + authObject.playerName + " - "+ authObject.playerAuthenticated);
+			                     + authObject.ClientName + " - "+ authObject.ClientAuthenticated);
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
 		}
 
@@ -112,15 +112,15 @@ namespace PurpleNetwork.Server.Handler
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
 			string password_or_token = string.Empty;
 
-			if(!string.IsNullOrEmpty(authObject.playerToken))
-				password_or_token = authObject.playerToken;
-			if(!string.IsNullOrEmpty(authObject.playerPassword))
-				password_or_token = authObject.playerPassword;
+			if(!string.IsNullOrEmpty(authObject.ClientToken))
+				password_or_token = authObject.ClientToken;
+			if(!string.IsNullOrEmpty(authObject.ClientPassword))
+				password_or_token = authObject.ClientPassword;
 
-			authObject.playerToken = AccountHelper.GenerateToken(authObject.playerName, password_or_token, np);
+			authObject.ClientToken = AccountHelper.GenerateToken(authObject.ClientName, password_or_token, np);
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
-			                     "client_generate_token_handler " + authObject.playerName);
+			                     "client_generate_token_handler " + authObject.ClientName);
 			PurpleNetwork.ToPlayer(np, "server_generate_token_result", authObject);
 		}
 
@@ -132,15 +132,15 @@ namespace PurpleNetwork.Server.Handler
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
 			string password_or_token = string.Empty;
 
-			if(!string.IsNullOrEmpty(authObject.playerPassword))
-				password_or_token = authObject.playerPassword;
-			if(!string.IsNullOrEmpty(authObject.playerToken))
-				password_or_token = authObject.playerToken;
+			if(!string.IsNullOrEmpty(authObject.ClientPassword))
+				password_or_token = authObject.ClientPassword;
+			if(!string.IsNullOrEmpty(authObject.ClientToken))
+				password_or_token = authObject.ClientToken;
 
-			authObject.playerAuthenticated = AccountHelper.Logout (authObject.playerName, password_or_token);
+			authObject.ClientAuthenticated = AccountHelper.Logout (authObject.ClientName, password_or_token);
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
-			                     "client_logout_handler " + authObject.playerName);
+			                     "client_logout_handler " + authObject.ClientName);
 			PurpleNetwork.ToPlayer (np, "server_logout_result", authObject);
 		}
 

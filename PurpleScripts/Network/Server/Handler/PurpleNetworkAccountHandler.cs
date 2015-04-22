@@ -40,21 +40,21 @@ namespace PurpleNetwork.Server.Handler
 			_PMClient.CreateAccount accountData = PurpleSerializer.StringToObjectConverter<_PMClient.CreateAccount> (dataObject);
 			Entities.Database.PurpleAccount purpleAccount = new Entities.Database.PurpleAccount ();
 
-			purpleAccount.birthday		= accountData.playerBirthday;
-			purpleAccount.country_code	= accountData.playerCountry;
-			purpleAccount.email 		= accountData.playerEmail;
-			purpleAccount.first_name 	= accountData.playerFirstName;
-			purpleAccount.gender 		= accountData.playerGender;
-			purpleAccount.language_code = accountData.playerLanguage;
-			purpleAccount.last_name 	= accountData.playerLastName;
-			purpleAccount.username 		= accountData.playerName;
+			purpleAccount.birthday		= accountData.ClientBirthday;
+			purpleAccount.country_code	= accountData.ClientCountry;
+			purpleAccount.email 		= accountData.ClientEmail;
+			purpleAccount.first_name 	= accountData.ClientFirstName;
+			purpleAccount.gender 		= accountData.ClientGender;
+			purpleAccount.language_code = accountData.ClientLanguage;
+			purpleAccount.last_name 	= accountData.ClientLastName;
+			purpleAccount.username 		= accountData.ClientName;
 
 			// TODO: test
-			accountData.validate = AccountHelper.Register (purpleAccount, accountData.playerPassword);
+			accountData.validate = AccountHelper.Register (purpleAccount, accountData.ClientPassword);
 			accountData.error = AccountHelper.GetErrorList();
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
-			                     "client_register_handler " + accountData.playerName + " - " + accountData.validate.ToString());
+			                     "client_register_handler " + accountData.ClientName + " - " + accountData.validate.ToString());
 			PurpleNetwork.ToPlayer (np, "server_register_result", accountData);
 		}
 
@@ -64,10 +64,10 @@ namespace PurpleNetwork.Server.Handler
 			Debug.Log ("Authentication received: " + np.ToString ());
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
 			_PMBasic.Boolean returnData = new _PMBasic.Boolean ();
-			returnData.value = AccountHelper.Disable (authObject.playerName, authObject.playerPassword, np);
+			returnData.value = AccountHelper.Disable (authObject.ClientName, authObject.ClientPassword, np);
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
-			                     "client_disable_handler " + authObject.playerName + " - " + returnData.value.ToString());
+			                     "client_disable_handler " + authObject.ClientName + " - " + returnData.value.ToString());
 			PurpleNetwork.ToPlayer (np, "server_disable_result", returnData);
 		}
 

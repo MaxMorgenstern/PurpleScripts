@@ -61,45 +61,45 @@ namespace Entities.PurpleMessages
 		// USER ACTION
 		public class Action : PurpleUserMessage
 		{
-			public string playerName;
-			public string actionName;
+			public string ClientName;
+			public string ActionName;
 		}
 
 		// USER LOGIN
 		public class Authentication : PurpleUserMessage
 		{
-			public string playerName;
-			public string playerPassword;
-			public string playerToken;
-			public bool playerAuthenticated;
+			public string ClientName;
+			public string ClientPassword;
+			public string ClientToken;
+			public bool ClientAuthenticated;
 		}
 
 		// CREATE ACCOUNT
 		public class CreateAccount : PurpleUserMessage
 		{
-			public string playerName;
-			public string playerPassword;
-			public string playerEmail;
-			public string playerFirstName;
-			public string playerLastName;
-			public string playerGender;
-			public DateTime playerBirthday;
-			public string playerCountry;
-			public string playerLanguage;
-			public string playerComment;
+			public string ClientName;
+			public string ClientPassword;
+			public string ClientEmail;
+			public string ClientFirstName;
+			public string ClientLastName;
+			public string ClientGender;
+			public DateTime ClientBirthday;
+			public string ClientCountry;
+			public string ClientLanguage;
+			public string ClientComment;
 		}
 
 		// CREATE CHARACTER
 		public class CreateCharacter : PurpleUserMessage
 		{
-			public string characterName;
+			public string CharacterName;
 			/// TODO
 		}
 
 		// CREATE Game
 		public class CreateGame : PurpleUserMessage
 		{
-			public string gameName;
+			public string GameName;
 			// TODO
 		}
 	}
