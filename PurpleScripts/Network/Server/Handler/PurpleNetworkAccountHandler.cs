@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using PurpleDatabase.Helper;
 using _PMBasic = Entities.PurpleMessages;
@@ -79,6 +77,8 @@ namespace PurpleNetwork.Server.Handler
 			// TODO: convert data object to account object - purple messages
 		}
 
+
+		// DESTROY /////////////////////////
 
 		public static void remove_account_handler(object ob, NetworkPlayer np)
 		{

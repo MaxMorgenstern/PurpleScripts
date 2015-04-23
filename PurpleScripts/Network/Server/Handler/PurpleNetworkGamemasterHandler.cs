@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using PurpleDatabase.Helper;
 using _PMGamemaster = Entities.PurpleMessages.Gamemaster;
@@ -18,12 +16,14 @@ namespace PurpleNetwork.Server.Handler
 
 		// HANDLER /////////////////////////
 
-		// GAME /////////////////////////
+		// GAMEMASTER /////////////////////////
 		public static void gamemaster_add_warning_handler (string dataObject, NetworkPlayer np)
 		{
 			Debug.Log ("Gamemaster add warning received: " + np.ToString ());
 			_PMGamemaster.Warning accountWarning = PurpleSerializer.StringToObjectConverter<_PMGamemaster.Warning> (dataObject);
 			string password_or_token = string.Empty;
+
+			// TODO - validate that client has right to do this call
 
 			if(!string.IsNullOrEmpty(accountWarning.gmToken))
 				password_or_token = accountWarning.gmToken;
@@ -39,9 +39,14 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.ToPlayer (np, "server_add_warning_result", accountWarning);
 		}
 
+
+		// DESTROY /////////////////////////
+
 		public static void remove_gamemaster_handler(object ob, NetworkPlayer np)
 		{
 			PurpleNetwork.RemoveListener("gamemaster_add_warning", gamemaster_add_warning_handler);
+			
+			PurpleNetwork.DisconnectedFromPurpleServer -= remove_gamemaster_handler;
 		}
 	}
 }
