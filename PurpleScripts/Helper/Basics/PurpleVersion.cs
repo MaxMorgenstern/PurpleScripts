@@ -18,11 +18,11 @@ public class PurpleVersion
 		_Revision = 1;
 	}
 
-	public PurpleVersion (int major, int minor, int status, int revision)
+	public PurpleVersion (int major, int minor, int build, int revision)
 	{
 		_Major = major;
 		_Minor = minor;
-		_Build = status;
+		_Build = build;
 		_Revision = revision;
 	}
 
@@ -36,11 +36,11 @@ public class PurpleVersion
 		}
 	}
 
-	public void SetVersion(int major, int minor, int status, int revision)
+	public void SetVersion(int major, int minor, int build, int revision)
 	{
 		_Major = major;
 		_Minor = minor;
-		_Build = status;
+		_Build = build;
 		_Revision = revision;
 	}
 
@@ -51,6 +51,26 @@ public class PurpleVersion
 
 		// Major, Minor, Days of Development, Build minute of current day
 		PurpleVersion pv = new PurpleVersion (0, 3, (sv.Build-firstDevelopmentDay), (sv.Revision*2/60));
+		return pv.Version;
+	}
+
+	public string GetServerVersion()
+	{
+		PurpleVersion pv = new PurpleVersion (
+			PurpleConfig.Version.Server.Major, 
+			PurpleConfig.Version.Server.Minor, 
+			PurpleConfig.Version.Server.Build,
+			PurpleConfig.Version.Server.Revision);
+		return pv.Version;
+	}
+
+	public string GetClientVersion()
+	{
+		PurpleVersion pv = new PurpleVersion (
+			PurpleConfig.Version.Client.Major, 
+			PurpleConfig.Version.Client.Minor, 
+			PurpleConfig.Version.Client.Build,
+			PurpleConfig.Version.Client.Revision);
 		return pv.Version;
 	}
 }

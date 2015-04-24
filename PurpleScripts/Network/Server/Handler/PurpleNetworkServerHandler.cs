@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace PurpleNetwork.Server.Handler
 {
 	public class Handler

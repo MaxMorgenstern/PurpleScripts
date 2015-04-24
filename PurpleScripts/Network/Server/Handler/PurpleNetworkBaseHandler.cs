@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Entities.PurpleNetwork;
@@ -33,6 +32,7 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.AddListener("server_broadcast", server_broadcast_handler);
 
 			PurpleNetwork.AddListener("client_ping", client_ping_handler);
+			PurpleNetwork.AddListener("client_get_version", client_get_version_handler);
 			PurpleNetwork.AddListener("client_authenticate", client_authenticate_handler);
 			PurpleNetwork.AddListener("client_generate_token", client_generate_token_handler);
 			PurpleNetwork.AddListener("client_logout", client_logout_handler);
@@ -151,6 +151,16 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.ToPlayer (np, "server_ping", pingObject);
 		}
 
+		public static void client_get_version_handler (string dataObject, NetworkPlayer np)
+		{
+			_PMServer.Version versionObject = new _PMServer.Version ();
+			PurpleVersion pv = new PurpleVersion ();
+			versionObject.BuildVersion = pv.Version;
+			versionObject.ClientVersion = pv.GetClientVersion ();
+			versionObject.ServerVersion = pv.GetServerVersion ();
+
+			PurpleNetwork.ToPlayer (np, "server_get_version", versionObject);
+		}
 
 		// EVENT /////////////////////////
 
@@ -193,6 +203,9 @@ namespace PurpleNetwork.Server.Handler
 			}
 		}
 
+
+		// DESTROY /////////////////////////
+
 		public static void remove_base_handler(object ob, NetworkPlayer np)
 		{
 			baseHandlerTick.DestroyInstance ();
@@ -202,6 +215,7 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.RemoveListener("server_broadcast", server_broadcast_handler);
 
 			PurpleNetwork.RemoveListener("client_ping", client_ping_handler);
+			PurpleNetwork.RemoveListener("client_get_version", client_get_version_handler);
 			PurpleNetwork.RemoveListener("client_authenticate", client_authenticate_handler);
 			PurpleNetwork.RemoveListener("client_generate_token", client_generate_token_handler);
 			PurpleNetwork.RemoveListener("client_logout", client_logout_handler);

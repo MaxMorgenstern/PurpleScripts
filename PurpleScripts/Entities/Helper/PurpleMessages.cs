@@ -13,7 +13,7 @@ namespace Entities.PurpleMessages
 		// CONSTRUCTOR
 		public PurpleMessage()
 		{
-			guid = System.Guid.NewGuid ();
+			guid = Guid.NewGuid ();
 			timestamp = DateTime.Now;
 		}
 	}
@@ -93,7 +93,7 @@ namespace Entities.PurpleMessages
 		public class CreateCharacter : PurpleUserMessage
 		{
 			public string CharacterName;
-			/// TODO
+			// TODO
 		}
 
 		// CREATE Game
@@ -156,6 +156,14 @@ namespace Entities.PurpleMessages
 			}
 		}
 		*/
+
+		// VERSION MESSAGE
+		public class Version : PurpleMessage
+		{
+			public string BuildVersion;
+			public string ServerVersion;
+			public string ClientVersion;
+		}
 
 		// PING MESSAGE
 		public class Ping : PurpleMessage

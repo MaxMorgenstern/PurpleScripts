@@ -338,32 +338,32 @@ namespace PurpleNetwork.Server
 		{
 			PurpleNetwork.SetSpamProtection (currentServerConfig.SpamPrevention);
 			PurpleNetwork.SetSpamResponse (currentServerConfig.SpamResponse);
-			
+
 			serverLaunchDate = DateTime.Now;
-			
+
 			switch (currentServerConfig.ServerType)
 			{
 			case ServerTypes.Account:
 				Handler.Handler.RegisterAccountListener();
 				break;
-				
+
 			case ServerTypes.Game:
 				Handler.Handler.RegisterGameListener();
 				break;
-				
+
 			case ServerTypes.Lobby:
 				Handler.Handler.RegisterLobbyListener();
 				break;
-				
+
 			case ServerTypes.Monitoring:
 				Handler.Handler.RegisterLMonitoringListener();
 				break;
-				
+
 			case ServerTypes.Multi:
 				Handler.Handler.RegisterMultiListener();
 				break;
 			}
-			
+
 			if(currentServerConfig.SanityTest)
 			{
 				PurpleNetworkServerSanityTester.ServerSanityCheck();

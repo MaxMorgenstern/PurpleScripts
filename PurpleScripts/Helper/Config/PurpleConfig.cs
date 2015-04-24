@@ -161,4 +161,21 @@ namespace PurpleConfig
 			}
 		}
 	}
+
+	// VERSION /////////////////////////
+	public static class Version {
+		public static class Server {
+			public static int Major { get { return ItemIds.getConfigInt ("Version.Server.Major"); } }
+			public static int Minor { get { return ItemIds.getConfigInt ("Version.Server.Minor"); } }
+			public static int Build { get { return ItemIds.getConfigInt ("Version.Server.Build"); } }
+			public static int Revision { get { return ItemIds.getConfigInt ("Version.Server.Revision"); } }
+		}
+
+		public static class Client {
+			public static int Major { get { return ItemIds.getConfigInt ("Version.Client.Major"); } }
+			public static int Minor { get { return ItemIds.getConfigInt ("Version.Client.Minor"); } }
+			public static int Build { get { return ItemIds.getConfigInt ("Version.Client.Build"); } }
+			public static int Revision { get { return ItemIds.getConfigInt ("Version.Client.Revision"); } }
+		}
+	}
 }

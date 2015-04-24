@@ -2,48 +2,55 @@ Function Calls:
 
 <sender> _ <topic> _ <description> ( _ <detail> )
 
+// SERVER /////////////////////////
 
 Server:
-Name:									Comment:										Handled in:
-server_broadcast						Server Broadcast for all clients				Server: PurpleNetworkBaseHandler
+Name:									Comment:								TODO:	Sended/Handled in:
+server_broadcast						Server Broadcast for all clients		X		Server: PurpleNetworkBaseHandler (recieve)
 
-server_disconnect_unspecified			Disconnect State 1 - Unspecified
-server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated 			Server: PurpleNetworkBaseHandler
+server_disconnect_unspecified			Disconnect State 1 - Unspecified 		X		-
+server_disconnect_unauthenticated		Disconnect State 2 - Unauthenticated 	X		Server: PurpleNetworkBaseHandler
 
-server_validate_username_result			Result if username is unique					Server: PurpleNetworkAccountHandler
-server_register_result					Refult of client registering					Server: PurpleNetworkAccountHandler
-server_authenticate_result				Authentication response message 				Server: PurpleNetworkBaseHandler
-server_generate_token_result			Token Generation Response						Server: PurpleNetworkBaseHandler
-server_logout_result					Logout result									Server: PurpleNetworkBaseHandler
-server_disable_result					Disable account									Server: PurpleNetworkAccountHandler
+server_validate_username_result			Result if username is unique			X		Server: PurpleNetworkAccountHandler
+server_register_result					Refult of client registering			X		Server: PurpleNetworkAccountHandler
+server_disable_result					Disable account							X		Server: PurpleNetworkAccountHandler
 
-server_ping								Ping Response									Server: PurpleNetworkBaseHandler
+server_authenticate_result				Authentication response message 				Server/Client: PurpleNetworkBaseHandler
+server_generate_token_result			Token Generation Response						Server/Client: PurpleNetworkBaseHandler
+server_logout_result					Logout result									Server/Client: PurpleNetworkBaseHandler
+server_ping								Ping Response									Server/Client: PurpleNetworkBaseHandler
+server_get_version						Version information								Server/Client: PurpleNetworkBaseHandler
 
 
-
-
+// CLIENT /////////////////////////
 
 Client:
-Name:									Comment:										Handled in:
-client_create_character																	Server: PurpleNetworkAccountHandler
+Name:									Comment:										Sended/Handled in:
+client_create_character															X		Server: PurpleNetworkAccountHandler
 
 Base Handler:
-client_validate_username				Username valifation								Server: PurpleNetworkAccountHandler
-client_register							Register account								Server: PurpleNetworkAccountHandler
-client_authenticate						Authenticate client								Server: PurpleNetworkBaseHandler
-client_generate_token					Generate new Token								Server: PurpleNetworkBaseHandler
-client_logout							logout call										Server: PurpleNetworkBaseHandler
-client_disable							account disable call							Server: PurpleNetworkAccountHandler
-
-client_ping								Ping request									Server: PurpleNetworkBaseHandler
+client_validate_username				Username valifation						X		Server: PurpleNetworkAccountHandler
+client_register							Register account						X		Server: PurpleNetworkAccountHandler
+client_disable							account disable call					X		Server: PurpleNetworkAccountHandler
 
 
+client_authenticate						Authenticate client								Client: PurpleNetworkBaseCalls
+																						Server: PurpleNetworkBaseHandler
+client_generate_token					Generate new Token								Client: PurpleNetworkBaseCalls
+																						Server: PurpleNetworkBaseHandler
+client_logout							logout call										Client: PurpleNetworkBaseCalls
+																						Server: PurpleNetworkBaseHandler
+client_ping								Ping request									Client: PurpleNetworkBaseCalls
+																						Server: PurpleNetworkBaseHandler
+client_get_version						Version request 								Client: PurpleNetworkBaseCalls
+																						Server: PurpleNetworkBaseHandler
 
 
+// GAMEMASTER /////////////////////////
 
 Gamemaster:
 Name:									Comment:										Handled in:
-gamemaster_add_warning																	Server: PurpleNetworkGamemasterHandler
+gamemaster_add_warning															X		Server: PurpleNetworkGamemasterHandler
 
 
 
