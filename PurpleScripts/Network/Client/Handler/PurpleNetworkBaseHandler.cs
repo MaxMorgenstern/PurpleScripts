@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using _PMClient = Entities.PurpleMessages.User;
 using _PMServer = Entities.PurpleMessages.Server;
 
@@ -12,7 +11,7 @@ namespace PurpleNetwork.Client.Handler
 			PurpleNetwork.ConnectedToPurpleServer += connected_to_server_handler;
 
 			PurpleNetwork.AddListener("server_broadcast", server_broadcast_handler);
-	
+
 			PurpleNetwork.AddListener("server_authenticate_result", server_authenticate_result_handler);
 			PurpleNetwork.AddListener("server_generate_token_result", server_generate_token_result_handler);
 			PurpleNetwork.AddListener("server_logout_result", server_logout_result_handler);
@@ -23,7 +22,7 @@ namespace PurpleNetwork.Client.Handler
 
 
 		// HANDLER /////////////////////////
-		
+
 		// BASE /////////////////////////
 		public static void server_broadcast_handler (string dataObject, NetworkPlayer np)
 		{
@@ -56,14 +55,15 @@ namespace PurpleNetwork.Client.Handler
 			_PMServer.Ping pingObject = PurpleSerializer.StringToObjectConverter<_PMServer.Ping> (dataObject);
 			//TODO
 		}
-		
+
 		// EVENT /////////////////////////
 
 		public static void connected_to_server_handler(object ob, NetworkPlayer np)
 		{
+			Calls.Base.Authenticate (PurpleClient.CurrentConfig);
 		}
-		
-		
+
+
 		// DESTROY /////////////////////////
 
 		public static void remove_base_handler(object ob, NetworkPlayer np)
@@ -71,7 +71,7 @@ namespace PurpleNetwork.Client.Handler
 			PurpleNetwork.ConnectedToPurpleServer -= connected_to_server_handler;
 
 			PurpleNetwork.AddListener("server_broadcast", server_broadcast_handler);
-			
+
 			PurpleNetwork.AddListener("server_authenticate_result", server_broadcast_handler);
 			PurpleNetwork.AddListener("server_generate_token_result", server_broadcast_handler);
 			PurpleNetwork.AddListener("server_logout_result", server_broadcast_handler);
