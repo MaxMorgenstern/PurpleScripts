@@ -40,7 +40,7 @@ using UnityEngine;public class ServerManager : MonoBehaviour {		public strin
 	{
 		if (args.Length == 2 && PurpleLog.IsHelpRequired(args[1]))
 		{
-			Debug.Log("Function to launch the server.");
+			Debug.Log("Launch the server.");
 			return string.Empty;
 		}
 
@@ -52,7 +52,7 @@ using UnityEngine;public class ServerManager : MonoBehaviour {		public strin
 	{
 		if (args.Length == 2 && PurpleLog.IsHelpRequired(args[1]))
 		{
-			Debug.Log("Function to stop the server.");
+			Debug.Log("Stop the server.");
 			return string.Empty;
 		}
 
@@ -64,7 +64,7 @@ using UnityEngine;public class ServerManager : MonoBehaviour {		public strin
 	{
 		if (args.Length == 2 && PurpleLog.IsHelpRequired(args[1]))
 		{
-			Debug.Log("Function to restart the server.");
+			Debug.Log("Restart the server.");
 			return string.Empty;
 		}
 

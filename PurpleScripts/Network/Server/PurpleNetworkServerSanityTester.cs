@@ -342,12 +342,12 @@ namespace PurpleNetwork
 			int testTime = 30;
 
 			Debug.Log ("ServerSanityCheck: Start...");
-			Debug.Log ("ServerSanityCheck: Initialize calls...");
+			Debug.Log ("ServerSanityCheck: Initialize Calls...");
 			run_test (testTime-2);
 			string ipAddress = Network.player.ipAddress;
 			string externalIP = Network.player.externalIP;
 
-			Debug.Log ("ServerSanityCheck: Start Database check...");
+			Debug.Log ("ServerSanityCheck: Start Database Check...");
 			if(test_current_database_connection (ipAddress, externalIP))
 			{
 				Debug.Log ("ServerSanityCheck: Database OK");
@@ -358,7 +358,7 @@ namespace PurpleNetwork
 				Debug.LogError("ServerSanityCheck: Database ERROR");
 			}
 
-			Debug.Log ("ServerSanityCheck: Start network check...");
+			Debug.Log ("ServerSanityCheck: Start Network Check...");
 			Debug.Log ("ServerSanityCheck: Local IP Address " + ipAddress);
 			Debug.Log ("ServerSanityCheck: External IP Address " + externalIP);
 			if(!string.IsNullOrEmpty(externalIP)
@@ -389,6 +389,20 @@ namespace PurpleNetwork
 				{
 					server_sanity_network_reachable = true;
 				}
+                if (!server_sanity_network_ip)
+                {
+                    string externalIP = Network.player.externalIP;
+                    Debug.Log("ServerSanityCheck: Re-Test External IP Address " + externalIP);
+                    if (!string.IsNullOrEmpty(externalIP)
+                       && !externalIP.StartsWith("0.")
+                       && !externalIP.StartsWith("127.")
+                       && !externalIP.StartsWith("192.")
+                       && !externalIP.Contains("UNASSIGNED_SYSTEM_ADDRESS"))
+                    {
+                        server_sanity_network_ip = true;
+                    }
+                }
+
 				server_sanity_check_done();
 			}
 			else

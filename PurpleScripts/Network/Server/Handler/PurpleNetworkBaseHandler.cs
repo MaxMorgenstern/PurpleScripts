@@ -99,7 +99,8 @@ namespace PurpleNetwork.Server.Handler
 				}
 			}
 			AccountHelper.AddLog(get_network_player_reference(np).UserName, "client_authenticate_handler "
-			                     + authObject.ClientName + " - "+ authObject.ClientAuthenticated);
+								 + authObject.ClientName + " - "+ authObject.ClientAuthenticated);
+			Debug.Log("Authentication result: " + authObject.ClientName + ": " + authObject.ClientAuthenticated);
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
 		}
 
@@ -120,7 +121,7 @@ namespace PurpleNetwork.Server.Handler
 			authObject.ClientToken = AccountHelper.GenerateToken(authObject.ClientName, password_or_token, np);
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
-			                     "client_generate_token_handler " + authObject.ClientName);
+								 "client_generate_token_handler " + authObject.ClientName);
 			PurpleNetwork.ToPlayer(np, "server_generate_token_result", authObject);
 		}
 
@@ -140,7 +141,7 @@ namespace PurpleNetwork.Server.Handler
 			authObject.ClientAuthenticated = AccountHelper.Logout (authObject.ClientName, password_or_token);
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
-			                     "client_logout_handler " + authObject.ClientName);
+								 "client_logout_handler " + authObject.ClientName);
 			PurpleNetwork.ToPlayer (np, "server_logout_result", authObject);
 		}
 
@@ -182,11 +183,11 @@ namespace PurpleNetwork.Server.Handler
 		private static void periodically_validate_player()
 		{
 			PurpleServer.UserList.Where(x => !x.UserAuthenticated &&
-			                            x.UserConnectedTime.AddSeconds(System.Convert.ToDouble(
+										x.UserConnectedTime.AddSeconds(System.Convert.ToDouble(
 				PurpleServer.CurrentConfig.ClientAuthentificationTimeout)) < DateTime.Now )
 				.ToList().ForEach( x => {
 					Debug.Log ("PurpleNetwork.Server.Handler.Base: Disconnect Unauthenticated User "
-					           + x.UserReference.ToString());
+							   + x.UserReference.ToString());
 					_PMServer.Disconnect disconnectMessage = new _PMServer.Disconnect();
 					disconnectMessage.status = 2;
 					disconnectMessage.message = PurpleI18n.Get("server_disconnect_unauthenticated");
