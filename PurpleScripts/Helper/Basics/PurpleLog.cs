@@ -10,6 +10,10 @@ using System.Collections.Generic;
  *
  *		string functionname(string[] stringArrayName)
  *		{
+ *		    if (args.Length == 2 && PurpleLog.IsHelpRequired(args[1]))
+ *          {
+ *              // Print Help
+ *          }
  *			for(int i = 0; i < stringArrayName.Length; i++)
  *			{
  *				Debug.Log (stringArrayName[i]);
@@ -116,6 +120,7 @@ public class PurpleLog : MonoBehaviour
 		Application.RegisterLogCallback(Log);
 		#endif
 
+		PurpleLog.AddListener("help", help_call);
 		consoleActive = true;
 	}
 
@@ -126,6 +131,7 @@ public class PurpleLog : MonoBehaviour
 		Application.RegisterLogCallback(null);
 		#endif
 
+		PurpleLog.RemoveListener("help", help_call);
 		consoleActive = false;
 	}
 
@@ -179,6 +185,31 @@ public class PurpleLog : MonoBehaviour
 		{
 			return logPosition;
 		}
+	}
+
+	public static List<string> listenerList
+	{
+		get
+		{
+			return Instance.get_all_listener();
+		}
+	}
+
+	public static string help_call(string[] stringArrayName)
+	{
+		List<string> localList = listenerList;
+		localList.Remove("help");
+		Debug.Log("Try '<function> --help' for more information.\n" +
+			"Available functions:\n  " + string.Join("\n  ", localList.OrderBy(x => x).ToArray<string>()));
+		return string.Empty;
+	}
+
+	public static bool IsHelpRequired(string param)
+	{
+		if (param.ToLower().IndexOf("-h", System.StringComparison.Ordinal) >= 0) return true;
+		if (param.ToLower().IndexOf("-help", System.StringComparison.Ordinal) >= 0) return true;
+		if (param.ToLower().IndexOf("/?", System.StringComparison.Ordinal) >= 0) return true;
+		return false;
 	}
 
 
@@ -327,9 +358,14 @@ public class PurpleLog : MonoBehaviour
 		if (has_event(event_name)) {
 			return eventListeners[event_name](event_data);
 		} else {
-			Debug.LogError("Command not found");
-			return "Command not found";
+			Debug.LogError("Command not found. Try 'help'.");
+			return "Command not found. Try 'help'.";
 		}
+	}
+
+	private List<string> get_all_listener()
+	{
+		return eventListeners.Keys.ToList();
 	}
 
 	private bool has_event(string event_name) {
