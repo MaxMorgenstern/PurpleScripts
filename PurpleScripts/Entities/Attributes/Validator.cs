@@ -1,7 +1,4 @@
-using UnityEngine;
-using System.Collections;
 using System.Reflection;
-using System;
 using System.Collections.Generic;
 
 namespace PurpleAttributes
@@ -110,5 +107,3 @@ namespace PurpleAttributes
 		*/
 	}
 }
-
-

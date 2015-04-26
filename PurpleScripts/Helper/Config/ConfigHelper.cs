@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
 using UnityEngine;
 
@@ -20,16 +18,16 @@ namespace PurpleConfig {
 			string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.config", SearchOption.AllDirectories);
 			if(files.Length > 0)
 			{
-				foreach (string filePath in files) 
+				foreach (string filePath in files)
 				{
 					if(filePath.Contains("/Config/") || filePath.Contains("\\Config\\"))
 					{
 						xmlDoc.LoadXml (System.IO.File.ReadAllText(filePath)); // load the file.
 						XmlNodeList nodesList = xmlDoc.GetElementsByTagName("add"); // array of the level nodes.
-						foreach (XmlNode levelInfo in nodesList) 
+						foreach (XmlNode levelInfo in nodesList)
 						{
 							_configDictionary.Add(levelInfo.Attributes["key"].Value,levelInfo.Attributes["value"].Value);
-						}	
+						}
 					}
 				}
 			} else {
@@ -50,7 +48,7 @@ namespace PurpleConfig {
 			}
 			return returnData;
 		}
-		
+
 		public static int getConfigInt(string searchString)
 		{
 			string tempData = string.Empty;
@@ -65,7 +63,7 @@ namespace PurpleConfig {
 				return -1;
 			}
 		}
-		
+
 		public static float getConfigFloat(string searchString)
 		{
 			string tempData = string.Empty;
@@ -80,7 +78,7 @@ namespace PurpleConfig {
 				return -1;
 			}
 		}
-		
+
 		public static double getConfigDouble(string searchString)
 		{
 			string tempData = string.Empty;
@@ -95,7 +93,7 @@ namespace PurpleConfig {
 				return -1;
 			}
 		}
-		
+
 		public static bool getConfigBoolean(string searchString)
 		{
 			string tempData = string.Empty;
@@ -110,6 +108,5 @@ namespace PurpleConfig {
 				return false;
 			}
 		}
-
 	}
 }

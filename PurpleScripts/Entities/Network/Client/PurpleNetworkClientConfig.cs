@@ -5,18 +5,18 @@ namespace Entities.PurpleNetwork.Client
 	public class ClientConfig
 	{
 		public string 		ServerHost;
-		public int 			ServerPort;	
+		public int 			ServerPort;
 		public string 		ServerPassword;
 
 		protected Guid _guid;
 
-		public string guid 
+		public string guid
 		{
 			get
 			{
 				return _guid.ToString();
 			}
-			
+
 			set
 			{
 				_guid = new Guid(value);
@@ -43,10 +43,10 @@ namespace Entities.PurpleNetwork.Client
 		{
 			PurpleStorage.PurpleStorage.Save("Entities.PurpleNetwork.Client.ClientConfig", this);
 		}
-		
+
 		public void Load()
 		{
-			ClientConfig config 
+			ClientConfig config
 				= PurpleStorage.PurpleStorage.Load<ClientConfig> ("Entities.PurpleNetwork.Client.ClientConfig");
 			this.ServerHost 		= config.ServerHost;
 			this.ServerPort 		= config.ServerPort;
@@ -59,9 +59,5 @@ namespace Entities.PurpleNetwork.Client
 			this.PlayerAuthenticated= config.PlayerAuthenticated;
 			this.guid 				= config.guid;
 		}
-		
-
-
 	}
 }
-

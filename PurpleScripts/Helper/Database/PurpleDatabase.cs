@@ -7,13 +7,10 @@
  * Also see: http://answers.unity3d.com/questions/379212/how-to-solve-the-error-type-or-namespace-systemdat.html
  */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MySql.Data;
 using MySql.Data.MySqlClient;
 using UnityEngine;
 

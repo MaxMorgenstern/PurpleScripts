@@ -9,7 +9,7 @@ public class PurpleException : Exception
 	public PurpleException(string message) : base(message)
 	{
 	}
-	
+
 	public PurpleException(string message, Exception inner) : base(message, inner)
 	{
 	}

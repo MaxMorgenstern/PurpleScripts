@@ -1,9 +1,8 @@
-using UnityEngine;
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections;
+using UnityEngine;
 using _PurpleSerializer = PurpleSerializer;
 
 
@@ -68,6 +67,11 @@ namespace PurpleStorage
 
 		// PUBLIC FUNCTIONS /////////////////////////
 
+		public static void Setup()
+		{
+			Instance.get_ppref_setting ();
+		}
+
 		public static bool SwitchUsePlayerPrefs()
 		{
 			if(Instance.get_ppref_setting())
@@ -94,13 +98,13 @@ namespace PurpleStorage
 			{
 				return Instance.save_player_pref(filename, fileData);
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
 				Debug.LogWarning(ex);
 				return false;
 			}
 		}
-		
+
 		public static bool SavePlayerPref(string filename, object data)
 		{
 			PurpleFileObject fileData = Instance.create_purple_file_object (filename, data);
@@ -108,7 +112,7 @@ namespace PurpleStorage
 			{
 				return Instance.save_player_pref(filename, fileData);
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
 				Debug.LogWarning(ex);
 				return false;
@@ -122,7 +126,7 @@ namespace PurpleStorage
 			{
 				return Instance.save_player_pref(filename, fileData);
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
 				Debug.LogWarning(ex);
 				return false;
@@ -172,7 +176,7 @@ namespace PurpleStorage
 			return Instance.save_pfo_helper (filename, data);
 		}
 
-		
+
 		// LOAD /////////////////////////
 		public static PurpleFileObject Load(string filename)
 		{
@@ -223,18 +227,18 @@ namespace PurpleStorage
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename, false);
 			return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
 		}
-		
+
 		// DELETE /////////////////////////
 		public static bool DeleteFile(string filename)
 		{
 			return Instance.delete_pfo_helper (filename);
 		}
-		
+
 		public static bool DeletePlayerPref(string filename)
 		{
 			return Instance.delete_player_pref(filename);
 		}
-		
+
 		public static bool DeleteBinaryFile(string filename)
 		{
 			return Instance.delete_binary_file (filename);
@@ -246,17 +250,17 @@ namespace PurpleStorage
 		{
 			return Instance.create_purple_meta_object ();
 		}
-		
+
 		public static bool SaveMetaObject(PurpleMetaObject metaObject)
 		{
 			return Instance.save_meta_object(metaObject);
 		}
-		
+
 		public static PurpleMetaObject LoadMetaObject()
 		{
 			return Instance.load_meta_object ();
 		}
-		
+
 		public static bool UpdateMetaObject(PurpleMetaObject metaObject)
 		{
 			return Instance.update_meta_object (metaObject);
@@ -266,7 +270,7 @@ namespace PurpleStorage
 		{
 			return Instance.update_meta_object (data);
 		}
-		
+
 		public static bool UpdateMetaObject(string data, bool add)
 		{
 			return Instance.update_meta_object (data, add);
@@ -282,8 +286,8 @@ namespace PurpleStorage
 				try
 				{
 					return save_player_pref(filename, data);
-				} 
-				catch (Exception ex) 
+				}
+				catch (Exception ex)
 				{
 					Debug.LogWarning(ex);
 					usePlayerPrefs = false;

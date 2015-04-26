@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
@@ -258,5 +257,4 @@ public class PurpleMail : MonoBehaviour
 		}
 		return (String.IsNullOrEmpty(returnData)) ? entry : returnData;
 	}
-
 }

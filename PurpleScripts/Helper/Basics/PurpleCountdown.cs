@@ -5,14 +5,14 @@ public class PurpleCountdown : MonoBehaviour
 {
 	private int _ticks;
 	private float _countdown;
-	
+
 	private static GameObject _gameObject;
-	
+
 	public delegate void PurpleCountdownEvent(); // countdown event
-	
+
 	public event PurpleCountdownEvent CountdownRunEvent;
 	public event PurpleCountdownEvent CountdownDoneEvent;
-	
+
 	public event PurpleCountdownEvent TriggerEvent;
 
 	public int CountDownLeft
@@ -23,7 +23,7 @@ public class PurpleCountdown : MonoBehaviour
 		}
 	}
 
-	
+
 	// PUBLIC ////////////////////////////
 	public static PurpleCountdown NewInstance()
 	{
@@ -34,51 +34,51 @@ public class PurpleCountdown : MonoBehaviour
 	{
 		return CreateInstance("PurpleCountdown_"+name);
 	}
-	
+
 	public void DestroyInstance()
 	{
 		Destroy(this.gameObject);
 	}
 
-	
+
 	// TRIGGER ////////////////////////////
 	public void Trigger(float offset)
 	{
 		_ticks = -1;
 		Invoke("invoke_trigger", offset);
 	}
-	
+
 	public void Trigger(float offset, float repeatRate)
 	{
 		_ticks = -1;
 		InvokeRepeating("invoke_trigger", offset, repeatRate);
 	}
-	
+
 	public void Trigger(float offset, float repeatRate, int numberOfCalls)
 	{
 		_ticks = numberOfCalls;
 		InvokeRepeating("invoke_trigger", offset, repeatRate);
 	}
-	
+
 	public void CancelTrigger()
 	{
 		CancelInvoke();
 	}
-	
+
 	public bool IsTriggerRunning()
 	{
 		return IsInvoking ("invoke_trigger");
 	}
-	
+
 	// COUNTDOWN ////////////////////////////
 	public void CountDown(int seconds)
 	{
 		_countdown = (float)seconds;
 		StartCoroutine (countdown_trigger ());
 	}
-	
-	
-	
+
+
+
 	// PRIVATE ////////////////////////////
 	// INSTANCE /////////////////////////
 	private static PurpleCountdown CreateInstance(string name)
@@ -99,30 +99,30 @@ public class PurpleCountdown : MonoBehaviour
 		}
 		trigger_purple_event (TriggerEvent);
 	}
-	
-	
+
+
 	// COUNTDOWN ////////////////////////////
-	
+
 	private IEnumerator countdown_trigger()
 	{
 		while (_countdown > 0)
 		{
 			yield return new WaitForSeconds(1);
-			
+
 			trigger_purple_event (CountdownRunEvent);
-			
+
 			_countdown -= 1;
 		}
 		yield return new WaitForSeconds(1);
 		trigger_purple_event (CountdownDoneEvent);
 	}
-	
+
 	public void CancelCountDown()
 	{
 		StopCoroutine ("countdown_trigger");
 	}
-	
-	
+
+
 	// EVENT ////////////////////////////
 	private void trigger_purple_event(PurpleCountdownEvent eve)
 	{

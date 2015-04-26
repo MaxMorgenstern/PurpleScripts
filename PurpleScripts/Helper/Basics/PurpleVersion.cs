@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 
 [assembly:AssemblyVersion ("1.0.*.*")]
@@ -57,8 +56,8 @@ public class PurpleVersion
 	public string GetServerVersion()
 	{
 		PurpleVersion pv = new PurpleVersion (
-			PurpleConfig.Version.Server.Major, 
-			PurpleConfig.Version.Server.Minor, 
+			PurpleConfig.Version.Server.Major,
+			PurpleConfig.Version.Server.Minor,
 			PurpleConfig.Version.Server.Build,
 			PurpleConfig.Version.Server.Revision);
 		return pv.Version;
@@ -67,8 +66,8 @@ public class PurpleVersion
 	public string GetClientVersion()
 	{
 		PurpleVersion pv = new PurpleVersion (
-			PurpleConfig.Version.Client.Major, 
-			PurpleConfig.Version.Client.Minor, 
+			PurpleConfig.Version.Client.Major,
+			PurpleConfig.Version.Client.Minor,
 			PurpleConfig.Version.Client.Build,
 			PurpleConfig.Version.Client.Revision);
 		return pv.Version;

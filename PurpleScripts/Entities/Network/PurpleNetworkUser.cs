@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Data;
-using UnityEngine;
 using PurpleNetwork;
+using UnityEngine;
 
 namespace Entities.PurpleNetwork
 {

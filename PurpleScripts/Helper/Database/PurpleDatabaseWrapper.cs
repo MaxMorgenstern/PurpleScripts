@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -438,7 +437,7 @@ namespace PurpleDatabase
 			private static string keyDelimiter 		= ",";
 			private static string keyBracketOpen 	= "(";
 			private static string keyBracketClose 	= ")";
-			
+
 			private static string activeEscapeSymbol= "`";
 			private static string activeTablePrefix	= "";
 
@@ -473,7 +472,7 @@ namespace PurpleDatabase
 			{
 				activeTablePrefix = PurpleConfig.Database.Prefix;
 			}
-			
+
 			public void disable_table_prefix()
 			{
 				activeTablePrefix = String.Empty;

@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 
@@ -53,7 +52,6 @@ namespace Entities.PurpleMessages
 	{
 		public class PurpleUserMessage : PurpleMessage
 		{
-			public NetworkPlayer player;
 			public List<string> error;
 			public bool validate;
 		}
@@ -109,7 +107,6 @@ namespace Entities.PurpleMessages
 	{
 		public class PurpleGamemasterMessage : PurpleMessage
 		{
-			public NetworkPlayer player;
 			public string gmUsername;
 			public string gmPassword;
 			public string gmToken;
@@ -123,7 +120,7 @@ namespace Entities.PurpleMessages
 			public string warningUser;
 		}
 	}
-		
+
 	// SERVER RELATED MESSAGES ////////////////////////////
 	namespace Server
 	{

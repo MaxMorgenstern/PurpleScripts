@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Text.RegularExpressions;
-using UnityEngine;
 using Entities.Database;
 using Entities.PurpleNetwork;
 using PurpleDatabase.Extension;
 using PurpleNetwork.Server;
+using UnityEngine;
 
 namespace PurpleDatabase.Helper
 {
@@ -329,6 +326,5 @@ namespace PurpleDatabase.Helper
 			}
 			return false;
 		}
-
 	}
 }

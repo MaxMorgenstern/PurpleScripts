@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using UnityEngine;
-using System.Linq;
 
 /**
  * This class only tests the content.

@@ -27,7 +27,7 @@ public class PurpleI18n : MonoBehaviour
 		currentCulture = new CultureInfo( defaultCulture );
 	}
 
-	
+
 	// SINGLETON /////////////////////////
 	private static PurpleI18n Instance
 	{
@@ -67,7 +67,7 @@ public class PurpleI18n : MonoBehaviour
 	{
 		return Instance.get_culture ();
 	}
-	
+
 
 	// PRIVATE FUNCTIONS /////////////////////////
 	private void setup()
@@ -81,20 +81,20 @@ public class PurpleI18n : MonoBehaviour
 			currentCulture = new CultureInfo (culture);
 			configDictionary = new Dictionary<string,string>();
 
-			XmlDocument xmlDoc = new XmlDocument(); 
-			
-			string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), 
+			XmlDocument xmlDoc = new XmlDocument();
+
+			string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(),
 			                                    ("*"+culture+"*.lang"), SearchOption.AllDirectories);
 			if(files.Length > 0)
 			{
-				foreach (string filePath in files) 
+				foreach (string filePath in files)
 				{
 					xmlDoc.LoadXml (System.IO.File.ReadAllText(filePath)); // load the file.
 					XmlNodeList nodesList = xmlDoc.GetElementsByTagName("add"); // array of the level nodes.
-					foreach (XmlNode levelInfo in nodesList) 
+					foreach (XmlNode levelInfo in nodesList)
 					{
 						configDictionary.Add(levelInfo.Attributes["key"].Value,levelInfo.Attributes["value"].Value);
-					}	
+					}
 				}
 			} else {
 				Debug.LogError("Can not find config files.");
