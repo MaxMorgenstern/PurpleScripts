@@ -31,23 +31,43 @@ namespace Entities.PurpleNetwork.Client
 
 		public bool 		PlayerAuthenticated;
 
+		public bool			ConfigLoaded;
+
 		// CONSTRUCTOR
 		public ClientConfig ()
 		{
 			ServerHost 		= PurpleConfig.Network.Server.Host;
 			ServerPort 		= PurpleConfig.Network.Server.Port;
 			ServerPassword 	= PurpleConfig.Network.Server.Password;
+			ConfigLoaded	= false;
 		}
 
 		public void Save()
 		{
-			PurpleStorage.PurpleStorage.Save("Entities.PurpleNetwork.Client.ClientConfig", this);
+			Save (string.Empty);
+		}
+
+		public void Save(string Name)
+		{
+			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
+			_guid = Guid.NewGuid ();
+			PurpleStorage.PurpleStorage.Save("Entities.PurpleNetwork.Client.ClientConfig"+suffix, this);
 		}
 
 		public void Load()
 		{
+			Load (string.Empty);	
+		}
+
+		public void Load(string Name)
+		{
+			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
 			ClientConfig config
-				= PurpleStorage.PurpleStorage.Load<ClientConfig> ("Entities.PurpleNetwork.Client.ClientConfig");
+				= PurpleStorage.PurpleStorage.Load<ClientConfig> ("Entities.PurpleNetwork.Client.ClientConfig"+suffix);
+			if (config == null || config.guid == Guid.Empty.ToString ())
+				return;
+			
+			this.ConfigLoaded = true;
 			this.ServerHost 		= config.ServerHost;
 			this.ServerPort 		= config.ServerPort;
 			this.ServerPassword 	= config.ServerPassword;
@@ -58,6 +78,7 @@ namespace Entities.PurpleNetwork.Client
 			this.ClientTokenCreated = config.ClientTokenCreated;
 			this.PlayerAuthenticated= config.PlayerAuthenticated;
 			this.guid 				= config.guid;
+
 		}
 	}
 }

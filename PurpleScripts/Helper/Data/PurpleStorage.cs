@@ -186,19 +186,25 @@ namespace PurpleStorage
 		public static t Load<t>(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
-			return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+			if(pfo != null)
+				return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+			return default(t);
 		}
 
 		public static string LoadString(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
-			return pfo.dataString;
+			if(pfo != null)
+				return pfo.dataString;
+			return string.Empty;
 		}
 
 		public static object LoadObject(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename);
-			return pfo.dataObject;
+			if(pfo != null)
+				return pfo.dataObject;
+			return null;
 		}
 
 		public static t LoadObject<t>(string filename)
@@ -214,7 +220,9 @@ namespace PurpleStorage
 		public static t LoadPlayerPref<t>(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename, true);
-			return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+			if(pfo != null)
+				return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+			return default(t);
 		}
 
 		public static PurpleFileObject LoadBinaryFile(string filename)
@@ -225,7 +233,9 @@ namespace PurpleStorage
 		public static t LoadBinaryFile<t>(string filename)
 		{
 			PurpleFileObject pfo = Instance.load_pfo_helper (filename, false);
-			return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+			if(pfo != null)
+				return (t)_PurpleSerializer.StringToObjectConverter<t> (pfo.dataString);
+			return default(t);
 		}
 
 		// DELETE /////////////////////////
