@@ -19,7 +19,8 @@ server_authenticate_result				Authentication response message 				Server/Client:
 server_generate_token_result			Token Generation Response						Server/Client: PurpleNetworkBaseHandler
 server_logout_result					Logout result									Server/Client: PurpleNetworkBaseHandler
 server_ping								Ping Response									Server/Client: PurpleNetworkBaseHandler
-server_get_version						Version information								Server/Client: PurpleNetworkBaseHandler
+server_version_result					Version information								Server/Client: PurpleNetworkBaseHandler
+
 
 
 // CLIENT /////////////////////////
