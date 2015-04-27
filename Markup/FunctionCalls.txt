@@ -28,10 +28,13 @@ Client:
 Name:									Comment:										Sended/Handled in:
 client_create_character															X		Server: PurpleNetworkAccountHandler
 
-Base Handler:
-client_validate_username				Username valifation						X		Server: PurpleNetworkAccountHandler
-client_register							Register account						X		Server: PurpleNetworkAccountHandler
-client_disable							account disable call					X		Server: PurpleNetworkAccountHandler
+
+client_validate_username				Username valifation								Client: PurpleNetworkAccountCalls
+																						Server: PurpleNetworkAccountHandler
+client_register							Register account								Client: PurpleNetworkAccountCalls
+																						Server: PurpleNetworkAccountHandler
+client_disable							account disable call							Client: PurpleNetworkAccountCalls
+																						Server: PurpleNetworkAccountHandler
 
 
 client_authenticate						Authenticate client								Client: PurpleNetworkBaseCalls
@@ -50,7 +53,8 @@ client_get_version						Version request 								Client: PurpleNetworkBaseCalls
 
 Gamemaster:
 Name:									Comment:										Handled in:
-gamemaster_add_warning															X		Server: PurpleNetworkGamemasterHandler
+gamemaster_add_warning																	Client: PurpleNetworkGamemasterCalls
+																						Server: PurpleNetworkGamemasterHandler
 
 
 
