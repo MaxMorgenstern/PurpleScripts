@@ -1,6 +1,7 @@
 using UnityEngine;
 using PurpleDatabase.Helper;
 using _PMGamemaster = Entities.PurpleMessages.Gamemaster;
+using Entities.PurpleNetwork;
 
 namespace PurpleNetwork.Server.Handler
 {
@@ -23,20 +24,22 @@ namespace PurpleNetwork.Server.Handler
 			_PMGamemaster.Warning accountWarning = PurpleSerializer.StringToObjectConverter<_PMGamemaster.Warning> (dataObject);
 			string password_or_token = string.Empty;
 
-			// TODO - validate that client has right to do this call
+			PurpleNetworkUser playerReference = get_network_player_reference(np);
+			if (playerReference.UserType != UserTypes.User) 
+			{
+				if(!string.IsNullOrEmpty(accountWarning.gmToken))
+					password_or_token = accountWarning.gmToken;
+				if(!string.IsNullOrEmpty(accountWarning.gmPassword))
+					password_or_token = accountWarning.gmPassword;
+				
+				accountWarning.validate = AccountHelper.AddWarning (accountWarning.gmUsername, password_or_token,
+					accountWarning.warningUser, accountWarning.warningComment,
+					accountWarning.warningLevel);
 
-			if(!string.IsNullOrEmpty(accountWarning.gmToken))
-				password_or_token = accountWarning.gmToken;
-			if(!string.IsNullOrEmpty(accountWarning.gmPassword))
-				password_or_token = accountWarning.gmPassword;
-
-			accountWarning.validate = AccountHelper.AddWarning (accountWarning.gmUsername, password_or_token,
-			                          accountWarning.warningUser, accountWarning.warningComment,
-			                          accountWarning.warningLevel);
-
-			AccountHelper.AddLog(get_network_player_reference(np).UserName,
-			                     "gamemaster_add_warning_handler " + accountWarning.gmUsername);
-			PurpleNetwork.ToPlayer (np, "server_add_warning_result", accountWarning);
+				AccountHelper.AddLog (get_network_player_reference (np).UserName,
+					"gamemaster_add_warning_handler " + accountWarning.gmUsername);
+				PurpleNetwork.ToPlayer (np, "server_add_warning_result", accountWarning);
+			}
 		}
 
 

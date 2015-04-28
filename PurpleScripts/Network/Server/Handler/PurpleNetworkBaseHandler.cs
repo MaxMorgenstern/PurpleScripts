@@ -74,6 +74,7 @@ namespace PurpleNetwork.Server.Handler
 			}
 
 			authObject.validate = validationResult;
+			authObject.timestamp = DateTime.Now;
 
 			// save 2 spaces if monitoring is allowed otherwise just one for Admin/Mod/GM
 			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
@@ -119,6 +120,7 @@ namespace PurpleNetwork.Server.Handler
 				password_or_token = authObject.ClientPassword;
 
 			authObject.ClientToken = AccountHelper.GenerateToken(authObject.ClientName, password_or_token, np);
+			authObject.timestamp = DateTime.Now;
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
 								 "client_generate_token_handler " + authObject.ClientName);
@@ -160,7 +162,7 @@ namespace PurpleNetwork.Server.Handler
 			versionObject.ClientVersion = pv.GetClientVersion ();
 			versionObject.ServerVersion = pv.GetServerVersion ();
 
-			PurpleNetwork.ToPlayer (np, "server_get_version", versionObject);
+			PurpleNetwork.ToPlayer (np, "server_version_result", versionObject);
 		}
 
 		// EVENT /////////////////////////

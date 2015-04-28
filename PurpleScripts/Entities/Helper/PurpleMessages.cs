@@ -124,19 +124,17 @@ namespace Entities.PurpleMessages
 	// SERVER RELATED MESSAGES ////////////////////////////
 	namespace Server
 	{
-		/*
-		// SERVER Credentials
-		public class Credentials : PurpleMessage
+		// SERVER CHANGE MESSAGE
+		public class SwitchMessage : PurpleMessage
 		{
-			public string name;
-			public string hostname;
-			public string ip;
-			public string password;
-			public int port;
-			public int player;
-			public int maxPlayer;
+			public string Hostname;
+			public string Password;
+			public int Port;
+
+			public string SwitchToken;
 		}
 
+		/*
 		// SERVER STATUS
 		public class Status : PurpleMessage
 		{
