@@ -32,7 +32,15 @@ public class ClientManager : MonoBehaviour {
 			_Client.CurrentConfig.Save ("TestScript");
 		}
 
+		_Network.AddListener("server_authenticate_result", authenticate_handler);
+
 		_Client.Connect ();
+	}
+
+
+	public static void authenticate_handler (string dataObject, NetworkPlayer np)
+	{
+		Debug.Log (dataObject);
 	}
 
 	void OnGUI()
