@@ -16,8 +16,10 @@ namespace PurpleNetwork
 
 
 	// DELEGATES FOR CALLBACK AND EVENTS
-	public delegate void PurpleNetCallback(string converted_object, NetworkPlayer network_info); // With message
+	public delegate void PurpleNetCallback(string converted_object, NetworkPlayer network_info); // Listener
 	public delegate void PurpleNetworkEvent(object passed_object, NetworkPlayer network_info); // network event
+
+	public delegate void PurpleNetworkClientEvent(object passed_object); // network event
 
 
 	public class Constants
