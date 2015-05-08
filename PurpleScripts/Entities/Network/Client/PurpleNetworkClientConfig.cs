@@ -61,6 +61,7 @@ namespace Entities.PurpleNetwork.Client
 
 		public void Load(string Name)
 		{
+			this.ConfigLoaded = false;
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
 			ClientConfig config
 				= PurpleStorage.PurpleStorage.Load<ClientConfig> ("Entities.PurpleNetwork.Client.ClientConfig"+suffix);
