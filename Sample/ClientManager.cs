@@ -14,8 +14,7 @@ public class ClientManager : MonoBehaviour {
 		Debug.Log("Client Manager Started!");
 		
 		PurpleStorage.PurpleStorage.Setup ();
-		PurpleI18n.Setup ();
-		
+		PurpleI18n.Setup("de-DE");
 		PurpleLog.Enable();
 
 		Debug.Log("Load Config");
