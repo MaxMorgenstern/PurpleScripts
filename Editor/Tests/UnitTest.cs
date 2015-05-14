@@ -1,3 +1,4 @@
+#if UnityTestToolsIsPresent
 using System;
 using NUnit.Framework;
 using UnityEngine;
@@ -172,3 +173,4 @@ namespace PurpleTests
 		}
 	}
 }
+#endif

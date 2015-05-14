@@ -470,3 +470,4 @@ namespace PurpleDatabaseWrapper
 		}
 	}
 }
+#endif

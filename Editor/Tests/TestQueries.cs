@@ -1,3 +1,4 @@
+#if UnityTestToolsIsPresent
 using UnityEngine;
 using PurpleDatabase;
 using System.Data;
@@ -133,3 +134,4 @@ namespace PurpleDatabaseQuery
 		}
 	}
 }
+#endif
