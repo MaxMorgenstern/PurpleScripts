@@ -60,6 +60,8 @@ public class PurplePassword {
 
 	public bool ValidatePassword(string password, string correctHash)
 	{
+		if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(correctHash)) return false;
+
 		// Extract the parameters from the hash
 		char[] delimiter = { ':' };
 		string[] split = correctHash.Split(delimiter);
