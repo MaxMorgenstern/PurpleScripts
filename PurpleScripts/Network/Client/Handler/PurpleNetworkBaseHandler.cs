@@ -29,7 +29,7 @@ namespace PurpleNetwork.Client.Handler
 		// BASE /////////////////////////
 		public static void server_broadcast_handler (string dataObject, NetworkPlayer np)
 		{
-			Debug.Log ("Broadcast received: " + np.ToString () + " | " + dataObject);
+			PurpleDebug.Log("Broadcast received: " + np.ToString() + " | " + dataObject);
 			if(np.ToString() != Constants.SERVER_ID_STRING) return;
 
 			// TODO: more?

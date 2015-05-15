@@ -53,7 +53,7 @@ public class PurpleCommandLine
 		}
 		catch (Exception e)
 		{
-			Debug.LogWarning(e);
+			PurpleDebug.LogWarning(e);
 			return argumentDictionary;
 		}
 		

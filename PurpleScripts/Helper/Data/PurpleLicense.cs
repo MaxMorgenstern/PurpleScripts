@@ -27,7 +27,7 @@ namespace PurpleLicense
 			} catch(Exception e){
 				keySize = 2048;
 				cryptoConfig = "SHA256";
-				Debug.LogError("Can not read Purple Config! " + e.ToString());
+				PurpleDebug.LogError("Can not read Purple Config! " + e.ToString(), 1);
 			}
 		}
 

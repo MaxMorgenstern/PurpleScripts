@@ -9,6 +9,13 @@ If you have any suggestions for improvement either let me know or fork this repo
 
 
 
+Unity Test Tools Note
+----
+Unit Tests are present within this Repository.
+In order to enable them please add 'UnityTestToolsIsPresent' within the 'Scripting Define Symbols' section within Unity3D.
+
+
+
 Content
 ----
 

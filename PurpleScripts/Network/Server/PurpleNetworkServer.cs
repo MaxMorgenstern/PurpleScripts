@@ -60,7 +60,7 @@ namespace PurpleNetwork.Server
 				restartNotificationMessage = "Server restart in !!time!!!";
 				restartNotificationDoneMessage = "The server will be restarted now!";
 
-				Debug.LogError("Can not read Purple Config! " + e.ToString());
+				PurpleDebug.LogError("Can not read Purple Config! " + e.ToString(), 1);
 			}
 		}
 
@@ -407,7 +407,7 @@ namespace PurpleNetwork.Server
 		private void initialize_database_connection(ServerConfig config)
 		{
 			PurpleDatabase.PurpleDatabase.Setup(config.DatabaseHost, config.DatabaseName,
-			                                    config.DatabaseUser, config.DatabasePassword, config.DatabasePort);
+												config.DatabaseUser, config.DatabasePassword, config.DatabasePort);
 		}
 
 		private TimeSpan uptime_calculator()

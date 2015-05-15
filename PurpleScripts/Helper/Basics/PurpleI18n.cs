@@ -20,7 +20,7 @@ public class PurpleI18n : MonoBehaviour
 			defaultCulture = PurpleConfig.Globalization.Culture;
 		} catch(Exception e){
 			defaultCulture = "en-GB" ;
-			Debug.LogError("Can not read Purple Config! " + e.ToString());
+			PurpleDebug.LogError("Can not read Purple Config! " + e.ToString(), 1);
 		}
 
 		configDictionary = new Dictionary<string,string>();
@@ -58,7 +58,7 @@ public class PurpleI18n : MonoBehaviour
 		try{
 			return Instance.get_entry (key.ToUpper());
 		} catch(Exception e){
-			Debug.LogError("Please call 'PurpleI18n.Setup()' initially! " + e.ToString());
+			PurpleDebug.LogError("Please call 'PurpleI18n.Setup()' initially! " + e.ToString(), 1);
 		}
 		return "I18n has not been setup for: '"+key+"'";
 	}
@@ -84,7 +84,7 @@ public class PurpleI18n : MonoBehaviour
 			XmlDocument xmlDoc = new XmlDocument();
 
 			string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(),
-			                                    ("*"+culture+"*.lang"), SearchOption.AllDirectories);
+												("*"+culture+"*.lang"), SearchOption.AllDirectories);
 			if(files.Length > 0)
 			{
 				foreach (string filePath in files)
@@ -97,10 +97,10 @@ public class PurpleI18n : MonoBehaviour
 					}
 				}
 			} else {
-				Debug.LogError("Can not find config files.");
+				PurpleDebug.LogError("Can not find config files.", 1);
 			}
 		} catch(Exception e) {
-			Debug.LogError(e);
+			PurpleDebug.LogError(e, 1);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class PurpleI18n : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.LogWarning(e.ToString());
+			PurpleDebug.LogWarning(e.ToString());
 		}
 		return (String.IsNullOrEmpty(returnData)) ? "Missing Label: '"+entry+"'" : returnData;
 	}

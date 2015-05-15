@@ -31,7 +31,7 @@ namespace PurpleConfig {
 					}
 				}
 			} else {
-				Debug.LogError("Can not find config files.");
+				PurpleDebug.LogError("Can not find config files.", 1);
 			}
 		}
 
@@ -44,7 +44,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				PurpleDebug.LogException(e);
 			}
 			return returnData;
 		}
@@ -59,7 +59,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				PurpleDebug.LogException(e);
 				return -1;
 			}
 		}
@@ -74,7 +74,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				PurpleDebug.LogException(e);
 				return -1;
 			}
 		}
@@ -89,7 +89,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				PurpleDebug.LogException(e);
 				return -1;
 			}
 		}
@@ -104,7 +104,7 @@ namespace PurpleConfig {
 			}
 			catch (Exception e)
 			{
-				Debug.LogException(e);
+				PurpleDebug.LogException(e);
 				return false;
 			}
 		}

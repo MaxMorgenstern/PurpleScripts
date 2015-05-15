@@ -20,7 +20,7 @@ namespace PurpleNetwork.Server.Handler
 		// GAMEMASTER /////////////////////////
 		public static void gamemaster_add_warning_handler (string dataObject, NetworkPlayer np)
 		{
-			Debug.Log ("Gamemaster add warning received: " + np.ToString ());
+			PurpleDebug.Log("Gamemaster add warning received: #" + np.ToString(), 1);
 			_PMGamemaster.Warning accountWarning = PurpleSerializer.StringToObjectConverter<_PMGamemaster.Warning> (dataObject);
 			string password_or_token = string.Empty;
 

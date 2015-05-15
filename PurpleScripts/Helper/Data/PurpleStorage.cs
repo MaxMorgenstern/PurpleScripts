@@ -40,7 +40,7 @@ namespace PurpleStorage
 				forcePlayerPrefs = false;
 				filePath = String.Empty;
 				metaObjectName = "purple_meta_object";
-				Debug.LogError("Can not read Purple Config! " + e.ToString());
+				PurpleDebug.LogError("Can not read Purple Config! " + e.ToString(), 1);
 			}
 			usePlayerPrefs = true;
 			if(String.IsNullOrEmpty(filePath))
@@ -100,7 +100,7 @@ namespace PurpleStorage
 			}
 			catch (Exception ex)
 			{
-				Debug.LogWarning(ex);
+				PurpleDebug.LogWarning(ex);
 				return false;
 			}
 		}
@@ -114,7 +114,7 @@ namespace PurpleStorage
 			}
 			catch (Exception ex)
 			{
-				Debug.LogWarning(ex);
+				PurpleDebug.LogWarning(ex);
 				return false;
 			}
 		}
@@ -128,7 +128,7 @@ namespace PurpleStorage
 			}
 			catch (Exception ex)
 			{
-				Debug.LogWarning(ex);
+				PurpleDebug.LogWarning(ex);
 				return false;
 			}
 		}
@@ -299,7 +299,7 @@ namespace PurpleStorage
 				}
 				catch (Exception ex)
 				{
-					Debug.LogWarning(ex);
+					PurpleDebug.LogWarning(ex);
 					usePlayerPrefs = false;
 					return save_binary_file (filename, data);
 				}
@@ -355,7 +355,7 @@ namespace PurpleStorage
 			}
 			catch (Exception ex)
 			{
-				Debug.Log("Can not save file: " + ex);
+				PurpleDebug.Log("Can not save file: " + ex, 1);
 			}
 			return false;
 		}
@@ -394,7 +394,7 @@ namespace PurpleStorage
 			}
 			catch (PlayerPrefsException ex)
 			{
-				Debug.Log("Can not save PlayerPref: " + ex);
+				PurpleDebug.Log("Can not save PlayerPref: " + ex, 1);
 			}
 			return false;
 		}
@@ -411,7 +411,7 @@ namespace PurpleStorage
 			}
 			catch(PurpleException ex)
 			{
-				Debug.LogError("Can not convert PurpleFileObject " + ex);
+				PurpleDebug.LogError("Can not convert PurpleFileObject " + ex);
 			}
 			return default (T);
 		}
@@ -427,7 +427,7 @@ namespace PurpleStorage
 			}
 			catch (Exception ex)
 			{
-				Debug.LogError("Can not delete PlayerPref " + ex);
+				PurpleDebug.LogError("Can not delete PlayerPref " + ex, 1);
 			}
 			return false;
 		}
@@ -526,7 +526,7 @@ namespace PurpleStorage
 			}
 			catch (PlayerPrefsException ex)
 			{
-				Debug.Log("Got: " + ex);
+				PurpleDebug.Log("Got: " + ex);
 			}
 			return false;
 		}
@@ -544,7 +544,7 @@ namespace PurpleStorage
 			}
 			catch(PurpleException ex)
 			{
-				Debug.LogWarning("Can not convert meta data object! " + ex);
+				PurpleDebug.LogWarning("Can not convert meta data object! " + ex);
 			}
 			return null;
 		}

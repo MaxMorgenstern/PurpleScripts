@@ -11,7 +11,7 @@ public class ServerManager : MonoBehaviour {
 	{
 		PurpleI18n.Setup("de-DE");
 		PurpleLog.Enable();
-		Debug.Log("Server Manager Started!");
+		PurpleDebug.Log("Server Manager Started!");
 		PurpleLog.AddListener("start", launch_server_command);
 		PurpleLog.AddListener("stop", stop_server_command);
 		PurpleLog.AddListener("restart", restart_server_command);
@@ -52,23 +52,23 @@ public class ServerManager : MonoBehaviour {
 
 	private void debug_data()
 	{
-		Debug.Log("Max Player: " + PurpleConfig.Network.MaxPlayer);
-		Debug.Log("Port: " + PurpleConfig.Network.Port);
-		Debug.Log("Password: " + PurpleConfig.Network.Password);
-		Debug.Log("Connections: " + Network.connections.Length);
-		Debug.Log("UserList: " + PurpleSerializer.ObjectToStringConverter(PurpleNetwork.Server.PurpleServer.UserList));
+		PurpleDebug.Log("Max Player: " + PurpleConfig.Network.MaxPlayer, 1);
+		PurpleDebug.Log("Port: " + PurpleConfig.Network.Port, 1);
+		PurpleDebug.Log("Password: " + PurpleConfig.Network.Password, 1);
+		PurpleDebug.Log("Connections: " + Network.connections.Length, 1);
+		PurpleDebug.Log("UserList: " + PurpleSerializer.ObjectToStringConverter(PurpleNetwork.Server.PurpleServer.UserList), 1);
 	}
 
 	private void launch_server()
 	{
-		Debug.Log("Start Server!");
+		PurpleDebug.Log("Start Server!");
 		Entities.PurpleNetwork.Server.ServerConfig psc = new Entities.PurpleNetwork.Server.ServerConfig();
 		psc.ServerMaxClients = numberOfPlayers;
 		psc.ServerPassword = connectionPassword;
 		psc.ServerPort = connectionPort;
 		PurpleNetwork.Server.PurpleServer.LaunchServer(psc);
 
-		Debug.Log(numberOfPlayers + " - - " + connectionPassword + " - - " + connectionPort);
+		PurpleDebug.Log(numberOfPlayers + " - - " + connectionPassword + " - - " + connectionPort);
 	}
 
 
@@ -76,7 +76,7 @@ public class ServerManager : MonoBehaviour {
 	{
 		if (args.Length == 2 && PurpleLog.IsHelpRequired(args[1]))
 		{
-			Debug.Log("Launch the server.");
+			PurpleDebug.Log("Launch the server.");
 			return string.Empty;
 		}
 
@@ -88,7 +88,7 @@ public class ServerManager : MonoBehaviour {
 	{
 		if (args.Length == 2 && PurpleLog.IsHelpRequired(args[1]))
 		{
-			Debug.Log("Stop the server.");
+			PurpleDebug.Log("Stop the server.");
 			return string.Empty;
 		}
 
@@ -100,7 +100,7 @@ public class ServerManager : MonoBehaviour {
 	{
 		if (args.Length == 2 && PurpleLog.IsHelpRequired(args[1]))
 		{
-			Debug.Log("Restart the server.");
+			PurpleDebug.Log("Restart the server.");
 			return string.Empty;
 		}
 
