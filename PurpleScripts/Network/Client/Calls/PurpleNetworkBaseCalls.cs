@@ -46,7 +46,7 @@ namespace PurpleNetwork.Client.Calls
 
 		public static void GetVersion()
 		{
-			PurpleNetwork.ToServer (null, "client_get_version");
+			PurpleNetwork.ToServer ("client_get_version", null);
 		}
 
 		// PRIVATE /////////////////////////

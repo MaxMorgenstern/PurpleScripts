@@ -7,6 +7,7 @@ namespace PurpleNetwork.Client.Handler
 	public class Base : Shared
 	{
 		public static event PurpleNetworkClientEvent ServerBroadcast;
+		public static event PurpleNetworkClientEvent Authentication;
 
 		public static void register_base_handler()
 		{
@@ -18,7 +19,8 @@ namespace PurpleNetwork.Client.Handler
 			PurpleNetwork.AddListener("server_generate_token_result", server_generate_token_result_handler);
 			PurpleNetwork.AddListener("server_logout_result", server_logout_result_handler);
 			PurpleNetwork.AddListener("server_ping", server_ping_handler);
-			PurpleNetwork.AddListener("server_switch", server_switch_handler);						//TODO: Impver Ca	PurpleNetwork.AddListener("server_version_result", server_version_result_handler);
+			PurpleNetwork.AddListener("server_switch", server_switch_handler);
+			PurpleNetwork.AddListener("server_version_result", server_version_result_handler);
 
 			PurpleNetwork.DisconnectedFromPurpleServer += remove_base_handler;
 		}
@@ -32,7 +34,6 @@ namespace PurpleNetwork.Client.Handler
 			PurpleDebug.Log("Broadcast received: " + np.ToString() + " | " + dataObject);
 			if(np.ToString() != Constants.SERVER_ID_STRING) return;
 
-			// TODO: more?
 			trigger_purple_event (ServerBroadcast, dataObject);
 		}
 
@@ -44,16 +45,19 @@ namespace PurpleNetwork.Client.Handler
 				PurpleClient.CurrentConfig.PlayerAuthenticated = authObject.ClientAuthenticated;
 				if (!authObject.ClientAuthenticated)
 				{
-					// TODO: too many clients connected
+					// authentication okay but too many clients connected
+					trigger_purple_event (Authentication, authObject);
 					return;
 				}
 				PurpleClient.CurrentConfig.ClientToken = authObject.ClientToken;
 				PurpleClient.CurrentConfig.ClientTokenCreated = authObject.timestamp;
-
+				// authentication okay
+				trigger_purple_event (Authentication, authObject);
 			} 
 			else 
 			{
-				// TODO: incorect data
+				// incorect data
+				trigger_purple_event (Authentication, authObject);
 			}
 		}
 
@@ -65,16 +69,20 @@ namespace PurpleNetwork.Client.Handler
 				PurpleClient.CurrentConfig.ClientToken = authObject.ClientToken;
 				PurpleClient.CurrentConfig.ClientTokenCreated = authObject.timestamp;
 			}
-			// TODO: trigger?
 		}
 
 		public static void server_logout_result_handler (string dataObject, NetworkPlayer np)
 		{
+			PurpleDebug.LogWarning ("Logout: " + dataObject);
+
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
+
 			if(!authObject.ClientAuthenticated)
 			{
-
-				// TODO: logged out - okay
+				// logged out - okay
+				PurpleClient.CurrentConfig.PlayerAuthenticated = authObject.ClientAuthenticated;
+				PurpleClient.CurrentConfig.ClientToken = authObject.ClientToken;
+				PurpleClient.CurrentConfig.ClientTokenCreated = System.DateTime.MinValue;
 			}
 		}
 
@@ -82,25 +90,30 @@ namespace PurpleNetwork.Client.Handler
 		{
 			_PMServer.Ping pingObject = PurpleSerializer.StringToObjectConverter<_PMServer.Ping> (dataObject);
 			//TODO
+			PurpleDebug.Log (PurpleSerializer.ObjectToStringConverter ((pingObject)));
 		}
 
 		public static void server_switch_handler (string dataObject, NetworkPlayer np)
 		{
 			_PMServer.SwitchMessage switchObject = PurpleSerializer.StringToObjectConverter<_PMServer.SwitchMessage> (dataObject);
 			//TODO
+			PurpleDebug.Log (PurpleSerializer.ObjectToStringConverter ((switchObject)));
 		}
 
 		public static void server_version_result_handler (string dataObject, NetworkPlayer np)
 		{
-			_PMServer.Version switchObject = PurpleSerializer.StringToObjectConverter<_PMServer.Version> (dataObject);
+			_PMServer.Version versionObject = PurpleSerializer.StringToObjectConverter<_PMServer.Version> (dataObject);
 			//TODO
+			PurpleDebug.Log (PurpleSerializer.ObjectToStringConverter ((versionObject)));
 		}
+
 
 		// EVENT /////////////////////////
 
 		public static void connected_to_server_handler(object ob, NetworkPlayer np)
 		{
 			Calls.Base.Authenticate (PurpleClient.CurrentConfig);
+			Calls.Base.GetVersion ();
 		}
 
 
@@ -108,14 +121,17 @@ namespace PurpleNetwork.Client.Handler
 
 		public static void remove_base_handler(object ob, NetworkPlayer np)
 		{
+			PurpleClient.CurrentConfig.PlayerAuthenticated = false;
 			PurpleNetwork.ConnectedToPurpleServer -= connected_to_server_handler;
 
-			PurpleNetwork.AddListener("server_broadcast", server_broadcast_handler);
+			PurpleNetwork.RemoveListener("server_broadcast", server_broadcast_handler);
 
-			PurpleNetwork.AddListener("server_authenticate_result", server_broadcast_handler);
-			PurpleNetwork.AddListener("server_generate_token_result", server_broadcast_handler);
-			PurpleNetwork.AddListener("server_logout_result", server_broadcast_handler);
-			PurpleNetwork.AddListener("server_ping", server_broadcast_handler);
+			PurpleNetwork.RemoveListener("server_authenticate_result", server_authenticate_result_handler);
+			PurpleNetwork.RemoveListener("server_generate_token_result", server_generate_token_result_handler);
+			PurpleNetwork.RemoveListener("server_logout_result", server_logout_result_handler);
+			PurpleNetwork.RemoveListener("server_ping", server_ping_handler);
+			PurpleNetwork.RemoveListener("server_switch", server_switch_handler);
+			PurpleNetwork.RemoveListener("server_version_result", server_version_result_handler);
 
 			PurpleNetwork.DisconnectedFromPurpleServer -= remove_base_handler;
 		}
