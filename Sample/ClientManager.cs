@@ -2,12 +2,15 @@
 using _Network = PurpleNetwork.PurpleNetwork;
 using _Client = PurpleNetwork.Client.PurpleClient;
 using _Handler = PurpleNetwork.Client.Handler;
+using _Calls = PurpleNetwork.Client.Calls;
 
 public class ClientManager : MonoBehaviour {
 
 	public string connectionIP = PurpleConfig.Network.Host;
 	public string connectionPassword = PurpleConfig.Network.Password;
 	public int connectionPort = PurpleConfig.Network.Port;
+
+	public GameObject DummyButton;
 
 	void Start()
 	{
@@ -32,21 +35,25 @@ public class ClientManager : MonoBehaviour {
 			_Client.CurrentConfig.Save ("ClientManagerConfig");
 		}
 
-		_Network.AddListener("server_authenticate_result", authenticate_handler);		
+		_Network.AddListener ("server_authenticate_result", authenticate_handler);
 	}
 
 
 	public static void authenticate_handler (string dataObject, NetworkPlayer np)
 	{
+		PurpleDebug.Log ("Authenticate Result:");
 		PurpleDebug.Log(dataObject, 1);
 	}
 
 	void OnGUI()
 	{
 		// LEFT ////////////////////////////
-
-		GUI.Label(new Rect(10, 10, 200, 20), "Status: Disconnected");
-
+		if (Network.peerType == NetworkPeerType.Disconnected) 
+			GUI.Label(new Rect(10, 10, 200, 20), "Status: Disconnected");
+		else
+			GUI.Label(new Rect(10, 10, 200, 20), "Status: Connected");
+		
+		
 		if (GUI.Button(new Rect(50, 50, 200, 50), "Debug"))
 			PurpleDebug.Log("Config Data: " + PurpleSerializer.ObjectToStringConverter(_Client.CurrentConfig), 1);
 		
@@ -64,22 +71,30 @@ public class ClientManager : MonoBehaviour {
 
 
 		// RIGHT ////////////////////////////
+		if (!_Client.CurrentConfig.PlayerAuthenticated) {
 
-		GUI.Box (new Rect (385, 50, 230, 175), "Login");
-		// GUI.Window (1, new Rect (100, 10, 200, 75), WindowFunc, "yyyyy");
+			GUI.Box (new Rect (385, 50, 230, 175), "Login");
+			// GUI.Window (1, new Rect (100, 10, 200, 75), WindowFunc, "yyyyy");
 
-		GUI.Label(new Rect(400, 65, 200, 20), "Username");
-		_Client.CurrentConfig.ClientName = 
+			GUI.Label (new Rect (400, 65, 200, 20), "Username");
+			_Client.CurrentConfig.ClientName = 
 			GUI.TextField (new Rect (400, 85, 200, 25), _Client.CurrentConfig.ClientName);
 		
-		GUI.Label(new Rect(400, 115, 200, 20), "Password");
-		_Client.CurrentConfig.ClientPassword = 
+			GUI.Label (new Rect (400, 115, 200, 20), "Password");
+			_Client.CurrentConfig.ClientPassword = 
 			GUI.PasswordField (new Rect (400, 135, 200, 25), _Client.CurrentConfig.ClientPassword, '*');
 
-		if (GUI.Button(new Rect(400, 175, 200, 35), "Login")) 
+			if (GUI.Button (new Rect (400, 175, 200, 35), "Login")) {
+				_Client.CurrentConfig.Save ("ClientManagerConfig");
+				_Client.Connect ();
+			}
+		}
+		else
 		{
-			_Client.CurrentConfig.Save ("ClientManagerConfig");
-			_Client.Connect ();
+			if(GUI.Button (new Rect (50, 230, 200, 50), "Logout"))
+			{
+				_Calls.Base.Logout (_Client.CurrentConfig);
+			}
 		}
 
 		GUI.Label(new Rect(10, Screen.height - 30, 200, 20), "Press '^' for console window.");
@@ -89,4 +104,10 @@ public class ClientManager : MonoBehaviour {
 	{
 	}
 }
+
+
+/*
+Save Password!?
+
+*/ 
 
