@@ -15,26 +15,25 @@ public class ClientManager : MonoBehaviour {
 		
 		PurpleStorage.PurpleStorage.Setup ();
 		PurpleI18n.Setup ();
+		
+		PurpleLog.Enable();
 
 		Debug.Log("Load Config");
-		_Client.CurrentConfig.Load ("TestScript");
-
+		_Client.CurrentConfig.Load ("ClientManagerConfig");
 
 		if (!_Client.CurrentConfig.ConfigLoaded) 
 		{
-			Debug.Log("No data loaded, set new one and save!");
+			Debug.Log("No data loaded, we set the default and save!");
 
 			_Client.CurrentConfig.ClientName = "administrator";
 			_Client.CurrentConfig.ClientPassword = "PurplePassword";
 			_Client.CurrentConfig.ServerHost = connectionIP;
 			_Client.CurrentConfig.ServerPassword = connectionPassword;
 			_Client.CurrentConfig.ServerPort = connectionPort;
-			_Client.CurrentConfig.Save ("TestScript");
+			_Client.CurrentConfig.Save ("ClientManagerConfig");
 		}
 
-		_Network.AddListener("server_authenticate_result", authenticate_handler);
-
-		_Client.Connect ();
+		_Network.AddListener("server_authenticate_result", authenticate_handler);		
 	}
 
 
@@ -45,7 +44,50 @@ public class ClientManager : MonoBehaviour {
 
 	void OnGUI()
 	{
+		// LEFT ////////////////////////////
 
+		GUI.Label(new Rect(10, 10, 200, 20), "Status: Disconnected");
+
+		if (GUI.Button(new Rect(50, 50, 200, 50), "Debug")) 
+			Debug.Log("Config Data: " + PurpleSerializer.ObjectToStringConverter(_Client.CurrentConfig));
+		
+		if (GUI.Button(new Rect(50, 110, 200, 50), "Load Config")) 
+		{
+			Debug.Log("Load Config");
+			_Client.CurrentConfig.Load ("ClientManagerConfig");
+		}
+
+		if (GUI.Button(new Rect(50, 170, 200, 50), "Delete Config")) 
+		{
+			Debug.Log("Delete Config");
+			_Client.CurrentConfig.Delete ("ClientManagerConfig");
+		}
+
+
+		// RIGHT ////////////////////////////
+
+		GUI.Box (new Rect (385, 50, 230, 175), "Login");
+		// GUI.Window (1, new Rect (100, 10, 200, 75), WindowFunc, "yyyyy");
+
+		GUI.Label(new Rect(400, 65, 200, 20), "Username");
+		_Client.CurrentConfig.ClientName = 
+			GUI.TextField (new Rect (400, 85, 200, 25), _Client.CurrentConfig.ClientName);
+		
+		GUI.Label(new Rect(400, 115, 200, 20), "Password");
+		_Client.CurrentConfig.ClientPassword = 
+			GUI.PasswordField (new Rect (400, 135, 200, 25), _Client.CurrentConfig.ClientPassword, '*');
+
+		if (GUI.Button(new Rect(400, 175, 200, 35), "Login")) 
+		{
+			_Client.CurrentConfig.Save ("ClientManagerConfig");
+			_Client.Connect ();
+		}
+
+		GUI.Label(new Rect(10, Screen.height - 30, 200, 20), "Press '^' for console window.");
+	}
+
+	void WindowFunc(int id)
+	{
 	}
 }
 

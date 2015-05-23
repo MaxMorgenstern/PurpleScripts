@@ -61,6 +61,7 @@ namespace Entities.PurpleNetwork.Client
 
 		public void Load(string Name)
 		{
+			this.ConfigLoaded = false;
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
 			ClientConfig config
 				= PurpleStorage.PurpleStorage.Load<ClientConfig> ("Entities.PurpleNetwork.Client.ClientConfig"+suffix);
@@ -78,7 +79,17 @@ namespace Entities.PurpleNetwork.Client
 			this.ClientTokenCreated = config.ClientTokenCreated;
 			this.PlayerAuthenticated= config.PlayerAuthenticated;
 			this.guid 				= config.guid;
+		}
+		
+		public void Delete()
+		{
+			Delete (string.Empty);
+		}
 
+		public void Delete(string Name)
+		{
+			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
+			PurpleStorage.PurpleStorage.DeleteFile ("Entities.PurpleNetwork.Client.ClientConfig"+suffix);
 		}
 	}
 }
