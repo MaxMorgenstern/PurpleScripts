@@ -8,6 +8,8 @@ namespace Entities.PurpleNetwork.Client
 		public int 			ServerPort;
 		public string 		ServerPassword;
 
+		public string 		ServerSwitchToken;
+
 		protected Guid _guid;
 
 		public string guid
@@ -40,6 +42,15 @@ namespace Entities.PurpleNetwork.Client
 			ServerPort 		= PurpleConfig.Network.Server.Port;
 			ServerPassword 	= PurpleConfig.Network.Server.Password;
 			ConfigLoaded	= false;
+			ServerSwitchToken = string.Empty;
+		}
+
+		public void ResetServer ()
+		{
+			ServerHost 		= PurpleConfig.Network.Server.Host;
+			ServerPort 		= PurpleConfig.Network.Server.Port;
+			ServerPassword 	= PurpleConfig.Network.Server.Password;
+			ServerSwitchToken = string.Empty;
 		}
 
 		public void Save()
