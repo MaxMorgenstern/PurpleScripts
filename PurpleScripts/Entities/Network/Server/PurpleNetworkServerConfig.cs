@@ -112,6 +112,7 @@ namespace Entities.PurpleNetwork.Server
 			get_server_reference ();
 			if(serverReference == null)
 			{
+				serverReference = new PurpleServer ();
 				create_server_reference ();
 				get_server_reference ();
 			}
@@ -216,7 +217,8 @@ namespace Entities.PurpleNetwork.Server
 		{
 			serverReference = SQLGenerator.New ().Select ("*").From(SERVER_TABLE)
 				.Where ("guid="+guid).FetchSingle ().ToObject<PurpleServer> ();
-			ServerID = serverReference.id;
+			if(serverReference != null)
+				ServerID = serverReference.id;
 		}
 
 		private bool create_server_reference()
