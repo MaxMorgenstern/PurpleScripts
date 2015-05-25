@@ -70,6 +70,7 @@ namespace Entities.PurpleMessages
 			public string ClientPassword;
 			public string ClientToken;
 			public bool ClientAuthenticated;
+			public string ServerSwitchToken;
 		}
 
 		// CREATE ACCOUNT

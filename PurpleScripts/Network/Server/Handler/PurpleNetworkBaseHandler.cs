@@ -34,6 +34,7 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.AddListener("client_ping", client_ping_handler);
 			PurpleNetwork.AddListener("client_get_version", client_get_version_handler);
 			PurpleNetwork.AddListener("client_authenticate", client_authenticate_handler);
+			//PurpleNetwork.AddListener("client_authenticate_switch", client_authenticate_switch_handler);	// TODO
 			PurpleNetwork.AddListener("client_generate_token", client_generate_token_handler);
 			PurpleNetwork.AddListener("client_logout", client_logout_handler);
 
@@ -103,6 +104,18 @@ namespace PurpleNetwork.Server.Handler
 								 + authObject.ClientName + " - "+ authObject.ClientAuthenticated);
 			PurpleDebug.Log("Authentication result: " + authObject.ClientName + ": " + authObject.ClientAuthenticated);
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
+		}
+
+		public static void client_authenticate_switch_handler (string dataObject, NetworkPlayer np)
+		{
+			PurpleDebug.Log("Authentication Switch received: #" + np.ToString());
+			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
+
+			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
+			bool validationResult = false;
+			string newToken = string.Empty;
+
+			// TODO... 
 		}
 
 		// TODO: test and add call to overview
