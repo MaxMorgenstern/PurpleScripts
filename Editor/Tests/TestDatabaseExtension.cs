@@ -1,3 +1,4 @@
+#if UnityTestToolsIsPresent
 using UnityEngine;
 using PurpleDatabase;
 using PurpleDatabase.Extension;
@@ -321,3 +322,4 @@ namespace PurpleDatabaseWrapperExtension
 		}
 	}
 }
+#endif
