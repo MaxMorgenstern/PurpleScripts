@@ -1,16 +1,21 @@
 using System;
 using PurpleNetwork;
+using PurpleDatabase;
+using PurpleDatabase.Extension;
+using Entities.Database;
 
 namespace Entities.PurpleNetwork.Server
 {
 	public class ServerConfig
 	{
 		public const string 	CONFIG_FILE_PREFIX 	= "Entities.PurpleNetwork.Server.ServerConfig";
+		public const string 	SERVER_TABLE 	= "server";
 
 		public ServerTypes 	ServerType;
 		protected Guid 		_guid;
-			
-		public string ServerID
+
+		public int 			ServerID;
+		public string 		ServerGUID
 		{
 			get
 			{
@@ -48,10 +53,16 @@ namespace Entities.PurpleNetwork.Server
 
 		public bool			ConfigLoaded;
 
+		private PurpleServer serverReference;
+
 		// CONSTRUCTOR
 		public ServerConfig ()
 		{
-			Reset ();
+			Load ();
+			if(!ConfigLoaded)
+			{
+				Reset ();
+			}
 		}
 
 		public void SetType(string serverType)
@@ -64,11 +75,11 @@ namespace Entities.PurpleNetwork.Server
 			ServerType = serverType;
 		}
 
-
 		public void Reset ()
 		{
 			ServerType 		= parse_server_type (PurpleConfig.Network.Server.Type);
 			_guid 			= Guid.NewGuid ();
+			ServerID 		= -1;
 
 			ServerHost 		= PurpleConfig.Network.Server.Host;
 			ServerName 		= PurpleConfig.Network.Server.Name;
@@ -92,6 +103,15 @@ namespace Entities.PurpleNetwork.Server
 			DatabasePort 	= PurpleConfig.Database.Port;
 			DatabaseUser 	= PurpleConfig.Database.User;
 			DatabasePassword= PurpleConfig.Database.Password;
+
+			ConfigLoaded = false;
+
+			get_server_reference ();
+			if(serverReference == null)
+			{
+				create_server_reference ();
+				get_server_reference ();
+			}
 		}
 
 		public void Save()
@@ -102,6 +122,20 @@ namespace Entities.PurpleNetwork.Server
 		public void Save(string Name)
 		{
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
+			if(ServerID <= 0)
+			{
+				get_server_reference ();
+				if(serverReference == null)
+				{
+					create_server_reference ();
+					get_server_reference ();
+				}
+				ServerID = serverReference.id;
+			}
+			else
+			{
+				update_server_reference ();
+			}
 			PurpleStorage.PurpleStorage.Save(CONFIG_FILE_PREFIX+suffix, this);
 		}
 
@@ -117,12 +151,13 @@ namespace Entities.PurpleNetwork.Server
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
 			ServerConfig config
 				= PurpleStorage.PurpleStorage.Load<ServerConfig> (CONFIG_FILE_PREFIX+suffix);
-			if (config == null || config.ServerID == Guid.Empty.ToString ())
+			if (config == null || config.ServerGUID == Guid.Empty.ToString ())
 				return;
 			
 			this.ConfigLoaded 		= true;
 			this.ServerType 		= config.ServerType;
 			this.ServerID 			= config.ServerID;
+			this.ServerGUID 		= config.ServerGUID;
 
 			this.ServerHost 		= config.ServerHost;
 			this.ServerName 		= config.ServerName;
@@ -164,6 +199,46 @@ namespace Entities.PurpleNetwork.Server
 		private ServerTypes parse_server_type(string serverType)
 		{
 			return (ServerTypes) Enum.Parse(typeof(ServerTypes), serverType, true);
+		}
+
+
+		private void get_server_reference()
+		{
+			get_server_reference (ServerGUID);
+		}
+
+		private void get_server_reference(string guid)
+		{
+			serverReference = SQLGenerator.New ().Select ("*").From(SERVER_TABLE)
+				.Where ("guid="+guid).FetchSingle ().ToObject<PurpleServer> ();
+			ServerID = serverReference.id;
+		}
+
+		private bool create_server_reference()
+		{			
+			update_server_reference_helper ();
+
+			int result = serverReference.ToSQLInsert ().Execute ();
+			return (result==1) ? true : false;
+		}
+
+		private bool update_server_reference()
+		{
+			get_server_reference ();
+			update_server_reference_helper ();
+
+			int result = serverReference.ToSQLUpdate ().Execute ();
+			return (result==1) ? true : false;
+		}
+
+		private void update_server_reference_helper()
+		{
+			serverReference.guid = ServerGUID;
+			serverReference.host = ServerHost;
+			serverReference.max_player = ServerMaxClients;
+			serverReference.name = ServerName;
+			serverReference.port = ServerPort;
+			serverReference.type = ServerType.ToString ();
 		}
 	}
 }

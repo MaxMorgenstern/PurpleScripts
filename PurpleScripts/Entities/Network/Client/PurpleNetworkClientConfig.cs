@@ -11,10 +11,9 @@ namespace Entities.PurpleNetwork.Client
 		public string 		ServerPassword;
 
 		public string 		ServerSwitchToken;
+		protected Guid 		_guid;
 
-		protected Guid _guid;
-
-		public string guid
+		public string 		guid
 		{
 			get
 			{
