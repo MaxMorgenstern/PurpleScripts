@@ -5,8 +5,23 @@ namespace Entities.PurpleNetwork.Server
 {
 	public class ServerConfig
 	{
+		public const string 	CONFIG_FILE_PREFIX 	= "Entities.PurpleNetwork.Server.ServerConfig";
+
 		public ServerTypes 	ServerType;
-		public Guid			ServerID;
+		protected Guid 		_guid;
+			
+		public string ServerID
+		{
+			get
+			{
+				return _guid.ToString();
+			}
+
+			set
+			{
+				_guid = new Guid(value);
+			}
+		}
 
 		public string 		ServerHost;
 		public string 		ServerName;
@@ -31,11 +46,29 @@ namespace Entities.PurpleNetwork.Server
 		public string 		DatabaseUser;
 		public string 		DatabasePassword;
 
+		public bool			ConfigLoaded;
+
 		// CONSTRUCTOR
 		public ServerConfig ()
 		{
+			Reset ();
+		}
+
+		public void SetType(string serverType)
+		{
+			SetType(parse_server_type (serverType));
+		}
+
+		public void SetType(ServerTypes serverType)
+		{
+			ServerType = serverType;
+		}
+
+
+		public void Reset ()
+		{
 			ServerType 		= parse_server_type (PurpleConfig.Network.Server.Type);
-			ServerID 		= System.Guid.NewGuid ();
+			_guid 			= Guid.NewGuid ();
 
 			ServerHost 		= PurpleConfig.Network.Server.Host;
 			ServerName 		= PurpleConfig.Network.Server.Name;
@@ -61,15 +94,57 @@ namespace Entities.PurpleNetwork.Server
 			DatabasePassword= PurpleConfig.Database.Password;
 		}
 
-		public void SetType(string serverType)
+		public void Save()
 		{
-			SetType(parse_server_type (serverType));
+			Save (string.Empty);
 		}
 
-		public void SetType(ServerTypes serverType)
+		public void Save(string Name)
 		{
-			ServerType = serverType;
+			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
+			PurpleStorage.PurpleStorage.Save(CONFIG_FILE_PREFIX+suffix, this);
 		}
+
+		public void Load()
+		{
+			Load (string.Empty);	
+		}
+
+		public void Load(string Name)
+		{
+			
+			this.ConfigLoaded = false;
+			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
+			ServerConfig config
+				= PurpleStorage.PurpleStorage.Load<ServerConfig> (CONFIG_FILE_PREFIX+suffix);
+			if (config == null || config.ServerID == Guid.Empty.ToString ())
+				return;
+			
+			this.ConfigLoaded = true;
+			/*
+			this.ServerHost 		= config.ServerHost;
+			this.ServerPort 		= config.ServerPort;
+			this.ServerPassword 	= config.ServerPassword;
+			this.ClientName 		= config.ClientName;
+			this.ClientPassword 	= config.ClientPassword;
+			this.ClientEmail 		= config.ClientEmail;
+			this.ClientToken 		= config.ClientToken;
+			this.ClientTokenCreated = config.ClientTokenCreated;
+			this.guid 				= config.guid;
+			*/
+		}
+
+		public void Delete()
+		{
+			Delete (string.Empty);
+		}
+
+		public void Delete(string Name)
+		{
+			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
+			PurpleStorage.PurpleStorage.DeleteFile (CONFIG_FILE_PREFIX+suffix);
+		}
+
 
 		// PRIVATE HELPER /////////////////////////
 		private ServerTypes parse_server_type(string serverType)

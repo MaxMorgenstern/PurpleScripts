@@ -63,6 +63,24 @@ namespace Entities.Database
 		}
 
 
+		// PurpleServer ////////////////////////////
+
+		public static string ToSQLInsert(this PurpleServer data)
+		{
+			return to_sql_insert (data);
+		}
+
+		public static string ToSQLUpdate(this PurpleServer data)
+		{
+			return to_sql_update (data, data.id);
+		}
+
+		public static string ToSQLDelete(this PurpleServer data)
+		{
+			return to_sql_delete(data, data.id);
+		}
+
+
 		// PurpleServerLog ////////////////////////////
 
 		public static string ToSQLInsert(this PurpleServerLog data)
@@ -76,6 +94,24 @@ namespace Entities.Database
 		}
 
 		public static string ToSQLDelete(this PurpleServerLog data)
+		{
+			return to_sql_delete(data, data.id);
+		}
+
+
+		// PurpleServerSwitch ////////////////////////////
+
+		public static string ToSQLInsert(this PurpleServerSwitch data)
+		{
+			return to_sql_insert (data);
+		}
+
+		public static string ToSQLUpdate(this PurpleServerSwitch data)
+		{
+			return to_sql_update (data, data.id);
+		}
+
+		public static string ToSQLDelete(this PurpleServerSwitch data)
 		{
 			return to_sql_delete(data, data.id);
 		}
