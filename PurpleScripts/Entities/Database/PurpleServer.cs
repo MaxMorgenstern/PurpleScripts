@@ -1,26 +1,29 @@
-using System;
+﻿using System;
 using PurpleAttributes;
 
 namespace Entities.Database
 {
-	public class PurpleServerLog
+	public class PurpleServer
 	{
 		public int id { get; set; }
 
 		[Required]
-		public int server_id { get; set; }
+		public string name { get; set; }
 
 		[Required]
-		public string name { get; set; }
 		public string host { get; set; }
+
+		[Required]
 		public int port { get; set; }
+		public int currnet_player { get; set; }
+
+		[Required]
 		public int max_player { get; set; }
 
 		[Required]
 		public string type { get; set; }
 		public string local_ip { get; set; }
 		public string global_ip { get; set; }
-		public string comment { get; set; }
 		public DateTime timestamp { get; set; }
 	}
 }
