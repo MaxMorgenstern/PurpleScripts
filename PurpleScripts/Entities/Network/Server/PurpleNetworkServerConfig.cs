@@ -78,7 +78,10 @@ namespace Entities.PurpleNetwork.Server
 		public void Reset ()
 		{
 			ServerType 		= parse_server_type (PurpleConfig.Network.Server.Type);
-			_guid 			= Guid.NewGuid ();
+
+			ServerGUID 		= PurpleConfig.Network.Server.GUID;
+			if(string.IsNullOrEmpty (ServerGUID))
+				_guid 			= Guid.NewGuid ();
 			ServerID 		= -1;
 
 			ServerHost 		= PurpleConfig.Network.Server.Host;
@@ -181,6 +184,8 @@ namespace Entities.PurpleNetwork.Server
 			this.DatabasePort 		= config.DatabasePort;
 			this.DatabaseUser 		= config.DatabaseUser;
 			this.DatabasePassword 	= config.DatabasePassword;
+
+			get_server_reference ();
 		}
 
 		public void Delete()

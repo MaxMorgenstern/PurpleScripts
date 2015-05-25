@@ -11,6 +11,7 @@ namespace PurpleConfig
 		public static int Pause { get { return ItemIds.getConfigInt ("Network.Pause"); } }
 
 		public static class Server {
+			public static string GUID { get { return ItemIds.getConfigString ("Network.Server.GUID"); } }
 			public static string Name { get { return ItemIds.getConfigString ("Network.Server.Name"); } }
 			public static string Type { get { return ItemIds.getConfigString ("Network.Server.Type"); } }
 			public static string IPScript { get { return ItemIds.getConfigString ("Network.Server.IPScript"); } }

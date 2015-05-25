@@ -474,7 +474,7 @@ namespace PurpleNetwork
 
 		private bool test_current_database_connection(string ip, string externalIp)
 		{
-			Entities.Database.PurpleServerLog psl = new Entities.Database.PurpleServerLog ();
+			PurpleServerLog psl = new PurpleServerLog ();
 			psl.name = PNS.CurrentConfig.ServerName;
 			psl.port = PNS.CurrentConfig.ServerPort;
 			psl.max_player = PNS.CurrentConfig.ServerMaxClients;
