@@ -120,18 +120,32 @@ namespace Entities.PurpleNetwork.Server
 			if (config == null || config.ServerID == Guid.Empty.ToString ())
 				return;
 			
-			this.ConfigLoaded = true;
-			/*
+			this.ConfigLoaded 		= true;
+			this.ServerType 		= config.ServerType;
+			this.ServerID 			= config.ServerID;
+
 			this.ServerHost 		= config.ServerHost;
+			this.ServerName 		= config.ServerName;
 			this.ServerPort 		= config.ServerPort;
+
 			this.ServerPassword 	= config.ServerPassword;
-			this.ClientName 		= config.ClientName;
-			this.ClientPassword 	= config.ClientPassword;
-			this.ClientEmail 		= config.ClientEmail;
-			this.ClientToken 		= config.ClientToken;
-			this.ClientTokenCreated = config.ClientTokenCreated;
-			this.guid 				= config.guid;
-			*/
+			this.ServerMaxClients 	= config.ServerMaxClients;
+			this.ServerAllowMonitoring = config.ServerAllowMonitoring;
+
+			this.SanityTest 		= config.SanityTest;
+			this.SanityAction 		= config.SanityAction;
+			this.SanityPeriodical	= config.SanityPeriodical;
+
+			this.ClientAuthentificationTimeout = config.ClientAuthentificationTimeout;
+
+			this.SpamPrevention 	= config.SpamPrevention;
+			this.SpamResponse 		= config.SpamResponse;
+
+			this.DatabaseHost 		= config.DatabaseHost;
+			this.DatabaseName 		= config.DatabaseName;
+			this.DatabasePort 		= config.DatabasePort;
+			this.DatabaseUser 		= config.DatabaseUser;
+			this.DatabasePassword 	= config.DatabasePassword;
 		}
 
 		public void Delete()
