@@ -1,13 +1,14 @@
 using System.Reflection;
+using System;
 
 [assembly:AssemblyVersion ("1.0.*.*")]
 public class PurpleVersion
 {
 	// Version intormation
-	private static int 	_Major;		// Major - Big Versions
-	private static int 	_Minor;		// Minor - Functions added
-	private static int 	_Build;		// Buildnumer - Days of development
-	private static int 	_Revision;	// Revision numbers
+	public int 	_Major;		// Major - Big Versions
+	public int 	_Minor;		// Minor - Functions added
+	public int 	_Build;		// Buildnumer - Days of development
+	public int 	_Revision;	// Revision numbers
 
 	public PurpleVersion ()
 	{
@@ -15,6 +16,18 @@ public class PurpleVersion
 		_Minor = 0;
 		_Build = 0;
 		_Revision = 1;
+	}
+
+	public PurpleVersion (string version)
+	{
+		string[] versionArray = version.Split(new Char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+		if(versionArray.Length == 4)
+		{
+			_Major = Int32.Parse (versionArray [0]);
+			_Minor = Int32.Parse (versionArray [1]);
+			_Build = Int32.Parse (versionArray [2]);
+			_Revision = Int32.Parse (versionArray [3]);
+		}
 	}
 
 	public PurpleVersion (int major, int minor, int build, int revision)
@@ -71,5 +84,27 @@ public class PurpleVersion
 			PurpleConfig.Version.Client.Build,
 			PurpleConfig.Version.Client.Revision);
 		return pv.Version;
+	}
+
+	public string GetDatabaseVersion()
+	{
+		return PurpleConfig.Database.Version.Required;
+	}
+
+	public bool AreEqual(PurpleVersion compareValue)
+	{
+		if (_Major != compareValue._Major)
+			return false;
+
+		if (_Minor != compareValue._Minor)
+			return false;
+
+		if (_Build != compareValue._Build)
+			return false;
+
+		if (_Revision != compareValue._Revision)
+			return false;
+
+		return true;
 	}
 }

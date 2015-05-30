@@ -117,17 +117,33 @@ namespace Entities.Database
 		}
 
 
+		// PurpleDatabase ////////////////////////////
+
+		public static string ToSQLSelectMax(this PurpleDatabase data, string column)
+		{
+			return to_sql_select_max (data, column);
+		}
+
+
 
 
 		// TODO - Test
+		/*
 		public static PurpleAccount ToSQLSelect(this PurpleAccount data, int id = 0)
 		{
 			int identifier = (data.id != 0) ? data.id : id;
 			return to_sql_select(data, identifier).FetchSingle().ToObject<PurpleAccount>();
 		}
+		*/
 
 
 		// PRIVATE /////////////
+
+		private static string to_sql_select_max<T>(T data, string identifier)
+		{
+			string innerSQL = SQLGenerator.New().Select ("max("+identifier+")", get_table_name (data));
+			return SQLGenerator.New().Select ("*", get_table_name (data)).In (identifier, innerSQL, false);
+		}
 
 		private static string to_sql_select<T>(T data, int identifier)
 		{

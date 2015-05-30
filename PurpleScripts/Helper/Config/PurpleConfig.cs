@@ -83,6 +83,11 @@ namespace PurpleConfig
 		public static string Password { get { return ItemIds.getConfigString ("Database.Password"); } }
 		public static int Port { get { return ItemIds.getConfigInt ("Database.Port"); } }
 		public static string Prefix { get { return ItemIds.getConfigString ("Database.Prefix"); } }
+
+		public static class Version {
+			public static bool Validate { get { return ItemIds.getConfigBoolean ("Database.Version.Validate"); } }
+			public static string Required { get { return ItemIds.getConfigString ("Database.Version.Required"); } }
+		}
 	}
 
 	// Password generation/validation /////////////////////////

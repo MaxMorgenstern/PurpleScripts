@@ -24,6 +24,9 @@ namespace PurpleDatabase
 		private static string serverPassword;
 		private static int serverPort;
 
+		private static bool versionValidate;
+		private static string versionRequired;
+
 		private static string connectionString;
 		private static MySqlConnection connection;
 
@@ -40,6 +43,9 @@ namespace PurpleDatabase
 				serverUser = PurpleConfig.Database.User;
 				serverPassword = PurpleConfig.Database.Password;
 				serverPort = PurpleConfig.Database.Port;
+
+				versionValidate = PurpleConfig.Database.Version.Validate;
+				versionRequired = PurpleConfig.Database.Version.Required;
 			}
 			catch(Exception e)
 			{
@@ -378,6 +384,16 @@ namespace PurpleDatabase
 						"Password="+serverPassword+";" +
 						"Port="+serverPort+";";
 					connection = new MySqlConnection (connectionString);
+
+					if (versionValidate)
+					{
+						PurpleVersion versionRequired = new PurpleVersion(versionRequired);
+						PurpleVersion databaseVerion = new PurpleVersion(Entities.Database.PurpleDatabase.CurrentVersion());
+						if(!versionRequired.AreEqual(databaseVerion))
+						{
+							PurpleDebug.LogError ("PurpleDatabase: Database version does not match!", 1);
+						}
+					}
 				}
 				catch (Exception ex)
 				{
