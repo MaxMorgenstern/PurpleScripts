@@ -112,12 +112,7 @@ namespace PurpleNetwork.Server.Handler
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
-			string password_or_token = string.Empty;
-
-			if(!string.IsNullOrEmpty(authObject.ClientToken))
-				password_or_token = authObject.ClientToken;
-			if(!string.IsNullOrEmpty(authObject.ClientPassword))
-				password_or_token = authObject.ClientPassword;
+			string password_or_token = get_token_or_password(authObject);
 
 			authObject.ClientToken = AccountHelper.GenerateToken(authObject.ClientName, password_or_token, np);
 			authObject.timestamp = DateTime.Now;
@@ -133,18 +128,20 @@ namespace PurpleNetwork.Server.Handler
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
-			string password_or_token = string.Empty;
+			string password_or_token = get_token_or_password(authObject);
 
-			if(!string.IsNullOrEmpty(authObject.ClientPassword))
-				password_or_token = authObject.ClientPassword;
-			if(!string.IsNullOrEmpty(authObject.ClientToken))
-				password_or_token = authObject.ClientToken;
-
-			authObject.ClientAuthenticated = AccountHelper.Logout (authObject.ClientName, password_or_token);
+			if (AccountHelper.Logout(authObject.ClientName, password_or_token))
+			{
+				authObject.ClientAuthenticated = false;
+				authObject.ClientToken = string.Empty;
+			}
 
 			AccountHelper.AddLog(get_network_player_reference(np).UserName,
 								 "client_logout_handler " + authObject.ClientName);
 			PurpleNetwork.ToPlayer (np, "server_logout_result", authObject);
+
+			if(authObject.ClientAuthenticated == false)
+				Network.CloseConnection(np, true);
 		}
 
 		public static void client_ping_handler (string dataObject, NetworkPlayer np)

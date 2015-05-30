@@ -15,7 +15,8 @@ namespace Entities.PurpleNetwork
 		public bool				UserAuthenticated;
 		public DateTime			UserConnectedTime;
 
-		public string			UserName;
+		public string           UserName;
+		public string           UserPassword;
 		public string			UserToken;
 		public DateTime			UserTokenCreated;
 
@@ -29,7 +30,8 @@ namespace Entities.PurpleNetwork
 			UserAuthenticated 	= false;
 			UserConnectedTime 	= DateTime.Now;
 
-			UserName			= String.Empty;
+			UserName            = String.Empty;
+			UserPassword        = String.Empty;
 			UserToken 			= String.Empty;
 		}
 
@@ -44,6 +46,7 @@ namespace Entities.PurpleNetwork
 			UserConnectedTime 	= DateTime.Now;
 
 			UserName			= String.Empty;
+			UserPassword        = String.Empty;
 			UserToken 			= String.Empty;
 			UserTokenCreated	= DateTime.MinValue;
 		}
@@ -58,7 +61,7 @@ namespace Entities.PurpleNetwork
 			table.Columns.Add("token", typeof(string));
 			table.Columns.Add("token_created", typeof(DateTime));
 
-			table.Rows.Add(UserID, UserGUID.ToString(), UserName, string.Empty, UserToken, UserTokenCreated);
+			table.Rows.Add(UserID, UserGUID.ToString(), UserName, UserPassword, UserToken, UserTokenCreated);
 			return table;
 		}
 	}

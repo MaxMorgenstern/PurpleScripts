@@ -48,7 +48,7 @@ namespace PurpleDatabase.Helper
 				return false;
 
 			if (PurpleAccountValidator.ValidatePasswordStrength (password)
-			    	&& PurpleAccountValidator.ValidateUsername (account.username))
+					&& PurpleAccountValidator.ValidateUsername (account.username))
 			{
 				return create_database_user(account, password);
 			}
@@ -255,6 +255,7 @@ namespace PurpleDatabase.Helper
 				pnu.UserType 			= (PurpleNetwork.UserTypes) Enum.Parse(
 											typeof(PurpleNetwork.UserTypes), user.account_type, true);
 				pnu.UserName			= user.username;
+				pnu.UserPassword        = user.password;
 				pnu.UserToken			= user.token;
 				pnu.UserTokenCreated	= user.token_created;
 
