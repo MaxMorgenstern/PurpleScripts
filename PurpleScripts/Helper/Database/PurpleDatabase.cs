@@ -387,9 +387,9 @@ namespace PurpleDatabase
 
 					if (versionValidate)
 					{
-						PurpleVersion versionRequired = new PurpleVersion(versionRequired);
+						PurpleVersion requiredVersion = new PurpleVersion(versionRequired);
 						PurpleVersion databaseVerion = new PurpleVersion(Entities.Database.PurpleDatabase.CurrentVersion());
-						if(!versionRequired.AreEqual(databaseVerion))
+						if(!requiredVersion.AreEqual(databaseVerion))
 						{
 							PurpleDebug.LogError ("PurpleDatabase: Database version does not match!", 1);
 						}
@@ -398,7 +398,7 @@ namespace PurpleDatabase
 				catch (Exception ex)
 				{
 					connection = null;
-					PurpleDebug.Log(ex.ToString());
+					PurpleDebug.LogError(ex.ToString(), 1);
 				}
 			}
 		}
