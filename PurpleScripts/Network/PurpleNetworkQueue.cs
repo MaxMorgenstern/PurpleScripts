@@ -101,7 +101,7 @@ namespace PurpleNetwork
 						break;
 
 					default:
-						Debug.LogError("invalid queue type detected: " + current_item.type.ToString());
+						PurpleDebug.LogError("invalid queue type detected: " + current_item.type.ToString());
 						break;
 				}
 			} // END WHILE
@@ -155,8 +155,8 @@ namespace PurpleNetwork
 		void receive_purple_network_message_queue(string event_name, string xml_message, NetworkMessageInfo info)
 		{
 			// TODO
-			Debug.Log ("receive_purple_network_message_queue(string event_name, string xml_message, NetworkMessageInfo info)");
-			Debug.Log (xml_message);
+			PurpleDebug.Log ("receive_purple_network_message_queue(string event_name, string xml_message, NetworkMessageInfo info)");
+			DebugPurpleDebug.Log (xml_message);
 			eventListeners[event_name](xml_message);
 		}
 

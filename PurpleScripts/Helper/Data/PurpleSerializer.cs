@@ -51,8 +51,8 @@ public class PurpleSerializer
 			try{
 				return_message = _JSON.SerializeObject(message);
 			} catch(Exception e){
-				Debug.LogWarning("Can not convert object to JSON: " + e.ToString());
-				Debug.Log("Set message encoding standard to XML");
+				PurpleDebug.LogWarning("Can not convert object to JSON: " + e.ToString());
+				PurpleDebug.Log("Set message encoding standard to XML");
 				useJSONMessage = false;
 			}
 		}
@@ -69,11 +69,11 @@ public class PurpleSerializer
 		try{
 			return (T)_JSON.DeserializeObject<T>(message);
 		} catch(Exception e){
-			Debug.LogWarning("Can not convert message using JSON: " + e.ToString());
+			PurpleDebug.LogWarning("Can not convert message using JSON: " + e.ToString());
 			try{
 				return (T)deserialize_object_XML<T>(message);
 			} catch(Exception ex){
-				Debug.LogWarning("Can not convert message using XML: " + ex.ToString());
+				PurpleDebug.LogWarning("Can not convert message using XML: " + ex.ToString());
 				throw new PurpleException ("Can not convert string to the predefined object!");
 			}
 		}

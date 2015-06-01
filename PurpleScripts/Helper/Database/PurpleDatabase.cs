@@ -43,7 +43,7 @@ namespace PurpleDatabase
 			}
 			catch(Exception e)
 			{
-				Debug.LogError("Can not read Purple Config! " + e.ToString());
+				PurpleDebug.LogError("Can not read Purple Config! " + e.ToString(), 1);
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace PurpleDatabase
 				}
 				catch (Exception ex)
 				{
-					Debug.LogError("Can not execute query. " + ex.ToString());
+					PurpleDebug.LogError("Can not execute query. " + ex.ToString(), 1);
 				}
 				close_connection ();
 			}
@@ -254,7 +254,7 @@ namespace PurpleDatabase
 				}
 				catch (Exception ex)
 				{
-					Debug.LogError("Can not execute query. " + ex.ToString());
+					PurpleDebug.LogError("Can not execute query. " + ex.ToString(), 1);
 				}
 				finally
 				{
@@ -382,7 +382,7 @@ namespace PurpleDatabase
 				catch (Exception ex)
 				{
 					connection = null;
-					Debug.Log(ex.ToString());
+					PurpleDebug.Log(ex.ToString());
 				}
 			}
 		}
@@ -403,23 +403,23 @@ namespace PurpleDatabase
 				switch (ex.Number)
 				{
 					case 0:
-						Debug.Log ("Cannot connect to server.");
-						Debug.LogWarning (ex);
+						PurpleDebug.Log("Cannot connect to server.", 1);
+						PurpleDebug.LogWarning(ex);
 						break;
 
 					case 1042:
-						Debug.Log ("Unable to connect to any of the specified MySQL hosts.");
-						Debug.LogWarning (ex);
+						PurpleDebug.Log("Unable to connect to any of the specified MySQL hosts.", 1);
+						PurpleDebug.LogWarning(ex);
 						break;
 
 					case 1045:
-						Debug.Log("Invalid username/password.");
-						Debug.LogWarning (ex);
+						PurpleDebug.Log("Invalid username/password.", 1);
+						PurpleDebug.LogWarning(ex);
 						break;
 
 					default:
-						Debug.Log (ex.Number + " - " + ex.Message);
-						Debug.LogWarning (ex);
+						PurpleDebug.Log(ex.Number + " - " + ex.Message, 1);
+						PurpleDebug.LogWarning(ex);
 						break;
 				}
 				connection = null;
@@ -440,7 +440,7 @@ namespace PurpleDatabase
 			}
 			catch (MySqlException ex)
 			{
-				Debug.Log(ex.Message);
+				PurpleDebug.Log(ex.Message);
 				connection = null;
 			}
 			return false;

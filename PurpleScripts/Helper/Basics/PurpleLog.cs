@@ -107,7 +107,7 @@ public class PurpleLog : MonoBehaviour
 			colorUser = "'#39E600'";
 			consoleHistory = 5;
 			consoleActive = false;
-			Debug.LogError("Can not read Purple Config! Fallback to default. " + e.ToString());
+			PurpleDebug.LogError("Can not read Purple Config! Fallback to default. " + e.ToString(), 1);
 		}
 	}
 
@@ -199,8 +199,8 @@ public class PurpleLog : MonoBehaviour
 	{
 		List<string> localList = listenerList;
 		localList.Remove("help");
-		Debug.Log("Try '<function> --help' for more information.\n" +
-			"Available functions:\n  " + string.Join("\n  ", localList.OrderBy(x => x).ToArray<string>()));
+		PurpleDebug.Log("Try '<function> --help' for more information.\n" +
+			"Available functions:\n  " + string.Join("\n  ", localList.OrderBy(x => x).ToArray<string>()), 1);
 		return string.Empty;
 	}
 
@@ -358,7 +358,7 @@ public class PurpleLog : MonoBehaviour
 		if (has_event(event_name)) {
 			return eventListeners[event_name](event_data);
 		} else {
-			Debug.LogError("Command not found. Try 'help'.");
+			PurpleDebug.LogError("Command not found. Try 'help'.", 1);
 			return "Command not found. Try 'help'.";
 		}
 	}

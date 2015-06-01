@@ -49,13 +49,13 @@ namespace PurpleNetwork.Server.Handler
 		// BASE /////////////////////////
 		public static void server_broadcast_handler (string dataObject, NetworkPlayer np)
 		{
-			Debug.Log ("Broadcast received: " + np.ToString () + " | " + dataObject);
+			PurpleDebug.Log("Broadcast received: #" + np.ToString() + " | " + dataObject, 3);
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 		}
 
 		public static void client_authenticate_handler (string dataObject, NetworkPlayer np)
 		{
-			Debug.Log ("Authentication received: " + np.ToString ());
+			PurpleDebug.Log("Authentication received: #" + np.ToString());
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
@@ -101,14 +101,14 @@ namespace PurpleNetwork.Server.Handler
 			}
 			AccountHelper.AddLog(get_network_player_reference(np).UserName, "client_authenticate_handler "
 								 + authObject.ClientName + " - "+ authObject.ClientAuthenticated);
-			Debug.Log("Authentication result: " + authObject.ClientName + ": " + authObject.ClientAuthenticated);
+			PurpleDebug.Log("Authentication result: " + authObject.ClientName + ": " + authObject.ClientAuthenticated);
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
 		}
 
 		// TODO: test and add call to overview
 		public static void client_generate_token_handler (string dataObject, NetworkPlayer np)
 		{
-			Debug.Log ("Token re-generation received: " + np.ToString ());
+			PurpleDebug.Log("Token re-generation received: #" + np.ToString());
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
@@ -124,7 +124,7 @@ namespace PurpleNetwork.Server.Handler
 
 		public static void client_logout_handler (string dataObject, NetworkPlayer np)
 		{
-			Debug.Log ("Logout received: " + np.ToString ());
+			PurpleDebug.Log("Logout received: #" + np.ToString());
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
@@ -185,7 +185,7 @@ namespace PurpleNetwork.Server.Handler
 										x.UserConnectedTime.AddSeconds(System.Convert.ToDouble(
 				PurpleServer.CurrentConfig.ClientAuthentificationTimeout)) < DateTime.Now )
 				.ToList().ForEach( x => {
-					Debug.Log ("PurpleNetwork.Server.Handler.Base: Disconnect Unauthenticated User "
+					PurpleDebug.Log("PurpleNetwork.Server.Handler.Base: Disconnect Unauthenticated User #"
 							   + x.UserReference.ToString());
 					_PMServer.Disconnect disconnectMessage = new _PMServer.Disconnect();
 					disconnectMessage.status = 2;

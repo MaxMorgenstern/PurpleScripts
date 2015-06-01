@@ -37,7 +37,7 @@ public class PurpleStorageTest : MonoBehaviour
 				kb512_tempData += b1024_tempData;
 		}
 
-		Debug.Log ("Start test...");
+		PurpleDebug.Log("Start test...");
 
 		if (!startTesting)
 		{
@@ -56,17 +56,17 @@ public class PurpleStorageTest : MonoBehaviour
 					doneTesting = true;
 			}
 		} catch (PlayerPrefsException err) {
-			Debug.Log("Got: " + err);
+			PurpleDebug.Log("Got: " + err);
 			doneTesting = true;
 		}
 		PlayerPrefs.Save ();
 
 		timerEnd = Time.time;
 
-		Debug.Log ("Finished Test...");
-		Debug.Log (timerEnd-timerStart);
-		Debug.Log ("Count: " + (count-1));
-		Debug.Log ((kb512_tempData.Length * (count-1)/1024/1024) + "MB stored");
+		PurpleDebug.Log("Finished Test...");
+		PurpleDebug.Log(timerEnd - timerStart);
+		PurpleDebug.Log("Count: " + (count - 1));
+		PurpleDebug.Log((kb512_tempData.Length * (count - 1) / 1024 / 1024) + "MB stored");
 	}
 }
 

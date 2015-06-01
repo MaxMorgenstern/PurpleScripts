@@ -20,12 +20,12 @@ class PurpleMain
 {
     public static void EntryPoint()
     {
-		Debug.Log ("We passed the EntryPoint!");
+        PurpleDebug.Log("We passed the EntryPoint!");
 
-		Debug.Log("Example: " + PurpleCommandLine.GetArgument("Example"));
+        PurpleDebug.Log("Example: " + PurpleCommandLine.GetArgument("Example"));
 
-		Debug.Log("TestArg: " + PurpleCommandLine.GetArgument("TestArg"));
+        PurpleDebug.Log("TestArg: " + PurpleCommandLine.GetArgument("TestArg"));
 
-		Debug.LogWarning ("- - - ### - - -");
+        PurpleDebug.LogWarning("- - - ### - - -");
     }
 }

@@ -87,7 +87,7 @@ namespace PurpleNetwork
 				networkPause = PurpleConfig.Network.Pause;
 				serverPlayer = PurpleConfig.Network.MaxPlayer;
 			} catch(Exception e){
-				Debug.LogError("Can not read Purple Config! Set network pause to 500ms. " + e.ToString());
+				PurpleDebug.LogError("Can not read Purple Config! Set network pause to 500ms. " + e.ToString(), 1);
 			}
 		}
 
@@ -388,7 +388,7 @@ namespace PurpleNetwork
 
 		private void OnFailedToConnect(NetworkConnectionError error)
 		{
-			Debug.Log("Could not connect to server: " + error);
+			PurpleDebug.Log("Could not connect to server: " + error);
 			NetworkPlayer network_player = new NetworkPlayer ();
 			instance.trigger_purple_event (FailedToConnectToPurpleServer, network_player, error);
 		}
@@ -551,22 +551,22 @@ namespace PurpleNetwork
 				int clientID = Convert.ToInt32(info.sender.ToString());
 				if(serverSpamPrevention && !Spam.Prevention.CanClientRequestNow(clientID))
 				{
-					Debug.LogWarning ("SpamPrevention triggered for client: " + info.sender.ToString());
+					PurpleDebug.LogWarning("SpamPrevention triggered for client: " + info.sender.ToString());
 
 					if(serverSpamResponse && Spam.Prevention.SendSpamResponse(clientID))
 					{
 						_PurpleMessages.Server.SpamPrevention spamPreventionMessage = new _PurpleMessages.Server.SpamPrevention();
 						Spam.Prevention.GetRequestsInTimespan(clientID,
 											out spamPreventionMessage.requestsInTime,
-						                	out spamPreventionMessage.requestTimeSpan);
+											out spamPreventionMessage.requestTimeSpan);
 						purpleNetworkView.RPC("receive_purple_network_spam_warning", info.sender, event_name,
-						 					_PurpleSerializer.ObjectToStringConverter(spamPreventionMessage));
+											_PurpleSerializer.ObjectToStringConverter(spamPreventionMessage));
 					}
 					return;
 				}
 				eventListeners[event_name](string_message, info.sender);
 			} catch(Exception e){
-				Debug.LogWarning("Can not call: eventListeners["+event_name+"]("+string_message+") - " + e.ToString());
+				PurpleDebug.LogWarning("Can not call: eventListeners[" + event_name + "](" + string_message + ") - " + e.ToString());
 				// notify sender that there was an error
 				purpleNetworkView.RPC("receive_purple_network_error", info.sender, event_name, string_message);
 			}
@@ -575,14 +575,14 @@ namespace PurpleNetwork
 		[RPC]
 		void receive_purple_network_error(string event_name, string string_message, NetworkMessageInfo info)
 		{
-			Debug.LogWarning ("receive_purple_network_error: sender can not find called function: " + event_name + " - " + info.sender.ToString());
+			PurpleDebug.LogWarning("receive_purple_network_error: sender can not find called function: " + event_name + " - " + info.sender.ToString(), 3);
 			instance.trigger_purple_event(PurpleNetworkError, info.sender, event_name);
 		}
 
 		[RPC]
 		void receive_purple_network_spam_warning(string event_name, string string_message, NetworkMessageInfo info)
 		{
-			Debug.LogWarning ("receive_purple_network_spam_warning: too much requests from: " + info.sender.ToString() + " - last called event: " + event_name);
+			PurpleDebug.LogWarning("receive_purple_network_spam_warning: too much requests from: " + info.sender.ToString() + " - last called event: " + event_name, 3);
 			instance.trigger_purple_event(PurpleNetworkSpamWarning, info.sender, string_message);
 		}
 	}

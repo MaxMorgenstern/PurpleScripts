@@ -10,19 +10,19 @@ public class ClientManager : MonoBehaviour {
 	public int connectionPort = PurpleConfig.Network.Port;
 
 	void Start()
-	{	
-		Debug.Log("Client Manager Started!");
+	{
+		PurpleDebug.Log("Client Manager Started!");
 		
 		PurpleStorage.PurpleStorage.Setup ();
 		PurpleI18n.Setup("de-DE");
 		PurpleLog.Enable();
 
-		Debug.Log("Load Config");
+		PurpleDebug.Log("Load Config");
 		_Client.CurrentConfig.Load ("ClientManagerConfig");
 
 		if (!_Client.CurrentConfig.ConfigLoaded) 
 		{
-			Debug.Log("No data loaded, we set the default and save!");
+			PurpleDebug.Log("No data loaded, we set the default and save!", 1);
 
 			_Client.CurrentConfig.ClientName = "administrator";
 			_Client.CurrentConfig.ClientPassword = "PurplePassword";
@@ -38,7 +38,7 @@ public class ClientManager : MonoBehaviour {
 
 	public static void authenticate_handler (string dataObject, NetworkPlayer np)
 	{
-		Debug.Log (dataObject);
+		PurpleDebug.Log(dataObject, 1);
 	}
 
 	void OnGUI()
@@ -47,18 +47,18 @@ public class ClientManager : MonoBehaviour {
 
 		GUI.Label(new Rect(10, 10, 200, 20), "Status: Disconnected");
 
-		if (GUI.Button(new Rect(50, 50, 200, 50), "Debug")) 
-			Debug.Log("Config Data: " + PurpleSerializer.ObjectToStringConverter(_Client.CurrentConfig));
+		if (GUI.Button(new Rect(50, 50, 200, 50), "Debug"))
+			PurpleDebug.Log("Config Data: " + PurpleSerializer.ObjectToStringConverter(_Client.CurrentConfig), 1);
 		
 		if (GUI.Button(new Rect(50, 110, 200, 50), "Load Config")) 
 		{
-			Debug.Log("Load Config");
+			PurpleDebug.Log("Load Config", 1);
 			_Client.CurrentConfig.Load ("ClientManagerConfig");
 		}
 
 		if (GUI.Button(new Rect(50, 170, 200, 50), "Delete Config")) 
 		{
-			Debug.Log("Delete Config");
+			PurpleDebug.Log("Delete Config", 1);
 			_Client.CurrentConfig.Delete ("ClientManagerConfig");
 		}
 

@@ -268,13 +268,13 @@ namespace PurpleNetwork
 		private bool test_client_server_connecion(ConnectionTesterStatus type1, ConnectionTesterStatus type2)
 		{
 			if (type1 == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted &&
-			    type2 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
+				type2 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
 				return false;
 			else if (type1 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric &&
-			         type2 == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted)
+					 type2 == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted)
 				return false;
 			else if (type1 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric &&
-			         type2 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
+					 type2 == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
 				return false;
 			return true;
 		}
@@ -341,26 +341,26 @@ namespace PurpleNetwork
 
 			int testTime = 30;
 
-			Debug.Log ("ServerSanityCheck: Start...");
-			Debug.Log ("ServerSanityCheck: Initialize Calls...");
+			PurpleDebug.Log("ServerSanityCheck: Start...", 1);
+			PurpleDebug.Log("ServerSanityCheck: Initialize Calls...");
 			run_test (testTime-2);
 			string ipAddress = Network.player.ipAddress;
 			string externalIP = Network.player.externalIP;
 
-			Debug.Log ("ServerSanityCheck: Start Database Check...");
+			PurpleDebug.Log("ServerSanityCheck: Start Database Check...");
 			if(test_current_database_connection (ipAddress, externalIP))
 			{
-				Debug.Log ("ServerSanityCheck: Database OK");
+				PurpleDebug.Log("ServerSanityCheck: Database OK");
 				server_sanity_database = true;
 			}
 			else
 			{
-				Debug.LogError("ServerSanityCheck: Database ERROR");
+				PurpleDebug.LogError("ServerSanityCheck: Database ERROR", 1);
 			}
 
-			Debug.Log ("ServerSanityCheck: Start Network Check...");
-			Debug.Log ("ServerSanityCheck: Local IP Address " + ipAddress);
-			Debug.Log ("ServerSanityCheck: External IP Address " + externalIP);
+			PurpleDebug.Log("ServerSanityCheck: Start Network Check...");
+			PurpleDebug.Log("ServerSanityCheck: Local IP Address " + ipAddress);
+			PurpleDebug.Log("ServerSanityCheck: External IP Address " + externalIP);
 			if(!string.IsNullOrEmpty(externalIP)
 			   && !externalIP.StartsWith("0.")
 			   && !externalIP.StartsWith("127.")
@@ -383,31 +383,31 @@ namespace PurpleNetwork
 		{
 			if(testDone)
 			{
-				Debug.Log ("ServerSanityCheck: Network Testresult " + testResult.ToString());
+				PurpleDebug.Log("ServerSanityCheck: Network Testresult " + testResult.ToString());
 				if(testResult != ConnectionTesterStatus.Error &&
 				   testResult != ConnectionTesterStatus.Undetermined)
 				{
 					server_sanity_network_reachable = true;
 				}
-                if (!server_sanity_network_ip)
-                {
-                    string externalIP = Network.player.externalIP;
-                    Debug.Log("ServerSanityCheck: Re-Test External IP Address " + externalIP);
-                    if (!string.IsNullOrEmpty(externalIP)
-                       && !externalIP.StartsWith("0.")
-                       && !externalIP.StartsWith("127.")
-                       && !externalIP.StartsWith("192.")
-                       && !externalIP.Contains("UNASSIGNED_SYSTEM_ADDRESS"))
-                    {
-                        server_sanity_network_ip = true;
-                    }
-                }
+				if (!server_sanity_network_ip)
+				{
+					string externalIP = Network.player.externalIP;
+					PurpleDebug.Log("ServerSanityCheck: Re-Test External IP Address " + externalIP);
+					if (!string.IsNullOrEmpty(externalIP)
+					   && !externalIP.StartsWith("0.")
+					   && !externalIP.StartsWith("127.")
+					   && !externalIP.StartsWith("192.")
+					   && !externalIP.Contains("UNASSIGNED_SYSTEM_ADDRESS"))
+					{
+						server_sanity_network_ip = true;
+					}
+				}
 
 				server_sanity_check_done();
 			}
 			else
 			{
-				Debug.Log ("ServerSanityCheck: Network Testresult still running...");
+				PurpleDebug.Log("ServerSanityCheck: Network Testresult still running...");
 			}
 		}
 
@@ -423,21 +423,21 @@ namespace PurpleNetwork
 
 			if(server_sanity_database && server_sanity_network_ip && server_sanity_network_reachable)
 			{
-				Debug.Log("ServerSanityCheck: Success!");
+				PurpleDebug.Log("ServerSanityCheck: Success!", 1);
 			}
 			else
 			{
-				Debug.LogError("ServerSanityCheck: ERROR!");
+				PurpleDebug.LogError("ServerSanityCheck: ERROR!", 1);
 				if(!server_sanity_database)
-					Debug.LogError("ServerSanityCheck: Database unreachable!");
+					PurpleDebug.LogError("ServerSanityCheck: Database unreachable!", 1);
 
 				if(!server_sanity_network_ip)
-					Debug.LogError("ServerSanityCheck: No external IP!");
+					PurpleDebug.LogError("ServerSanityCheck: No external IP!", 1);
 
 				if(!server_sanity_network_reachable)
-					Debug.LogError("ServerSanityCheck: Network Error!");
+					PurpleDebug.LogError("ServerSanityCheck: Network Error!", 1);
 
-				Debug.LogError("ServerSanityCheck: Shut down server...");
+				PurpleDebug.LogError("ServerSanityCheck: Shut down server...", 1);
 				if(PurpleServer.CurrentConfig.SanityTest)
 				{
 					switch (PurpleServer.CurrentConfig.SanityAction.ToLower())
@@ -451,7 +451,7 @@ namespace PurpleNetwork
 						break;
 
 					case "warn":
-						Debug.LogError("ServerSanityCheck: Shutdown/Restart recommended!");
+						PurpleDebug.LogError("ServerSanityCheck: Shutdown/Restart recommended!", 1);
 						break;
 					}
 				}

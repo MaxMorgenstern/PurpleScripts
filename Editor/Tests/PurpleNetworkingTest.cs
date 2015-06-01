@@ -115,13 +115,13 @@ public class PurpleNetworkingTest : MonoBehaviour
 
 		if(connectionTestResult != connectionTestResultPrev)
 		{
-			Debug.Log ("###############");
-			Debug.Log (testStatus);
-			Debug.Log (testMessage);
-			Debug.Log (shouldEnableNatMessage);
-			Debug.Log ("Use NAT: " + useNat);
-			Debug.Log ("Done Testing: " + doneTesting);
-			Debug.Log ("###############");
+			PurpleDebug.Log("###############");
+			PurpleDebug.Log(testStatus);
+			PurpleDebug.Log(testMessage);
+			PurpleDebug.Log(shouldEnableNatMessage);
+			PurpleDebug.Log("Use NAT: " + useNat);
+			PurpleDebug.Log("Done Testing: " + doneTesting);
+			PurpleDebug.Log("###############");
 
 			connectionTestResultPrev = connectionTestResult;
 		}
@@ -130,13 +130,13 @@ public class PurpleNetworkingTest : MonoBehaviour
 	public bool CanConnectTo(ConnectionTesterStatus source, ConnectionTesterStatus destination)
 	{
 		if (source == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted &&
-		    destination == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
+			destination == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
 			return false;
 		else if (source == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric &&
-		         destination == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted)
+				 destination == ConnectionTesterStatus.LimitedNATPunchthroughPortRestricted)
 			return false;
 		else if (source == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric &&
-		         destination == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
+				 destination == ConnectionTesterStatus.LimitedNATPunchthroughSymmetric)
 			return false;
 		return true;
 	}

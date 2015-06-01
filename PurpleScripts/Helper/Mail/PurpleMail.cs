@@ -51,7 +51,7 @@ public class PurpleMail : MonoBehaviour
 			mailPort = 25;
 			mailUseSSL = false;
 
-			Debug.LogError("Can not read Purple Config! " + e.ToString());
+			PurpleDebug.LogError("Can not read Purple Config! " + e.ToString(), 1);
 		}
 
 		senderMail = new MailAddress(senderAddress, senderDisplayName);
@@ -186,16 +186,16 @@ public class PurpleMail : MonoBehaviour
 			client.EnableSsl = mailUseSSL;
 
 			client.Send(mail);
-			Debug.Log ("Mail sent: " + title + " - " + recipient);
+			PurpleDebug.Log("Mail sent: " + title + " - " + recipient);
 			return true;
 		}
 		catch (SmtpException exc)
 		{
-			Debug.LogWarning("Error: "+ exc.Message);
+			PurpleDebug.LogWarning("Error: " + exc.Message, 1);
 		}
 		catch (Exception exce)
 		{
-			Debug.LogError(exce);
+			PurpleDebug.LogError(exce);
 		}
 		return false;
 	}
@@ -253,7 +253,7 @@ public class PurpleMail : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.LogWarning(e.ToString());
+			PurpleDebug.LogWarning(e.ToString());
 		}
 		return (String.IsNullOrEmpty(returnData)) ? entry : returnData;
 	}

@@ -177,4 +177,10 @@ namespace PurpleConfig
 			public static int Revision { get { return ItemIds.getConfigInt ("Version.Client.Revision"); } }
 		}
 	}
+
+	
+	// BUILD /////////////////////////
+	public static class Build {
+		public static int DebugLevel { get { return ItemIds.getConfigInt("Build.DebugLevel"); } }
+	}
 }
