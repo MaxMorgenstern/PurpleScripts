@@ -75,7 +75,7 @@ namespace PurpleAttributes
 			switch (Type)
 			{
 			case ExpressionType.EMail:
-				regexString = @"^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$";
+				regexString = @"^([a-z0-9_\.-]+)@(([\da-z\.-]+)\.([a-z\.]{2,6})|([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})|localhost)$";
 				break;
 
 			case ExpressionType.HTMLTag:
