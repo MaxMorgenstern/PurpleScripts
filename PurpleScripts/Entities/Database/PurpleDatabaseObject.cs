@@ -125,6 +125,13 @@ namespace Entities.Database
 		}
 
 
+		// PurpleServerSwitch ////////////////////////////
+
+		public static PurpleServerSwitch ToSQLSelect(this PurpleServerSwitch data, string token)
+		{
+			data = to_sql_select(data, "token", token).FetchSingle().ToObject<PurpleServerSwitch>();
+			return data;
+		}
 
 
 		// TODO - Test
@@ -149,6 +156,12 @@ namespace Entities.Database
 		{
 			return SQLGenerator.New ().Select ("*", get_table_name (data))
 				.Where ("id=" + identifier).Single();
+		}
+
+		private static string to_sql_select<T>(T data, string key, string identifier)
+		{
+			return SQLGenerator.New ().Select ("*", get_table_name (data))
+				.Where (key + "=" + identifier).Single();
 		}
 
 		private static string to_sql_insert<T>(T data)

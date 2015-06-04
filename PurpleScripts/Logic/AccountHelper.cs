@@ -169,6 +169,26 @@ namespace PurpleDatabase.Helper
 			return string.Empty;
 		}
 
+		// TODO: test
+		public static bool ValidateServerSwitch(string identifier, string password_or_token, string serverToken)
+		{
+			PurpleServerSwitch switchObject = new PurpleServerSwitch ().ToSQLSelect (serverToken);
+			if (switchObject == null)
+				return false;
+
+			if(!ValidateAuthentication (identifier, password_or_token))
+				return false;
+
+			PurpleAccount userData = get_user_reference (identifier);
+			if (switchObject.account_id != userData.id)
+				return false;
+
+			if (PNS.CurrentConfig.ServerID != switchObject.to_server)
+				return false;
+			
+			return true;
+		}
+
 
 		// Warning / Log ////////////////////////////
 

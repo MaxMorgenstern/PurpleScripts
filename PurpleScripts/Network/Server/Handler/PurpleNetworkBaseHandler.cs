@@ -34,7 +34,7 @@ namespace PurpleNetwork.Server.Handler
 			PurpleNetwork.AddListener("client_ping", client_ping_handler);
 			PurpleNetwork.AddListener("client_get_version", client_get_version_handler);
 			PurpleNetwork.AddListener("client_authenticate", client_authenticate_handler);
-			//PurpleNetwork.AddListener("client_authenticate_switch", client_authenticate_switch_handler);	// TODO
+			PurpleNetwork.AddListener("client_authenticate_switch", client_authenticate_switch_handler);
 			PurpleNetwork.AddListener("client_generate_token", client_generate_token_handler);
 			PurpleNetwork.AddListener("client_logout", client_logout_handler);
 
@@ -111,9 +111,11 @@ namespace PurpleNetwork.Server.Handler
 			PurpleDebug.Log("Authentication Switch received: #" + np.ToString());
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
+			// TODO
+
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
-			bool validationResult = false;
-			string newToken = string.Empty;
+			string password_or_token = get_token_or_password(authObject);
+			bool validationResult = AccountHelper.ValidateServerSwitch(authObject.ClientName, password_or_token, authObject.ServerSwitchToken);
 
 			// TODO... 
 		}
