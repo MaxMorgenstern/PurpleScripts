@@ -77,15 +77,11 @@ namespace PurpleNetwork.Server.Handler
 			authObject.validate = validationResult;
 			authObject.timestamp = DateTime.Now;
 
-			// save 2 spaces if monitoring is allowed otherwise just one for Admin/Mod/GM
-			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
-			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 2 : 1;
-
 			authObject.ClientPassword = String.Empty;
 			authObject.ClientToken = String.Empty;
 			authObject.ClientAuthenticated = false;
 
-			if(validationResult && PurpleServer.UserList.Count <= maxAllowedConnections)
+			if(validationResult && PurpleServer.UserList.Count <= get_max_allowed_player ())
 			{
 				authObject.ClientToken = newToken;
 				authObject.ClientAuthenticated = true;
@@ -100,24 +96,44 @@ namespace PurpleNetwork.Server.Handler
 					authObject.ClientAuthenticated = true;
 				}
 			}
+
 			AccountHelper.AddLog(get_network_player_reference(np).UserName, "client_authenticate_handler "
 								 + authObject.ClientName + " - "+ authObject.ClientAuthenticated);
 			PurpleDebug.Log("Authentication result: " + authObject.ClientName + ": " + authObject.ClientAuthenticated);
 			PurpleNetwork.ToPlayer(np, "server_authenticate_result", authObject);
 		}
 
+		// TODO: test
 		public static void client_authenticate_switch_handler (string dataObject, NetworkPlayer np)
 		{
 			PurpleDebug.Log("Authentication Switch received: #" + np.ToString());
 			if(np.ToString() == Constants.SERVER_ID_STRING && Network.isServer) return;
 
-			// TODO
-
 			_PMClient.Authentication authObject = PurpleSerializer.StringToObjectConverter<_PMClient.Authentication> (dataObject);
 			string password_or_token = get_token_or_password(authObject);
 			bool validationResult = AccountHelper.ValidateServerSwitch(authObject.ClientName, password_or_token, authObject.ServerSwitchToken);
 
-			// TODO... 
+			// TODO: remove database entry - put to invalid
+
+			authObject.validate = validationResult;
+
+			if (validationResult && PurpleServer.UserList.Count <= get_max_allowed_player ())
+			{
+				authObject.ClientAuthenticated = true;
+			}
+			else if(validationResult)
+			{
+				PurpleNetworkUser playerReference = get_network_player_reference(np);
+				if (playerReference.UserType != UserTypes.User)
+				{
+					authObject.ClientAuthenticated = true;
+				}
+			}
+
+			AccountHelper.AddLog(get_network_player_reference(np).UserName, "client_authenticate_switch_handler "
+				+ authObject.ClientName + " - "+ authObject.ClientAuthenticated);
+			PurpleDebug.Log("Authentication Switch result: " + authObject.ClientName + ": " + authObject.ClientAuthenticated);
+			PurpleNetwork.ToPlayer(np, "server_authenticate_switch_result", authObject);
 		}
 
 		// TODO: test and add call to overview
@@ -216,6 +232,15 @@ namespace PurpleNetwork.Server.Handler
 			{
 				PurpleNetworkServerSanityTester.ServerSanityCheck();
 			}
+		}
+
+		private static int get_max_allowed_player()
+		{
+			// save 2 spaces if monitoring is allowed otherwise just one for Admin/Mod/GM
+			int maxAllowedConnections = PurpleServer.CurrentConfig.ServerMaxClients;
+			maxAllowedConnections -= (PurpleServer.CurrentConfig.ServerAllowMonitoring) ? 2 : 1;
+
+			return maxAllowedConnections;
 		}
 
 

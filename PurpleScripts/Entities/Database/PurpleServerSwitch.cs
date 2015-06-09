@@ -19,6 +19,8 @@ namespace Entities.Database
 		[Required]
 		public string token { get; set; }
 
+		public bool used { get; set; }
+
 		public DateTime timestamp { get; set; }
 	}
 }

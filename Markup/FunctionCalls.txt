@@ -16,6 +16,7 @@ server_register_result					Refult of client registering			X		Server: PurpleNetwo
 server_disable_result					Disable account							X		Server: PurpleNetworkAccountHandler
 
 server_authenticate_result				Authentication response message 				Server/Client: PurpleNetworkBaseHandler
+server_authenticate_switch_result		Authentication switch response 					Server/Client: PurpleNetworkBaseHandler
 server_generate_token_result			Token Generation Response						Server/Client: PurpleNetworkBaseHandler
 server_logout_result					Logout result									Server/Client: PurpleNetworkBaseHandler
 server_ping								Ping Response									Server/Client: PurpleNetworkBaseHandler
@@ -41,6 +42,8 @@ client_disable							account disable call							Client: PurpleNetworkAccountCall
 
 
 client_authenticate						Authenticate client								Client: PurpleNetworkBaseCalls
+																						Server: PurpleNetworkBaseHandler
+client_authenticate_switch				Server Switch 									Client: PurpleNetworkBaseCalls
 																						Server: PurpleNetworkBaseHandler
 client_generate_token					Generate new Token								Client: PurpleNetworkBaseCalls
 																						Server: PurpleNetworkBaseHandler

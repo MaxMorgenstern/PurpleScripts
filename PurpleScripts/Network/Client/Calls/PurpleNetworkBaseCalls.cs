@@ -25,7 +25,7 @@ namespace PurpleNetwork.Client.Calls
 			authObject.ServerSwitchToken = config.ServerSwitchToken;
 			authObject.ClientAuthenticated = false;
 
-			PurpleNetwork.ToServer ("client_authenticate_switch", authObject);		// TODO: function calls - Server side
+			PurpleNetwork.ToServer ("client_authenticate_switch", authObject);
 		}
 
 		public static void GenerateToken(string Username, string Password, string Token)

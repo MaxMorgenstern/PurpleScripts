@@ -344,16 +344,32 @@ namespace PurpleNetwork
 		// CONNECTION CALLS
 		private void connect_to(string hostname, string password, int port)
 		{
-			Network.Connect(hostname, port, password);
+			NetworkConnectionError error = Network.Connect(hostname, port, password);
+			failed_to_connect_catcher (error);
 		}
 
 		private void connect_to_static()
 		{
 			if(!String.IsNullOrEmpty(networkHost) && !String.IsNullOrEmpty(networkPassword) && networkPort > 0)
 			{
-				Network.Connect(networkHost, networkPort, networkPassword);
+				NetworkConnectionError error = Network.Connect(networkHost, networkPort, networkPassword);
+				failed_to_connect_catcher (error);
+
 			} else {
 				throw new PurpleException ("Can not connect to server, no connection details set!");
+			}
+		}
+
+		private void failed_to_connect_catcher(NetworkConnectionError error)
+		{
+			NetworkPlayer network_player = new NetworkPlayer ();
+			if (error != NetworkConnectionError.NoError) {
+				if (error == NetworkConnectionError.TooManyConnectedPlayers) {
+					PurpleDebug.Log ("NetworkConnectionError - To may Connected Players: " + error, 1);
+				} else {
+					PurpleDebug.Log ("NetworkConnectionError - Could not connect to server: " + error, 1);
+				}
+				instance.trigger_purple_event (FailedToConnectToPurpleServer, network_player, error);
 			}
 		}
 

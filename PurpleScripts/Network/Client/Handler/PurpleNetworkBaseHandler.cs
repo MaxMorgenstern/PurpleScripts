@@ -16,6 +16,7 @@ namespace PurpleNetwork.Client.Handler
 			PurpleNetwork.AddListener("server_broadcast", server_broadcast_handler);
 
 			PurpleNetwork.AddListener("server_authenticate_result", server_authenticate_result_handler);
+			PurpleNetwork.AddListener("server_authenticate_switch_result", server_authenticate_result_handler);
 			PurpleNetwork.AddListener("server_generate_token_result", server_generate_token_result_handler);
 			PurpleNetwork.AddListener("server_logout_result", server_logout_result_handler);
 			PurpleNetwork.AddListener("server_ping", server_ping_handler);
