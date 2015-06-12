@@ -360,19 +360,6 @@ namespace PurpleNetwork
 			}
 		}
 
-		private void failed_to_connect_catcher(NetworkConnectionError error)
-		{
-			NetworkPlayer network_player = new NetworkPlayer ();
-			if (error != NetworkConnectionError.NoError) {
-				if (error == NetworkConnectionError.TooManyConnectedPlayers) {
-					PurpleDebug.Log ("NetworkConnectionError - To may Connected Players: " + error, 1);
-				} else {
-					PurpleDebug.Log ("NetworkConnectionError - Could not connect to server: " + error, 1);
-				}
-				instance.trigger_purple_event (FailedToConnectToPurpleServer, network_player, error);
-			}
-		}
-
 		private void disconnect_from()
 		{
 			Network.Disconnect(networkPause);
@@ -404,9 +391,20 @@ namespace PurpleNetwork
 
 		private void OnFailedToConnect(NetworkConnectionError error)
 		{
-			PurpleDebug.Log("Could not connect to server: " + error);
+			failed_to_connect_catcher (error);
+		}
+
+		private void failed_to_connect_catcher(NetworkConnectionError error)
+		{
 			NetworkPlayer network_player = new NetworkPlayer ();
-			instance.trigger_purple_event (FailedToConnectToPurpleServer, network_player, error);
+			if (error != NetworkConnectionError.NoError) {
+				if (error == NetworkConnectionError.TooManyConnectedPlayers) {
+					PurpleDebug.Log ("NetworkConnectionError - To may Connected Players: " + error, 1);
+				} else {
+					PurpleDebug.Log ("NetworkConnectionError - Could not connect to server: " + error, 1);
+				}
+				instance.trigger_purple_event (FailedToConnectToPurpleServer, network_player, error);
+			}
 		}
 
 

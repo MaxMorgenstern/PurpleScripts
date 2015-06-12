@@ -129,7 +129,7 @@ namespace Entities.Database
 
 		public static PurpleServerSwitch ToSQLSelect(this PurpleServerSwitch data, string token)
 		{
-			data = to_sql_select(data, "token", token).Where ("valid=true", "AND").FetchSingle().ToObject<PurpleServerSwitch>();
+			data = to_sql_select(data, "token", token).Where ("used=false", "AND").FetchSingle().ToObject<PurpleServerSwitch>();
 			return data;
 		}
 

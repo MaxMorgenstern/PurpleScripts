@@ -12,6 +12,7 @@ namespace PurpleNetwork.Client.Handler
 		public static void register_base_handler()
 		{
 			PurpleNetwork.ConnectedToPurpleServer += connected_to_server_handler;
+			PurpleNetwork.FailedToConnectToPurpleServer += failed_to_connect_to_server_handler;
 
 			PurpleNetwork.AddListener("server_broadcast", server_broadcast_handler);
 
@@ -133,6 +134,16 @@ namespace PurpleNetwork.Client.Handler
 			Calls.Base.GetVersion ();
 		}
 
+		public static void failed_to_connect_to_server_handler(object ob, NetworkPlayer np)
+		{
+			PurpleDebug.Log ("failed_to_connect_to_server_handler" + (NetworkConnectionError)ob);
+			// TODO:	
+			/*
+			 	ob = error
+				NetworkConnectionError
+			*/
+		}
+
 
 		// DESTROY /////////////////////////
 
@@ -140,10 +151,12 @@ namespace PurpleNetwork.Client.Handler
 		{
 			PurpleClient.CurrentConfig.PlayerAuthenticated = false;
 			PurpleNetwork.ConnectedToPurpleServer -= connected_to_server_handler;
+			PurpleNetwork.FailedToConnectToPurpleServer -= failed_to_connect_to_server_handler;
 
 			PurpleNetwork.RemoveListener("server_broadcast", server_broadcast_handler);
 
 			PurpleNetwork.RemoveListener("server_authenticate_result", server_authenticate_result_handler);
+			PurpleNetwork.RemoveListener("server_authenticate_switch_result", server_authenticate_result_handler);
 			PurpleNetwork.RemoveListener("server_generate_token_result", server_generate_token_result_handler);
 			PurpleNetwork.RemoveListener("server_logout_result", server_logout_result_handler);
 			PurpleNetwork.RemoveListener("server_ping", server_ping_handler);
