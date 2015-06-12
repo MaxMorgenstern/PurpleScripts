@@ -415,7 +415,8 @@ namespace PurpleDatabase
 			// PRIVATE ////////////////////////////
 			private string _query = String.Empty;
 
-
+			private static string keyTRUE 			= "TRUE";
+			private static string keyFALSE 			= "FALSE";
 			private static string keyFrom 			= "FROM";
 			private static string keyWhere 			= "WHERE";
 			private static string keyValues 		= "VALUES";
@@ -711,6 +712,12 @@ namespace PurpleDatabase
 
 				if(object.Equals(str.ToLower(), keyNow))
 					return keyNow;
+
+				if(object.Equals(str.ToUpper(), keyTRUE))
+					return 1.ToString ();
+
+				if(object.Equals(str.ToUpper(), keyFALSE))
+					return 0.ToString ();
 
 				return keyStringEscapeSymbol + str + keyStringEscapeSymbol;
 			}
