@@ -77,7 +77,6 @@ namespace Entities.PurpleNetwork.Client
 			this.ClientEmail 		= config.ClientEmail;
 			this.ClientToken 		= config.ClientToken;
 			this.ClientTokenCreated = config.ClientTokenCreated;
-			this.PlayerAuthenticated= config.PlayerAuthenticated;
 			this.guid 				= config.guid;
 		}
 		
