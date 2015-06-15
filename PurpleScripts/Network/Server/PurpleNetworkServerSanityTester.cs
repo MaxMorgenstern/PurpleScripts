@@ -401,6 +401,15 @@ namespace PurpleNetwork
 					{
 						server_sanity_network_ip = true;
 					}
+					else
+					{
+						PurpleDebug.Log("ServerSanityCheck: No external IP, check for connected player. Connected: " 
+							+ Network.connections.Length);
+						if (Network.connections.Length > 0)
+						{
+							server_sanity_network_ip = true;
+						}
+					}
 				}
 
 				server_sanity_check_done();
@@ -421,9 +430,13 @@ namespace PurpleNetwork
 			sanityCountdownDone.CancelCountDown();
 			sanityCountdownDone.DestroyInstance();
 
-			if(server_sanity_database && server_sanity_network_ip && server_sanity_network_reachable)
+			if (server_sanity_database && server_sanity_network_ip && server_sanity_network_reachable)
 			{
 				PurpleDebug.Log("ServerSanityCheck: Success!", 1);
+			}
+			else if (server_sanity_database && server_sanity_network_reachable)
+			{
+				PurpleDebug.LogWarning("ServerSanityCheck: Partly Success! No external IP found.", 1);
 			}
 			else
 			{
