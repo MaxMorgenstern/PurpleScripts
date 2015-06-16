@@ -10,8 +10,6 @@ public class ClientManager : MonoBehaviour {
 	public string connectionPassword = PurpleConfig.Network.Password;
 	public int connectionPort = PurpleConfig.Network.Port;
 
-	public GameObject DummyButton;
-
 	void Start()
 	{
 		PurpleDebug.Log("Client Manager Started!");
