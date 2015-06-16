@@ -96,8 +96,16 @@ namespace PurpleNetwork.Client.Handler
 		public static void server_switch_handler (string dataObject, NetworkPlayer np)
 		{
 			_PMServer.SwitchMessage switchObject = PurpleSerializer.StringToObjectConverter<_PMServer.SwitchMessage> (dataObject);
-			//TODO
-			PurpleDebug.Log (PurpleSerializer.ObjectToStringConverter ((switchObject)));
+
+			// TODO - test for token
+			PurpleClient.CurrentConfig.ServerSwitchToken = switchObject.SwitchToken;
+
+			//TODO - TEST
+			if(PurpleClient.CurrentConfig.ServerHost != switchObject.Hostname
+				&& PurpleClient.CurrentConfig.ServerPort != switchObject.Port)
+			{
+				PurpleClient.SwitchServer (switchObject.Hostname, switchObject.Password, switchObject.Port);
+			}
 		}
 
 		public static void server_version_result_handler (string dataObject, NetworkPlayer np)
