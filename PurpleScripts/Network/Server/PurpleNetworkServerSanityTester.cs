@@ -478,7 +478,7 @@ namespace PurpleNetwork
 			psl.port = PurpleServer.CurrentConfig.ServerPort;
 			psl.max_player = PurpleServer.CurrentConfig.ServerMaxClients;
 			psl.host = PurpleServer.CurrentConfig.ServerHost;
-			psl.comment = String.Empty;
+			psl.comment = "PurpleNetworkServerSanityTester: Test";
 			psl.type = PurpleServer.CurrentConfig.ServerType.ToString();
 			psl.local_ip = ip;
 			psl.global_ip = externalIp;

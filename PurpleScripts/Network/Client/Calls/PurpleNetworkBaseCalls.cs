@@ -17,6 +17,17 @@ namespace PurpleNetwork.Client.Calls
 			authentication_call(config, "client_authenticate");
 		}
 
+		public static void AuthenticateSwitch(ClientConfig config)
+		{
+			_PMClient.Authentication authObject = new _PMClient.Authentication ();
+			authObject.ClientName = config.ClientName;
+			authObject.ClientToken = config.ClientToken;
+			authObject.ServerSwitchToken = config.ServerSwitchToken;
+			authObject.ClientAuthenticated = false;
+
+			PurpleNetwork.ToServer ("client_authenticate_switch", authObject);		// TODO: function calls - Server side
+		}
+
 		public static void GenerateToken(string Username, string Password, string Token)
 		{
 			authentication_call(Username, Password, Token, "client_generate_token");

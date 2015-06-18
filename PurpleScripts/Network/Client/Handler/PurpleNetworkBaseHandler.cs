@@ -120,7 +120,15 @@ namespace PurpleNetwork.Client.Handler
 
 		public static void connected_to_server_handler(object ob, NetworkPlayer np)
 		{
-			Calls.Base.Authenticate (PurpleClient.CurrentConfig);
+			// TODO - server switch 
+			if(string.IsNullOrEmpty(PurpleClient.CurrentConfig.ServerSwitchToken))
+			{
+				Calls.Base.Authenticate (PurpleClient.CurrentConfig);
+			}
+			else
+			{
+				Calls.Base.AuthenticateSwitch (PurpleClient.CurrentConfig);
+			}
 			Calls.Base.GetVersion ();
 		}
 
