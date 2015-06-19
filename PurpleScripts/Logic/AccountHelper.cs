@@ -6,6 +6,7 @@ using Entities.PurpleNetwork;
 using PurpleDatabase.Extension;
 using PurpleNetwork.Server;
 using UnityEngine;
+using PNS = PurpleNetwork.Server.PurpleServer;
 
 namespace PurpleDatabase.Helper
 {
@@ -110,7 +111,7 @@ namespace PurpleDatabase.Helper
 			userData.token_created = DateTime.Now;
 			userData.last_login = DateTime.Now;
 
-			PurpleNetworkUser pnu = PurpleServer.UserList
+			PurpleNetworkUser pnu = PNS.UserList
 				.Find (x => x.UserName == identifier || x.UserGUID.Equals(identifier));
 			if(pnu != null)
 				userData.last_login_ip = pnu.UserReference.ipAddress;
@@ -209,7 +210,7 @@ namespace PurpleDatabase.Helper
 
 		private static PurpleAccount get_user_reference(string identifier)
 		{
-			PurpleNetworkUser pnu = PurpleServer.UserList
+			PurpleNetworkUser pnu = PNS.UserList
 				.Find (x => x.UserName == identifier || x.UserGUID.Equals(identifier));
 			if(pnu != null)
 			{
@@ -234,14 +235,14 @@ namespace PurpleDatabase.Helper
 		{
 			if(np == null)
 				return false;
-			PurpleNetworkUser pnu = PurpleServer.UserList
+			PurpleNetworkUser pnu = PNS.UserList
 				.Find (x => x.UserReference == np || x.UserName == user.username || x.UserGUID.Equals(user.guid));
 			return update_user_reference(user, pnu, authenticated);
 		}
 
 		private static bool update_user_reference(PurpleAccount user, bool authenticated)
 		{
-			PurpleNetworkUser pnu = PurpleServer.UserList
+			PurpleNetworkUser pnu = PNS.UserList
 				.Find (x => x.UserName == user.username || x.UserGUID.Equals(user.guid));
 			return update_user_reference(user, pnu, authenticated);
 		}

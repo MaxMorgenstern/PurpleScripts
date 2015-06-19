@@ -8,6 +8,7 @@ using PurpleNetwork.Server;
 using Entities.PurpleNetwork.Server;
 using Entities.Database;
 using PurpleDatabase;
+using PNS = PurpleNetwork.Server.PurpleServer;
 
 
 // TODO: Class for monitoring - split it out later on
@@ -451,16 +452,16 @@ namespace PurpleNetwork
 					PurpleDebug.LogError("ServerSanityCheck: Network Error!", 1);
 
 				PurpleDebug.LogError("ServerSanityCheck: Shut down server...", 1);
-				if(PurpleServer.CurrentConfig.SanityTest)
+				if(PNS.CurrentConfig.SanityTest)
 				{
-					switch (PurpleServer.CurrentConfig.SanityAction.ToLower())
+					switch (PNS.CurrentConfig.SanityAction.ToLower())
 					{
 					case "shutdown":
-						PurpleServer.StopServer(5);
+						PNS.StopServer(5);
 						break;
 
 					case "restart":
-						PurpleServer.RestartServer(5);
+						PNS.RestartServer(5);
 						break;
 
 					case "warn":
@@ -474,12 +475,12 @@ namespace PurpleNetwork
 		private bool test_current_database_connection(string ip, string externalIp)
 		{
 			Entities.Database.PurpleServerLog psl = new Entities.Database.PurpleServerLog ();
-			psl.name = PurpleServer.CurrentConfig.ServerName;
-			psl.port = PurpleServer.CurrentConfig.ServerPort;
-			psl.max_player = PurpleServer.CurrentConfig.ServerMaxClients;
-			psl.host = PurpleServer.CurrentConfig.ServerHost;
+			psl.name = PNS.CurrentConfig.ServerName;
+			psl.port = PNS.CurrentConfig.ServerPort;
+			psl.max_player = PNS.CurrentConfig.ServerMaxClients;
+			psl.host = PNS.CurrentConfig.ServerHost;
 			psl.comment = "PurpleNetworkServerSanityTester: Test";
-			psl.type = PurpleServer.CurrentConfig.ServerType.ToString();
+			psl.type = PNS.CurrentConfig.ServerType.ToString();
 			psl.local_ip = ip;
 			psl.global_ip = externalIp;
 
