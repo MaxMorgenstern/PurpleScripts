@@ -4,6 +4,8 @@ namespace Entities.PurpleNetwork.Client
 {
 	public class ClientConfig
 	{
+		public const string 	CONFIG_FILE_PREFIX 	= "Entities.PurpleNetwork.Client.ClientConfig";
+
 		public string 		ServerHost;
 		public int 			ServerPort;
 		public string 		ServerPassword;
@@ -62,7 +64,7 @@ namespace Entities.PurpleNetwork.Client
 		{
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
 			_guid = Guid.NewGuid ();
-			PurpleStorage.PurpleStorage.Save("Entities.PurpleNetwork.Client.ClientConfig"+suffix, this);
+			PurpleStorage.PurpleStorage.Save(CONFIG_FILE_PREFIX+suffix, this);
 		}
 
 		public void Load()
@@ -75,7 +77,7 @@ namespace Entities.PurpleNetwork.Client
 			this.ConfigLoaded = false;
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
 			ClientConfig config
-				= PurpleStorage.PurpleStorage.Load<ClientConfig> ("Entities.PurpleNetwork.Client.ClientConfig"+suffix);
+				= PurpleStorage.PurpleStorage.Load<ClientConfig> (CONFIG_FILE_PREFIX+suffix);
 			if (config == null || config.guid == Guid.Empty.ToString ())
 				return;
 			
@@ -99,7 +101,7 @@ namespace Entities.PurpleNetwork.Client
 		public void Delete(string Name)
 		{
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
-			PurpleStorage.PurpleStorage.DeleteFile ("Entities.PurpleNetwork.Client.ClientConfig"+suffix);
+			PurpleStorage.PurpleStorage.DeleteFile (CONFIG_FILE_PREFIX+suffix);
 		}
 	}
 }
