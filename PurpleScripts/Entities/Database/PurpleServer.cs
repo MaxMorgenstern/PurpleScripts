@@ -8,6 +8,9 @@ namespace Entities.Database
 		public int id { get; set; }
 
 		[Required]
+		public string guid { get; set; }
+
+		[Required]
 		public string name { get; set; }
 
 		[Required]

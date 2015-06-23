@@ -483,6 +483,7 @@ namespace PurpleNetwork
 			psl.type = PNS.CurrentConfig.ServerType.ToString();
 			psl.local_ip = ip;
 			psl.global_ip = externalIp;
+			psl.server_id = PNS.CurrentConfig.ServerID;
 
 			int insertResult = psl.ToSQLInsert ().Execute ();
 			if (insertResult == 1 && PurpleDatabase.PurpleDatabase.LastInsertedId() > 0)
