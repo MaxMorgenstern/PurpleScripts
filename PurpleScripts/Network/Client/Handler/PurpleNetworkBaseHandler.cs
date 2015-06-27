@@ -106,6 +106,7 @@ namespace PurpleNetwork.Client.Handler
 			{
 				PurpleClient.SwitchServer (switchObject.Hostname, switchObject.Password, switchObject.Port);
 			}
+			// TODO - check if switch complete
 		}
 
 		public static void server_version_result_handler (string dataObject, NetworkPlayer np)

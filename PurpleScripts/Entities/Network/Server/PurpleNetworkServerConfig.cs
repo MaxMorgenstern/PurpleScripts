@@ -1,15 +1,13 @@
 using System;
 using PurpleNetwork;
-using PurpleDatabase;
-using PurpleDatabase.Extension;
 using Entities.Database;
+using PurpleDatabase.Helper;
 
 namespace Entities.PurpleNetwork.Server
 {
 	public class ServerConfig
 	{
 		public const string 	CONFIG_FILE_PREFIX 	= "Entities.PurpleNetwork.Server.ServerConfig";
-		public const string 	SERVER_TABLE 	= "server";
 
 		public ServerTypes 	ServerType;
 		protected Guid 		_guid;
@@ -53,7 +51,7 @@ namespace Entities.PurpleNetwork.Server
 
 		public bool			ConfigLoaded;
 
-		private PurpleServer serverReference;
+		public PurpleServer serverReference;
 
 		// CONSTRUCTOR
 		public ServerConfig ()
@@ -109,13 +107,17 @@ namespace Entities.PurpleNetwork.Server
 
 			ConfigLoaded = false;
 
-			get_server_reference ();
+			serverReference = PurpleServerHelper.GetServerReference (ServerGUID);
+			if(serverReference != null)
+				ServerID = serverReference.id;
 			if(serverReference == null)
 			{
 				serverReference = new PurpleServer ();
-				create_server_reference ();
-				get_server_reference ();
+				PurpleServerHelper.CreateServerReference (this, 0, string.Empty, string.Empty);
+				serverReference = PurpleServerHelper.GetServerReference (ServerGUID);
 			}
+			if(serverReference != null)
+				ServerID = serverReference.id;
 		}
 
 		public void Save()
@@ -128,17 +130,18 @@ namespace Entities.PurpleNetwork.Server
 			string suffix = (!string.IsNullOrEmpty (Name)) ? "." + Name : string.Empty;
 			if(ServerID <= 0)
 			{
-				get_server_reference ();
+				serverReference = PurpleServerHelper.GetServerReference (ServerGUID);
 				if(serverReference == null)
 				{
-					create_server_reference ();
-					get_server_reference ();
+					serverReference = new PurpleServer ();
+					PurpleServerHelper.CreateServerReference (this, 0, string.Empty, string.Empty);
+					serverReference = PurpleServerHelper.GetServerReference (ServerGUID);
 				}
 				ServerID = serverReference.id;
 			}
 			else
 			{
-				update_server_reference ();
+				PurpleServerHelper.UpdateServerReference (this, 0, string.Empty, string.Empty);
 			}
 			PurpleStorage.PurpleStorage.Save(CONFIG_FILE_PREFIX+suffix, this);
 		}
@@ -186,7 +189,7 @@ namespace Entities.PurpleNetwork.Server
 			this.DatabaseUser 		= config.DatabaseUser;
 			this.DatabasePassword 	= config.DatabasePassword;
 
-			get_server_reference ();
+			this.serverReference = PurpleServerHelper.GetServerReference (this.ServerGUID);
 		}
 
 		public void Delete()
@@ -207,45 +210,5 @@ namespace Entities.PurpleNetwork.Server
 			return (ServerTypes) Enum.Parse(typeof(ServerTypes), serverType, true);
 		}
 
-
-		private void get_server_reference()
-		{
-			get_server_reference (ServerGUID);
-		}
-
-		private void get_server_reference(string guid)
-		{
-			serverReference = SQLGenerator.New ().Select ("*").From(SERVER_TABLE)
-				.Where ("guid="+guid).FetchSingle ().ToObject<PurpleServer> ();
-			if(serverReference != null)
-				ServerID = serverReference.id;
-		}
-
-		private bool create_server_reference()
-		{			
-			update_server_reference_helper ();
-
-			int result = serverReference.ToSQLInsert ().Execute ();
-			return (result==1) ? true : false;
-		}
-
-		private bool update_server_reference()
-		{
-			get_server_reference ();
-			update_server_reference_helper ();
-
-			int result = serverReference.ToSQLUpdate ().Execute ();
-			return (result==1) ? true : false;
-		}
-
-		private void update_server_reference_helper()
-		{
-			serverReference.guid = ServerGUID;
-			serverReference.host = ServerHost;
-			serverReference.max_player = ServerMaxClients;
-			serverReference.name = ServerName;
-			serverReference.port = ServerPort;
-			serverReference.type = ServerType.ToString ();
-		}
 	}
 }
