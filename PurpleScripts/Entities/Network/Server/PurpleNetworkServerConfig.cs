@@ -78,7 +78,7 @@ namespace Entities.PurpleNetwork.Server
 			ServerType 		= parse_server_type (PurpleConfig.Network.Server.Type);
 
 			ServerGUID 		= PurpleConfig.Network.Server.GUID;
-			if(string.IsNullOrEmpty (ServerGUID))
+			if(string.IsNullOrEmpty (ServerGUID) || ServerGUID.Equals (new Guid ().ToString()))
 				_guid 			= Guid.NewGuid ();
 			ServerID 		= -1;
 
