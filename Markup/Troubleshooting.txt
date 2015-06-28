@@ -1,0 +1,32 @@
+Troubleshooting:
+
+Purple Scripts have been tested with several different systems but there is still a slight chance that some errors occur.
+
+This are the most common issues:
+
+
+
+Error:
+Unhandled Exception: System.Reflection.ReflectionTypeLoadException: The classes in the module cannot be loaded.
+Solution:
+Change the API Compatibility level from „.NET 2.0 Subnet“ to „.NET 2.0“
+
+
+Error:
+Internal compiler error. ... Could not load file or assembly 'System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies.
+Solution:
+Change the API Compatibility level from „.NET 2.0 Subnet“ to „.NET 2.0“
+
+
+Error:
+There are no Unit Tests within the project.
+Solution:
+Add „UnityTestToolsIsPresent“ to the „Scripting Define Symbols“ section.
+
+
+Error:
+The type or namespace 'NUnit' could not be found.
+Solution:
+Remove „UnityTestToolsIsPresent“ from the „Scripting Define Symbols“ section.
+OR Install Unity Test Tools in order to enable Unit testing.
+

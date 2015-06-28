@@ -134,7 +134,6 @@ namespace Entities.Database
 		}
 
 
-		// TODO - Test
 		/*
 		public static PurpleAccount ToSQLSelect(this PurpleAccount data, int id = 0)
 		{

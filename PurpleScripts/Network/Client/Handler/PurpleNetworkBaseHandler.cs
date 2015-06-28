@@ -113,7 +113,7 @@ namespace PurpleNetwork.Client.Handler
 		public static void server_version_result_handler (string dataObject, NetworkPlayer np)
 		{
 			_PMServer.Version versionObject = PurpleSerializer.StringToObjectConverter<_PMServer.Version> (dataObject);
-			//TODO
+			//TODO - check against current version
 			PurpleDebug.Log (PurpleSerializer.ObjectToStringConverter ((versionObject)));
 		}
 
