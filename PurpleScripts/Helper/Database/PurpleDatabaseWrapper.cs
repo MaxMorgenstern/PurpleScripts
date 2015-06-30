@@ -438,6 +438,9 @@ namespace PurpleDatabase
 			private static string keyBracketOpen 	= "(";
 			private static string keyBracketClose 	= ")";
 
+			private static string regexMax			= @"max.?\((.*?)\)";
+			private static string regexMin			= @"min.?\((.*?)\)";
+
 			private static string activeEscapeSymbol= "`";
 			private static string activeTablePrefix	= "";
 
@@ -672,6 +675,22 @@ namespace PurpleDatabase
 
 			public string AddEscapeSymbol(string str)
 			{
+				MatchCollection matchesMax = Regex.Matches (str, regexMax, RegexOptions.IgnoreCase);
+				MatchCollection matchesMin = Regex.Matches (str, regexMin, RegexOptions.IgnoreCase);
+				if (matchesMax.Count > 0 || matchesMin.Count > 0) 
+				{
+					foreach(Match m in matchesMax)
+					{
+						if(m.Groups.Count == 2)
+						{
+							string[] fieldDataArray = split_field_data (m.Groups [1].Value);
+							string inner = AddEscapeSymbol(string.Join(keyStringEscapeSymbol + ", " + keyStringEscapeSymbol, fieldDataArray));
+							str = str.Replace (m.Groups[1].Value, inner);
+						}
+					}
+					return str;
+				}
+
 				return activeEscapeSymbol + str.Trim(_trimSymbols) + activeEscapeSymbol;
 			}
 
