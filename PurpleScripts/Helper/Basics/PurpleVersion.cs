@@ -58,16 +58,18 @@ public class PurpleVersion
 
 	public string GetCurrent()
 	{
+		int major = 0;
+		int minor = 3;
 		int firstDevelopmentDay = 5500;
-		return GetCurrent (firstDevelopmentDay);
+		return GetCurrent (major, minor, firstDevelopmentDay);
 	}
 
-	public string GetCurrent(int offset)
+	public string GetCurrent(int major, int minor, int offset)
 	{
 		System.Version sv = Assembly.GetExecutingAssembly ().GetName ().Version;
 
 		// Major, Minor, Days of Development, Build minute of current day
-		PurpleVersion pv = new PurpleVersion (0, 3, (sv.Build-offset), (sv.Revision*2/60));
+		PurpleVersion pv = new PurpleVersion (major, minor, (sv.Build-offset), (sv.Revision*2/60));
 		return pv.Version;
 	}
 
