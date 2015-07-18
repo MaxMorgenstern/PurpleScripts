@@ -5,6 +5,7 @@ PurpleScripts
 
 This classes have been created during an evaluation of unitys networking capabilities.
 
+This is not a finished project but still in progress. I will update/extend/fix the code on regulary bases.
 If you have any suggestions for improvement either let me know or fork this repository and create a pull request.
 
 
